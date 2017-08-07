@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>http://nicosommi.github.com/</loc>
+    <lastmod>2017-04-29T06:34:58-03:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/post/node-artifacts/</loc>
+    <lastmod>2017-04-29T06:34:58-03:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/post/tuos/</loc>
+    <lastmod>2017-04-23T08:20:25-03:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/slide/docker.secrets/</loc>
+    <lastmod>2017-03-29T15:38:10-03:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/slide/docker/</loc>
+    <lastmod>2016-10-24T15:38:10-03:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/slide/proxies/</loc>
+    <lastmod>2016-10-24T15:38:10-03:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/index.php/2016/09/06/contenedores-unicamente-de-volumenes-en-docker-volume-only-containers/</loc>
+    <lastmod>2016-09-07T00:10:13+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/index.php/2016/05/27/generation-driven-development-introduction-to-the-idea-and-to-gddify/</loc>
+    <lastmod>2016-05-27T13:38:42+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/index.php/2016/05/25/generation-driven-development-introduccion-a-la-idea-y-a-gddify/</loc>
+    <lastmod>2016-05-26T00:08:30+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/index.php/2016/03/30/a-good-way-to-use-global-not-really-clis-in-your-node-js-project-like-gulp/</loc>
+    <lastmod>2016-03-30T16:47:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/index.php/2015/10/21/how-adopting-cucumber-js-and-other-agile-practices-can-help-you-improve-your-development-process/</loc>
+    <lastmod>2015-10-21T14:47:35+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/index.php/2015/08/10/partial-class-approach-for-es6/</loc>
+    <lastmod>2015-08-10T02:50:50+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/index.php/2015/07/17/crear-un-componente-javascript-y-open-source-de-calidad-en-minutos/</loc>
+    <lastmod>2015-07-17T01:34:25+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/index.php/2015/07/17/create-a-javascript-quality-open-source-component-in-minutes/</loc>
+    <lastmod>2015-07-17T01:34:06+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/index.php/2014/06/21/mmmmm-mozilla/</loc>
+    <lastmod>2014-06-21T19:12:03+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/index.php/2014/05/02/asusta-pero-es-exitante-traduccion-al-espanol-de-la-carta-de-mark-surman-de-mozilla-scary-but-exciting/</loc>
+    <lastmod>2014-05-02T01:56:10+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/index.php/2014/05/02/debugging-node/</loc>
+    <lastmod>2014-05-02T01:39:40+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/index.php/2014/04/20/debugging-node-seriously/</loc>
+    <lastmod>2014-04-20T15:17:15+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/index.php/2013/12/05/explore-bw-test/</loc>
+    <lastmod>2013-12-05T21:11:21+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/index.php/2013/12/02/bw-rest-2/</loc>
+    <lastmod>2013-12-02T01:41:11+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/index.php/2013/12/02/explore-bw-test-2/</loc>
+    <lastmod>2013-12-02T01:38:50+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/index.php/2013/10/18/bw-rest/</loc>
+    <lastmod>2013-10-18T01:54:52+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://nicosommi.github.com/resume/</loc>
+    <lastmod>2013-04-11T22:27:04+00:00</lastmod>
+  </url>
+  
+</urlset>

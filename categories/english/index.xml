@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>English on nicosommi</title>
+    <link>http://nicosommi.github.com/categories/english/</link>
+    <description>Recent content in English on nicosommi</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>es-AR</language>
+    <lastBuildDate>Fri, 27 May 2016 13:38:42 +0000</lastBuildDate>
+    <atom:link href="http://nicosommi.github.com/categories/english/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Generation Driven Development – Introduction to the idea and to gddify</title>
+      <link>http://nicosommi.github.com/index.php/2016/05/27/generation-driven-development-introduction-to-the-idea-and-to-gddify/</link>
+      <pubDate>Fri, 27 May 2016 13:38:42 +0000</pubDate>
+      
+      <guid>http://nicosommi.github.com/index.php/2016/05/27/generation-driven-development-introduction-to-the-idea-and-to-gddify/</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/nicosommi/gddify&#34;&gt;gddify on github&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.nicosommi.com/index.php/2016/05/25/generation-driven-development-introduccion-a-la-idea-y-a-gddify/&#34;&gt;leer este articulo en español&lt;/a&gt;&lt;figure id=&#34;attachment_639&#34; style=&#34;width: 300px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://www.nicosommi.com/wp-content/uploads/2016/05/sync-300x300.png&#34; alt=&#34;Keep your source code blocks updated on every software component on your architecture. Even if they belong to the same file.&#34; width=&#34;300&#34; height=&#34;300&#34; class=&#34;size-medium wp-image-639&#34; srcset=&#34;http://www.nicosommi.com/wp-content/uploads/2016/05/sync-300x300.png 300w, http://www.nicosommi.com/wp-content/uploads/2016/05/sync-150x150.png 150w, http://www.nicosommi.com/wp-content/uploads/2016/05/sync.png 512w&#34; sizes=&#34;(max-width: 300px) 85vw, 300px&#34; /&gt;&lt;figcaption class=&#34;wp-caption-text&#34;&gt;Keep your source code blocks updated on every software component on your architecture. Even if they belong to the same file.&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Note: GDD and gddify are a work in progress.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Applications are concrete points of view. A point of view that is composed by other points of view. Those from every person that participates in their development. Specially the developers, who create the abstraction from the real information flow using a programming language.&lt;/p&gt;
+
+&lt;p&gt;Points of view, or models, are the thing that is observed, plus an additional subjective load from the observer, a meta information. Payload and meta.&lt;/p&gt;
+
+&lt;p&gt;Over the last year, many times I have created source code generators. Either using one of the template languages out there (swig, ejs, lodash, etc, etc) or using yeoman. Even with custom scripts.&lt;/p&gt;
+
+&lt;p&gt;Also, over the last years, I saw how promises get into the equation on the async world. This javascript objects that promise us some information to be delivered in the future. I always though that this was a very interesting concept, and that it was very clever. Is not only that simplifies the way you can write functions, but also addresses ambiguity in the error handling mechanism. But better of all, it represents the reality better. This is the point which I want to take in order to explain GDD (generation driven development).&lt;/p&gt;
+
+&lt;p&gt;As I said earlier, when generating source code, we (developers) are used to use some kind of templating language, or yeoman or some custom script. However, if we take a look at the reality, a template (God bless the templates, I will never criticize them after all that they did for me) is physically impossible, it just does not make any sense to put two things together on the same place and mix them up literally. The &amp;#8220;mix&amp;#8221;, in the reality, is like a cell-level genesis that grows.&lt;/p&gt;
+
+&lt;p&gt;Someone may tell me here that, even if templates are not too close to the reality, they helped us to accomplish many objectives, even unimaginable. And that&amp;#8217;s true. Absolutely. But I think that a better picture of the reality here, like promises did, may also simplify the development process.&lt;/p&gt;
+
+&lt;p&gt;But let&amp;#8217;s take a look at some common problems right now:&lt;/p&gt;
+
+&lt;p&gt;&amp;#8211; microservices: a lot of overhead on maintenance because the number of projects that compose your architecture&lt;/p&gt;
+
+&lt;p&gt;&amp;#8211; constant module update: it happens a lot that you use a module out there that may not be updated at the right time for you, you have to fork it and create your own.&lt;/p&gt;
+
+&lt;p&gt;&amp;#8211; technology decisions: new utilities are released every day, some are the right choice for us and others don&amp;#8217;t, and the impact here is important because it may lead to a certain amount of refactor work later on&lt;/p&gt;
+
+&lt;p&gt;&amp;#8211; unmaintained modules: it&amp;#8217;s a common case that some libraries are abandonware because of different reasons&lt;/p&gt;
+
+&lt;p&gt;&amp;#8211; broken module compatibility: also, there are modules that relies on other modules, and wrappers-only-modules often don&amp;#8217;t get updated as fast as the original module, or when they change the version and the interface gets changed too in some way and now we need to adapt all of our projects.&lt;/p&gt;
+
+&lt;p&gt;&amp;#8211; repeated source code patterns: there are source code patterns that we repeat over and over on our components&lt;/p&gt;
+
+&lt;p&gt;&amp;#8211; build a generator: is something new and you have to learn how to use it, how to test it, or use some third party generator and learn how it works (like MEAN)&lt;/p&gt;
+
+&lt;p&gt;&amp;#8211; template issues: IDE&amp;#8217;s are not prepared to parse two languages in the same file on most cases&lt;/p&gt;
+
+&lt;p&gt;All these are reasons made me think that there is something better out there. There are things to improve.&lt;/p&gt;
+
+&lt;p&gt;Going back to points of view. Applications are concrete points of view. So, if we think on how to generate more points of view, we will need to pay special attention to the meta information, which are the perception of the reality, to create and maintain other similar perceptions. We need to observe the observer in order to create it.&lt;/p&gt;
+
+&lt;p&gt;From this idea I created this development practice that I called GDD, which stands for Generation Driven Development, which is just to add meta information on the source code that is needed in order to generate it again but with little differences, using the main meta information tool on source code: the comments.&lt;/p&gt;
+
+&lt;h2 id=&#34;which-is-that-necessary-information&#34;&gt;Which is that necessary information?&lt;/h2&gt;
+
+&lt;p&gt;This can be a long discussion and surely with time and maybe the collaboration of the community I will find things that today I do not see.&lt;/p&gt;
+
+&lt;p&gt;Actually, the tool that I created to implement GDD, gddify, supports the thing that my experience told me (my current point of view to create points of view). So let&amp;#8217;s take a look at those elements one by one:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;em&gt;sw component (swComponent)&lt;/em&gt;: a software component that contains software blocks. A project. Examples: a webapp, an API, a microservice, or any project.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;em&gt;sw block (swBlock)&lt;/em&gt;: a sw block, a group of files inside a software component with a particular purpose. For example, the files that build the source code into the compiled code (in the js world, maybe gulp related files), or the files involved in a SCUDL (even specs!), or any other group that means something logically or practically to our architecture.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;em&gt;source code files&lt;/em&gt;: this is the minimum unit for generation. a file.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure id=&#34;attachment_630&#34; style=&#34;width: 300px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img src=&#34;http://www.nicosommi.com/wp-content/uploads/2016/05/ph.portion-300x255.png&#34; alt=&#34;place holders&#34; width=&#34;300&#34; height=&#34;255&#34; class=&#34;size-medium wp-image-630&#34; srcset=&#34;http://www.nicosommi.com/wp-content/uploads/2016/05/ph.portion-300x255.png 300w, http://www.nicosommi.com/wp-content/uploads/2016/05/ph.portion.png 466w&#34; sizes=&#34;(max-width: 300px) 85vw, 300px&#34; /&gt;&lt;figcaption class=&#34;wp-caption-text&#34;&gt;Inside place holders, that content will be always the same for that particular file even after updates&lt;/figcaption&gt;&lt;/figure&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;place holders&lt;/em&gt;: This are source code blocks that keep their content the same for that specific file. It is delimited with meta information.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Example using gddify (js)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;javascript&#34;&gt;/* ph constructor */
+constructor () {
+  this.name = &#39;nico&#39;
+}
+/* endph */
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;em&gt;replacements&lt;/em&gt;: objects with information for replacements, which will be used in the synchronization. Their current attributes in gddify are name (which will be used to match the same point from other files), regex (regular expression, which is used to synchronize other files with this one) and value (which is the value for that replacement here in this file).&lt;/p&gt;
+
+&lt;p&gt;Example using gddify (js), please notice that this replacement information is contained inside a special placeholder called replacements and that their attributes are comma separated, and one per line.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;javascript&#34;&gt;/* ph replacements &lt;em&gt;/
+/&lt;/em&gt; name, /myClass/g, myClass &lt;em&gt;/
+/&lt;/em&gt; endph */
+&lt;/code&gt;&lt;/pre&gt;&lt;figure id=&#34;attachment_629&#34; style=&#34;width: 280px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://www.nicosommi.com/wp-content/uploads/2016/05/replacements.portion-280x300.png&#34; alt=&#34;replacements&#34; width=&#34;280&#34; height=&#34;300&#34; class=&#34;size-medium wp-image-629&#34; srcset=&#34;http://www.nicosommi.com/wp-content/uploads/2016/05/replacements.portion-280x300.png 280w, http://www.nicosommi.com/wp-content/uploads/2016/05/replacements.portion.png 425w&#34; sizes=&#34;(max-width: 280px) 85vw, 280px&#34; /&gt;&lt;figcaption class=&#34;wp-caption-text&#34;&gt;a replacement example&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;em&gt;stamps&lt;/em&gt;: source code blocks shared across components. They keeps always the same content. But, they can be ignored from files.&lt;/p&gt;
+
+&lt;p&gt;Example using gddify (js)&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;javascript&#34;&gt;/* stamp toJson &lt;em&gt;/
+toJSON () {
+  return { name: this.name }
+}
+/&lt;/em&gt; endstamp */
+&lt;/code&gt;&lt;/pre&gt;&lt;figure id=&#34;attachment_631&#34; style=&#34;width: 199px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://www.nicosommi.com/wp-content/uploads/2016/05/package.js.portion-199x300.png&#34; alt=&#34;stamps&#34; width=&#34;199&#34; height=&#34;300&#34; class=&#34;size-medium wp-image-631&#34; srcset=&#34;http://www.nicosommi.com/wp-content/uploads/2016/05/package.js.portion-199x300.png 199w, http://www.nicosommi.com/wp-content/uploads/2016/05/package.js.portion.png 583w&#34; sizes=&#34;(max-width: 199px) 85vw, 199px&#34; /&gt;&lt;figcaption class=&#34;wp-caption-text&#34;&gt;Stamps are code blocks shared and immutable across components (that can be ignored)&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;em&gt;ignoring stamps&lt;/em&gt;: array of names of stamps that will be ignored on this file.&lt;/p&gt;
+
+&lt;p&gt;Example using gddify (js). Notice that, like replacements, ignored stamps are contained in a special place holder called ignoringStamps.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;javascript&#34;&gt;/* ph ignoringStamps &lt;em&gt;/
+/&lt;/em&gt; toJson, parse &lt;em&gt;/
+/&lt;/em&gt; endstamp */
+&lt;/code&gt;&lt;/pre&gt;&lt;figure id=&#34;attachment_632&#34; style=&#34;width: 300px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://www.nicosommi.com/wp-content/uploads/2016/05/gulpfile.ignoringstamps.portion-300x244.png&#34; alt=&#34;Ignoring stamps&#34; width=&#34;300&#34; height=&#34;244&#34; class=&#34;size-medium wp-image-632&#34; srcset=&#34;http://www.nicosommi.com/wp-content/uploads/2016/05/gulpfile.ignoringstamps.portion-300x244.png 300w, http://www.nicosommi.com/wp-content/uploads/2016/05/gulpfile.ignoringstamps.portion.png 591w&#34; sizes=&#34;(max-width: 300px) 85vw, 300px&#34; /&gt;&lt;figcaption class=&#34;wp-caption-text&#34;&gt;Ignoring stamps are those code blocks that we do not want to show this particular file&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;The description of this software components on the right way, will allow us not just create more components, but also combine blocks, and keep them updated, with no additional effort building generators, and with just one programming language, and with no templates. That is the value that this way of development has, thanks to the change on the model which is at my opinion, better to address these common problems of today.&lt;/p&gt;
+
+&lt;p&gt;I consider that GDD has the potential to lower that cost considerably, because it allows you to share code blocks across projects, keeping them up to date easily, and thus brings microservices and other kind of complex architectures that requires modularization to everyone and not only to those who can pay high expenses on development. Improve applications quality and price. That is my personal objetive and the compromise and vision of &lt;a href=&#34;http://integracionesagiles.com&#34;&gt;Integraciones Agiles&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;This is a simple introduction to the model of visualizing the problem, soon I will publish more details on the usability, on how to get used to the process, common issues, use cases, more code examples, and much more.&lt;/p&gt;
+
+&lt;h2 id=&#34;contribute&#34;&gt;Contribute&lt;/h2&gt;
+
+&lt;p&gt;I&amp;#8217;m doing this open source without making any money, so in order to keep dedicating time to this kind of projects I need the support of the community. Please do no hesitate to contact me for contributions to the idea, to the source code, donations, services, consultancy or business.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://integracionesagiles.com&#34;&gt;http://integracionesagiles.com&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/nicosommi/gddify&#34;&gt;gddify en github&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>A common pitfall when using “global” (not really) CLI’s in your node.js project (like gulp)</title>
+      <link>http://nicosommi.github.com/index.php/2016/03/30/a-good-way-to-use-global-not-really-clis-in-your-node-js-project-like-gulp/</link>
+      <pubDate>Wed, 30 Mar 2016 16:47:00 +0000</pubDate>
+      
+      <guid>http://nicosommi.github.com/index.php/2016/03/30/a-good-way-to-use-global-not-really-clis-in-your-node-js-project-like-gulp/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;&amp;#8220;Little things can make a big difference.&amp;#8221;&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;“Little things can make a big difference.” I’m sure you heard that phrase a lot. Well there are cases in which that is true. And this is, at my opinion, one of those cases. Some people know about this detail I&amp;#8217;m going to talk about, but most people don’t.&lt;/p&gt;
+
+&lt;p&gt;Why? Almost everyone, including me until recently, when they decide to use a tool, like gulp, on one of their node.js projects, they creates a gulp file on the project root with some tasks like “test” on it for example, and then run something like&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;javascript&#34;&gt;gulp test
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Right?&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Well. I understand you if that&amp;#8217;s your case, because they tell you to do so in the official documentation. I did the same some time ago. But, in most cases, that&amp;#8217;s a bad thing to do. I will say that you should stop doing that ASAP.&lt;/em&gt; Not the gulpfile, that&amp;#8217;s ok, but I have what I think it is a solid set of arguments against using gulp as a top level task runner (I mean installed globally). &lt;em&gt;Let me explain you why.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Firstly, I want my node.js project to be cloned and executed right away. Period. &lt;em&gt;I do not want the container / user / developer / anybody to install something globally on their environments&lt;/em&gt; besides of the natural requirements for that technology. Because &lt;em&gt;is just unrelated&lt;/em&gt; to my node.js project environment. It&amp;#8217;s not a global dependency, it is a local dependency&lt;strong&gt;.&lt;/strong&gt; The flow should be something more like: git clone, npm install, npm test. &lt;em&gt;And that&amp;#8217;s it.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Let&amp;#8217;s imagine this situation for a minute.&lt;/em&gt; I&amp;#8217;m making public modules relying on the global gulp. On the other hand, you&amp;#8217;re a developer and you&amp;#8217;re new to node.js&amp;#8230; then you start with some project and you decide to clone one of my modules. Now, suddenly, if you want to run the test or maybe do some other task like contributing to my project, you need to install some global tool called, in this example, gulp. So now you need to read lot&amp;#8217;s of docs to know what it is and how it works. &lt;em&gt;All right, I would say that coupling gulp learning curve to my node.js modules is not intuitive and it&amp;#8217;s also unfair for those developers who don&amp;#8217;t know about our custom tool preference or they just don&amp;#8217;t want to learn it. So by doing this, you&amp;#8217;re not just creating a dependency for your projects in your environments but also for the users/potential contributors of your module if it&amp;#8217;s a public module, or the developers in your team if it&amp;#8217;s not.&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;I would say that coupling gulp learning curve to my node.js modules is not intuitive and it&amp;#8217;s also unfair for those developers who don&amp;#8217;t know about our custom tool preference or they just don&amp;#8217;t want to learn it. So by doing this, you&amp;#8217;re not just creating a dependency for your projects in your environments but also for the users&lt;em&gt;/potential contributors&lt;/em&gt; of your module if it&amp;#8217;s a public module, or the developers in your team if it&amp;#8217;s not.&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Wait, this is not just some hedonistic crap. And it&amp;#8217;s not just me believing it&amp;#8217;s better. That thing can hurt your open source strategy and it can make you lose time with your team.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;And there are even more real conflicts with this&amp;#8230; specifically with module versions.&lt;/em&gt; If you don&amp;#8217;t believe me, just start playing with babel versions 5, 6 along with gulp versions 2 and 3 in two or three different projects, and you will face a lot of problems. Because you&amp;#8217;re sharing dependency versions among projects by using a global CLI. Gulp (like almost any other popular CLI in node.js) is not really a global CLI, is a dependency of each one of your projects. So on each case you really need to ask to yourself &amp;#8220;is this CLI a real global dependency or is related to my projects individually?&amp;#8221;. Because if you decide this wrong, this may force you to update your old projects after you update one, or switch constantly global CLI versions, and this task can be very annoying, &lt;strong&gt;&lt;em&gt;making you lose time and money&lt;/em&gt;&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;You may think, well anyway I just have a few projects and if I refresh one I can just refresh all of them. Well if you grow you will have troubles this is a side effect on the team plan. It&amp;#8217;s creating unexpected efforts. And it may be not so easy to figure out which versions are failing.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;_**Gulp (like almost any other popular CLI in node.js) is not really a global CLI, is a dependency of each one of your projects. So on each case you really need to ask to yourself &amp;#8220;is this CLI a real global dependency or is related to my projects individually?&amp;#8221; Because if you decide this wrong, this may force you to update your old projects after you update one, or switch constantly global CLI versions, and this task can be very annoying, &lt;strong&gt;&lt;em&gt;making you lose time and money&lt;/em&gt;&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;**_&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Even if gulp get a really amazing development process in which they fully stick to backwards compatibility, this is not a recommended practice at all, mainly because you are creating a node.js project, not a gulp project. And it does not depend on one framework as I told you with the babel/gulp letal combination. &lt;em&gt;I remember that day. We literally had to refresh all our modules because they suddenly started to fail in the continuous integration server when the environment changed.&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;I remember that day. We literally had to refresh all our modules because they suddenly started to fail in the continuous integration server when the environment changed.&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;Introduction to the &amp;#8220;trivial&amp;#8221; solution&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Node.js comes with the npm binary built in&lt;/em&gt;. Npm supports, via package.json, running scripts in different stages or phases and also custom scripts. Also, some packages like gulp have a binary link for which &lt;em&gt;npm creates a symbolic link automatically on a project scoped bin folder and npm run includes those links in the PATH automatically for the scripts in the package.json&lt;/em&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;npm creates a symbolic link automatically on a project scoped bin folder and npm run includes those links in the PATH automatically for the scripts in the package.json.&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;You can see a reference here &lt;a href=&#34;https://docs.npmjs.com/cli/run-script&#34;&gt;https://docs.npmjs.com/cli/run-script&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;So the point is to use the local gulp binary link in the package.json as a shortcut for executing your internal gulp tasks.&lt;/em&gt; And, luckily, that is transparent to us.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;So the point is to use the local gulp binary link in the package.json as a shortcut for executing your internal gulp tasks&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;How to do this?&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Well basically, let&amp;#8217;s say you want to replace your &lt;em&gt;gulp test&lt;/em&gt; command so you don&amp;#8217;t need a global gulp&amp;#8230; well ok, then simply add this to your scripts section of your package.json&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;javascript&#34;&gt;...(content on your package.json)...
+&#34;scripts&#34;: {
+&#34;test&#34;: &#34;gulp test&#34;
+}
+...(more content on your package.json)...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;And that&amp;#8217;s it!&lt;/strong&gt; With that line now you just need a node js regular environment with nothing installed globally on it, like this&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;javascript&#34;&gt;npm test
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Trivial? Well not so fast. This is the small detail. If you read the npm documentation, maybe you are doing this already. But according to my experience and what I see out there, some people do this but they don&amp;#8217;t know what happens behind the scenes and most people just use the global gulp&lt;em&gt;. This npm test command is not executing the global gulp. The better way to experiment this is just uninstalling the global gulp. And please do that ASAP!&lt;/em&gt; &lt;em&gt;You just need to install gulp (or the CLI you want to make local) locally&lt;/em&gt; in your project before you execute the script through &lt;strong&gt;npm run&lt;/strong&gt;&amp;#8230; remember that. So this is picking the link from the PATH that points to the node_modules version of gulp of your project.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;javascript&#34;&gt;npm uninstall -g gulp
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;**&lt;em&gt;This npm test command is not executing the global gulp.&lt;/em&gt; The better way to experiment this is just uninstalling the global gulp. And please do that ASAP! You just need to install gulp (or the CLI you want to make local) locally&lt;/p&gt;
+
+&lt;p&gt;**&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;**Sugar for complex cases&lt;/p&gt;
+
+&lt;p&gt;**&lt;/p&gt;
+
+&lt;p&gt;As I said earlier, you can use custom scripts (meaning any name you want) on the scripts element on your package.json. If that&amp;#8217;s your case, after you added it on your package.json, you need can run that custom npm script with this command&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;javacript&#34;&gt;npm run gulp yourcustomtask
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And here, an elegant ultimate approach that let you execute any gulp task you may have with the bin symbolic link fix with a command like &lt;strong&gt;&lt;em&gt;npm run gulp anytask&lt;/em&gt;&lt;/strong&gt;, check it out:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;javascript&#34;&gt;...(content on your package.json)...
+&#34;scripts&#34;: {
+&#34;test&#34;: &#34;gulp test&#34;,
+&#34;gulp&#34;: &#34;gulp&#34;
+}
+...(more content on your package.json)...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Other examples&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;And as I mentioned I&amp;#8217;m not talking about just gulp, eslint is another good example of this concept but in a slightly different way, you can configure your IDE to use some global eslint set of rules, but &lt;em&gt;every project may have different rules, and this is a real conflict too because one maybe is in es5 and the other one in ECMAScript 2015&lt;/em&gt;, and there lots of examples. &lt;em&gt;Grunt also applies&lt;/em&gt;&lt;strong&gt;,&lt;/strong&gt; you can stop using the global grunt by following this steps too (installing grunt-cli locally instead). Want more? Mocha, some Babel versions. And the list is long. Of course, they are creating a module, they want it to be easy so more developers adopt it. And it’s true, it works, they get more engagement on their modules. But at some point we need to know where to stop and grow from our experience.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Conclusion&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;So in conclusion, I think every project should be self sufficient, self configured, and this approach tries to tackle that. If you create a node.js project you need to stick to the node.js interpreter as a requirement. Nothing global except for that container platform itself which is a natural requirement for your scripts. In this way, if some day another task runner came out and kills gulp, or any pseudo global CLI, you can smoothly switch to the new one. Also you don&amp;#8217;t couple the learning curve from the CLI to your module user&amp;#8217;s, and you don&amp;#8217;t share CLI dependencies between your different projects you may have, letting you have different project with different versions without forcing you to refresh them all.&lt;/p&gt;
+
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+
+&lt;p&gt;Please any comment, suggestion, typo, send it to nicosommi@gmail.com&lt;/p&gt;
+
+&lt;p&gt;Thanks for reading.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How, adopting cucumber js and other agile practices, can help you improve your development process</title>
+      <link>http://nicosommi.github.com/index.php/2015/10/21/how-adopting-cucumber-js-and-other-agile-practices-can-help-you-improve-your-development-process/</link>
+      <pubDate>Wed, 21 Oct 2015 14:47:35 +0000</pubDate>
+      
+      <guid>http://nicosommi.github.com/index.php/2015/10/21/how-adopting-cucumber-js-and-other-agile-practices-can-help-you-improve-your-development-process/</guid>
+      <description>
+
+&lt;h2 id=&#34;how-s-that&#34;&gt;How’s that?&lt;/h2&gt;
+
+&lt;p&gt;Well, I just experienced that last month, we were chatting with Dallas and after a discussion about our cucumber &lt;strong&gt;features&lt;/strong&gt; I said to him “So cucumber made our scrum better, how about that?” so he told me to write about that and I think that is actually an interesting experience to share.&lt;/p&gt;
+
+&lt;p&gt;We started using agile practices with our team at the very beginning of our project. Very soon we started using &lt;strong&gt;cucumber&lt;/strong&gt; (first time for me), because our team used it before in Ruby and they were happy with it. And &lt;strong&gt;there is a JS version&lt;/strong&gt; for it. Oh yes it is, and it works pretty well. Read more &lt;a href=&#34;https://cucumber.io/docs/reference/javascript&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;but-why-cucumber&#34;&gt;But… why cucumber?&lt;/h2&gt;
+
+&lt;p&gt;Well, first off it’s convenient for executives so you can easily start using it, because they can actually understand what’s going on without a deep technical/specific knowledge, and they can see better the things the team had done with a quick look. And because of that, now communication with executives is better, and you can practice a better scrum, which can have a great impact for programmers and for the final product. And that’s a fact that everyone who worked with agile practices knows. Of course you can find a better explanation about cucumber itself by looking their &lt;a href=&#34;https://cucumber.io/&#34; target=&#34;_blank&#34;&gt;homepage&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;It was a great decision for us.&lt;/p&gt;
+
+&lt;h2 id=&#34;other-tools-and-practices&#34;&gt;Other tools and practices?&lt;/h2&gt;
+
+&lt;p&gt;Yes. &lt;a href=&#34;http://martinfowler.com/bliki/TestDrivenDevelopment.html&#34; target=&#34;_blank&#34;&gt;TDD&lt;/a&gt;/BDD, &lt;a href=&#34;https://github.com/gotwarlost/istanbul&#34; target=&#34;_blank&#34;&gt;test coverage&lt;/a&gt; and &lt;a href=&#34;https://www.bithound.io/&#34; target=&#34;_blank&#34;&gt;source code quality&lt;/a&gt; controls. All those practices/tools were helpful. It’s not just cucumber.&lt;/p&gt;
+
+&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+
+&lt;p&gt;Well this article is not a pro scrum nor a pro cucumber article. I think they are great, but is not what I want to talk about in this post. Also, this experience perse is nothing new, I just found interesting to point out how we saw it. So what &lt;strong&gt;I&lt;/strong&gt; really &lt;strong&gt;want&lt;/strong&gt; &lt;strong&gt;to share&lt;/strong&gt; is &lt;strong&gt;this particular experience,&lt;/strong&gt; in which cucumber, in combination with those other practices and tools actually made our scrum, better.&lt;/p&gt;
+
+&lt;p&gt;We already made a lot of improvements to our agile framework.&lt;/p&gt;
+
+&lt;p&gt;Like for example we recently started to work with one dashboard per team instead of one per project like we did before (it sounds dumb to me now I mention that, but you can just work on one prioritized list at a time… otherwise priorities lose sense, but is a common mistake that some people, to think that they are doing better because now developers can work on a lot of stuff but it’s wrong, because they are now confused wasting lots of time with context switch tasks).&lt;/p&gt;
+
+&lt;p&gt;Also we changed the way we create our stories to be those who strictly add business value to our application (before this, what we usually do was to create technical chores as user stories with points, another common mistake that leads to finish sprints without any real business value to the end user… which defeats the whole purpose of scrum, dummy mistake).&lt;/p&gt;
+
+&lt;p&gt;But recently we discovered a new issue on our development process: **shared features. And that’s what I want to talk about.&lt;/p&gt;
+
+&lt;p&gt;**&lt;/p&gt;
+
+&lt;h2 id=&#34;ok-but-technically-speaking-how-it-happened&#34;&gt;Ok, but technically speaking, how it happened?&lt;/h2&gt;
+
+&lt;p&gt;Well we experienced it with the authentication/authorization &lt;strong&gt;feature&lt;/strong&gt; &lt;em&gt;-gherkin speaking-&lt;/em&gt; (which is maybe the better example because of how scrum create user stories for many people, based on roles and creating the “walking skeleton” from that point of view).&lt;/p&gt;
+
+&lt;p&gt;So the User Stories usually says something like “As a user/admin/whatever I want to do something”, all right? But anyway the common thing is to create one story for that. But it&amp;#8217;s actually mixed: authentication, authorization, and the particular “something” for that story.&lt;/p&gt;
+
+&lt;p&gt;At first, we were doing special cucumber &lt;strong&gt;scenarios&lt;/strong&gt; on each cucumber &lt;strong&gt;feature&lt;/strong&gt; to test roles, token expiration, and so on (they have different messages, HTTP statuses, etc). There was no direct functionality related to it, as I said, it’s a cross service shared functionality. An aspect of the user story. Take this feature for item creation as an example (simplified):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Given a valid access token
+When a new item creation request is received
+Then create a new item on the list
+
+Given an invalid access token
+When a new item creation request is received
+Then throw an unauthorized error
+
+Given an expired access token
+When a new item creation request is received
+Then throw an expired token error
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As you can see &lt;strong&gt;in this example feature&lt;/strong&gt;, there is &lt;strong&gt;one different scenario per authorization&lt;/strong&gt; &lt;strong&gt;scenario on each business&lt;/strong&gt; &lt;strong&gt;feature&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;It turns out that when we created the first feature for the first user story, we just made an inline authentication and authorization source code, which is the common path to follow when practicing a TDD/BDD approach.&lt;/p&gt;
+
+&lt;p&gt;On the second feature, on the final refactor step, and with the help of some source code quality check tool like bithound or code climate detecting code duplicates afterwards on our commits, we moved that logic into a common space with some common design techniques for reusability. In this particular node case it was just a separate file with the common authentication/authorization function.&lt;/p&gt;
+
+&lt;p&gt;Later, we split up our service into many services, so to different repositories&amp;#8230; and I was actually writing the source code of a specific integration chore to provide authorization/authentication to the first particular brand new service, and again because TDD/BDD, I quickly realized that I needed to create a superfluous unrelated cucumber feature to test that. Let&amp;#8217;s say the item creation feature that I shown previously.&lt;/p&gt;
+
+&lt;p&gt;Well. That was the signal. I realized &lt;strong&gt;that having the same cucumber scenario over and over on several features implies lots of cucumber steps (test related source code) actually testing the same portion of code&lt;/strong&gt;. If you use istanbul or some other test coverage tool like I do, you will probably understand what I&amp;#8217;m talking about. The same branches are being tested twice or N-times being N the feature quantity &lt;strong&gt;in which you actually remember to test that&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;So when the &amp;#8220;chore&amp;#8221; was completed it was obvious that, if we had a particular special feature for it, let&amp;#8217;s say an access token/authorization feature (which implies a user story with points), we can test more scenarios and save scenarios for other business features. For example, in this case&amp;#8230; using an expired token, or a wrong one, or no token at all, those scenarios can now be tested just in one feature for it, and on every other feature it will be implied with just two trivial scenarios that just test that the function is present on that particular feature (that the branch exist on that particular service, and I said two are needed because just one could throw a false positive).&lt;/p&gt;
+
+&lt;p&gt;So our new business feature like item creation became something like this&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Given a valid access token
+When a new item creation request is received
+Then create a new item on the list
+
+Given a invalid access token
+When a new item creation request is received
+Then throw an unauthorized error
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And we created another feature for the authorization and authentication like this one&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Given a valid access token
+When a generic message is received
+Then respond ok
+
+Given a invalid access token
+When a generic message is received
+Then throw an unauthorized error
+
+Given a expired access token
+When a generic message is received
+Then throw an unauthorized error
+
+Given a absent access token
+When a generic message is received
+Then throw an unauthorized error
+
+Given an incomplete access token
+When a generic message is received
+Then throw an unauthorized error with a custom message
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;In short terms,  you need a user story for this kind of shared feature.&lt;/p&gt;
+
+&lt;p&gt;Now you may think &amp;#8220;Ey well, don&amp;#8217;t try to change the business (user stories) from the source code, it&amp;#8217;s just better to test what the business says, don&amp;#8217;t touch the user stories and if you have to write more source code, well just write it and shut up&amp;#8221;. And that&amp;#8217;s ok. But I don&amp;#8217;t want to change the business. I just think &lt;strong&gt;that there is a better model to approach it&lt;/strong&gt;. It saves work, increasing productivity (not writing unnecessary steps that tests the code already tested) and increasing also the final product quality (writing scenarios that may came out by getting deep into the newly created feature for the shared feature like in this case the custom error message on a incomplete access token).&lt;/p&gt;
+
+&lt;p&gt;Also we realized that the authentication actually has a business value by itself. Now our API is more secure. So we definitely changed that chore into a user story with points instead.&lt;/p&gt;
+
+&lt;p&gt;This is just one more concrete example on how cucumber act as a bridge between the technical (source code) aspect and the business aspect (or the user story), and this is done in two ways, not just one, and I mean not just to make it more understandable for non-technical people but also showing the business better to the technical people so now developers can improve their workflow to be smoother. But you need to use the right tools and practices.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Partial class approach for ES5/ES6</title>
+      <link>http://nicosommi.github.com/index.php/2015/08/10/partial-class-approach-for-es6/</link>
+      <pubDate>Mon, 10 Aug 2015 02:50:50 +0000</pubDate>
+      
+      <guid>http://nicosommi.github.com/index.php/2015/08/10/partial-class-approach-for-es6/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://github.com/nicosommi/partialClass&#34; target=&#34;_blank&#34;&gt;Source code&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;When you create components that have some code quality control like code climate, bithound or something like that. There are plenty errors that you will found on your component, from code duplication to very specific details.&lt;/p&gt;
+
+&lt;p&gt;One of those rules is the &lt;strong&gt;class complexity&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;So you have a giant class. You may &lt;strong&gt;need or want to split it up into different files&lt;/strong&gt;. Of course, you can do some hacks with the javascript language to get that done. Of course, you can take a different design solution and make smaller classes. Of course, you can do a lot of things, but what I&amp;#8217;m trying to show here is an approach to get &lt;strong&gt;something like the partial class declaration from OOP languages like C#&lt;/strong&gt;. Keeping files simple and small. You need to cover some features like private methods, public ones, properties, bind problems ( so you can use &amp;#8220;this&amp;#8221; on every method), etc. And at the same time you should produce self documented code.&lt;/p&gt;
+
+&lt;p&gt;So I came up with a simple solution but that has some key points to unlock some features (private methods with symbols and using a standard function to attach to the class prototype). It is not something trivial actually but not so hard neither. It consist on some &lt;strong&gt;easy to follow steps&lt;/strong&gt; (on the example code, using the Babel plugin implementation for ES6 and ES5 compatibility):&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Instead of creating a file for your class, create a folder for it.&lt;/li&gt;
+&lt;li&gt;Create an index.js inside of it that contains the actual class&lt;/li&gt;
+&lt;li&gt;Create some file with the function/functions that you want to have in different files&lt;/li&gt;
+&lt;li&gt;Chose one of the alternatives to assign the method to the main class on the index. For example Object.assign(MyClass.prototype, objNewMethods). This is maybe the best option since it bind the functions automatically. UPDATE: It seems like there is a caveat using Object.assign to copy methods&amp;#8230; I will work on it soon to check that it happens and then update the article/source code with a better solution.&lt;/li&gt;
+&lt;li&gt;If you want to split up symbols (usually used for private methods) you need a separate file to instantiate them and use the same one among different files (for example to call a private method from another file).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;That&amp;#8217;s basically all! &lt;strong&gt;See&lt;/strong&gt; &lt;a href=&#34;http://github.com/nicosommi/partialClass&#34;&gt;this repo&lt;/a&gt; to take a look at a working source code.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Now you have a class in several files, small and self documented files with functions with reduced complexity.&lt;/strong&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Create a javascript quality open source component in minutes</title>
+      <link>http://nicosommi.github.com/index.php/2015/07/17/create-a-javascript-quality-open-source-component-in-minutes/</link>
+      <pubDate>Fri, 17 Jul 2015 01:34:06 +0000</pubDate>
+      
+      <guid>http://nicosommi.github.com/index.php/2015/07/17/create-a-javascript-quality-open-source-component-in-minutes/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;http://nicosommi.com/?p=395&#34;&gt;Leer este articulo en espaniol&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://www.npmjs.com/package/generator-oss-component&#34;&gt;Go to the component on npm&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Some months ago with the team from Free All Media we started to build a new javascript project, which &lt;strong&gt;rapidly began to grow in code lines and in what we called components&lt;/strong&gt;, but consisted only in a folder collection with javascript files on it. We knew at the very beginning that &lt;strong&gt;sooner or later creating component will be necesary, but we didn&amp;#8217;t knew yet when&lt;/strong&gt; the business would support it by increasing the priority.&lt;/p&gt;
+
+&lt;p&gt;After some time, &lt;strong&gt;we had to create a new set of services, which shared some component functionality&lt;/strong&gt; with the previous one. &lt;strong&gt;Then it happened: the real need&lt;/strong&gt; of sharing components with at least one more project. At that moment we confront the classic engineering problem of being as efficient and efective as possible. We had around 15 different folders and we knew that the best path was to create one component for each functionality instead of trying to create one giant component to maybe save some time and costs (with repos, deployment tasks, etc, etc). We always try to go by the best path we see, so we had no doubts about sticking with the one component per functionality option. &lt;strong&gt;But the business wasn&amp;#8217;t very happy with spending money in creating so many components with all that creation overhead&lt;/strong&gt; and with all the extra costs, specially when we could just create one component and use that. Speaking of numbers, &lt;strong&gt;each component would take many hours&lt;/strong&gt; to get created and published correctly, maybe a little more or a little less depending upon the particular component needs. It was just then when we made some business with the business and we decided to &lt;strong&gt;create a component generator&lt;/strong&gt; with the target of optimizing the time and the related costs associated, specially on shared patterns.&lt;/p&gt;
+
+&lt;p&gt;This generator has &lt;strong&gt;the responsibility of initialize a new open source component with a set of desirable features for them:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;A good README&lt;/strong&gt; with &lt;strong&gt;badges&lt;/strong&gt; and common sections&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;LICENSE file&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Test coverage support&lt;/strong&gt; (generation and report integration with travis and coveralls)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Continuous integration&lt;/strong&gt; (with &lt;strong&gt;travis&lt;/strong&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;gulp tasks&lt;/strong&gt; for compile sources and testing them&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;browser compatibility tests&lt;/strong&gt; using karma and a optional sauce labs integration&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ES6 and ES5&lt;/strong&gt; compatibility using babel&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;linting files&lt;/strong&gt; a eslint file and the required dependencies&lt;/li&gt;
+&lt;li&gt;many more on the way: more integrations, more detailed questions and a smarter behavior&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Luckily us this component quickly &lt;strong&gt;give us the expected result&lt;/strong&gt; and, &lt;strong&gt;even knowing that this is a still very early version&lt;/strong&gt;, it&amp;#8217;s very useful and it has a great potential but &lt;strong&gt;it saves us hours of working already&lt;/strong&gt;. We know that there are lots of tools out there to integrate a generic open source component to, but &lt;strong&gt;we believe that given the fact that this is open source, the best way to reach that point is having the contribution of the open source community&lt;/strong&gt; like the normal process to cover such giant amount of options, if we everyone put&amp;#8217;s his own particular alternatives on it we will have lot&amp;#8217;s of options some day.&lt;/p&gt;
+
+&lt;p&gt;Of course &lt;strong&gt;this open source component generator is an open source component by itself&lt;/strong&gt; (the first was the component, and once he got mature, he override himself, but just for stetics). In fact, in order to get better efficiency through time with the generated components, &lt;strong&gt;we strongly suggest to try to reduce to the minimum any modification to the auto generated artifacts&lt;/strong&gt; (currently some little manual changes are needed).&lt;/p&gt;
+
+&lt;p&gt;In conclusion, I think it worth enough the contribution to the community and this post is just an &lt;strong&gt;invitation&lt;/strong&gt; to &lt;strong&gt;contribute&lt;/strong&gt; to our project if you want to or just &lt;strong&gt;use it&lt;/strong&gt; if you want to get a new component in just minutes.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;How do you use it?&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;First highly recommended steps is to &lt;strong&gt;read the README, but basically&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;em&gt;create the github repo&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;link it with coveralls and travis (basic to get ci and test coverage)&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;if you want to add another tool supported by the component and you want to use.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;(if you don&amp;#8217;t have yeoman) npm install -g yo bower grunt-cli gulp&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;npm install -g generator-oss-component&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;initialize the repo with github and go to that folder and type&lt;em&gt;: yo oss-component&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;answer the questions using the credentials if needed for the integrations to be done&lt;/li&gt;
+&lt;li&gt;execute travis setup npm if you want to auto publish to npm your component&lt;/li&gt;
+&lt;li&gt;start coding&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Remember if you do not find the application to integrate with we invite you to &lt;strong&gt;send us a pull request&lt;/strong&gt; by following the contribution guide on the README 🙂&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Debugging node</title>
+      <link>http://nicosommi.github.com/index.php/2014/05/02/debugging-node/</link>
+      <pubDate>Fri, 02 May 2014 01:39:40 +0000</pubDate>
+      
+      <guid>http://nicosommi.github.com/index.php/2014/05/02/debugging-node/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;http://nicosommi.com/?p=250&#34; title=&#34;Debugueando node&#34;&gt;&lt;em&gt;Para ver este artículo en español click aquí.&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;When we write scripts on node.js there is always some things flying around our minds.There is a lot of things to think about. Is simple, but you need to know what are you doing because if you don&amp;#8217;t you can get into a mess quickly. Javascript. npm. The good, the bad and the uggly.&lt;/p&gt;
+
+&lt;p&gt;One of the things that scared me the most in this node-hell at my begining was the debug method. Some of us are used to use frequently different kinds of logging utilities, from the built in console object to cool npm packages like debug, ain2, winston, etc. But what about the old well known debug process? Yes! I&amp;#8217;m talking about that one that allow us to watch expressiones in the current context, view the backtrace, and that kind of things.&lt;/p&gt;
+
+&lt;p&gt;In my experience I was debugging node when I started to use it, but in a heavy way. Using eclipse. I came from Java so that was familiar for me and the V8 eclipse plugin works great and it&amp;#8217;s easy to use. You just start node with &amp;#8211;debug flag and connect the plugin to that port. It&amp;#8217;s a very good alternative. You can also use Chrome browser the same way. But today I&amp;#8217;m working on a lighter environment. Now I use Sublime Text and Gedit. Lose the fear to the console is something that we must do. Many of us learn that from ubuntu, git and such. Lose the fear to the console is actually a key part for a light and easy debug with node.&lt;/p&gt;
+
+&lt;p&gt;So easy as the well known debugger on complex IDE but in the console. Some programmers are used to this kind of debugging, but for people that worked mostly with Java, C#, TIBCO and that kind of high level programming languages that is not the common thing and this was my first time debugging through the console for real.&lt;/p&gt;
+
+&lt;p&gt;First of all let&amp;#8217;s take a look at the need. This came from real environments in which you have to solve a complexs issues all the time. Console logging sometimes does not give us the flexibility we need and in the time we need to know what is happening. Sometimes is just difficult to reproduce just one execution of some case. Many people can discuss about this and some maybe prefer to just trust in his skills&amp;#8230; I don&amp;#8217;t, I just prefer to not feel that pressure, I just want to know how to debug and detect problems watching the environment and using the tools the language provides for doing that.&lt;/p&gt;
+
+&lt;p&gt;Well&amp;#8230; now that we know the benefits, let&amp;#8217;s go deep on how do you do this. It&amp;#8217;s so simple&amp;#8230; like everything in js. We just need to put the  &lt;strong&gt;debugger;&lt;/strong&gt; sentence in the places that we want, taking care of the asynchrounous nature of most apps on node, of course. Then we just execute the app with the debug argument&amp;#8230;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;node debug script.js&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;That simple. That leave us in the debug console. Now is easy, but from command line. Command we are use to execute with F8, F10, and all that, now are commands like &amp;#8216;n&amp;#8217;, &amp;#8216;s&amp;#8217;, &amp;#8216;c&amp;#8217;, or &amp;#8216;repl&amp;#8217;. Yes, n is for next, s if for step into, c is for continue or run. Repl is for entering to a console to eval.&lt;/p&gt;
+
+&lt;p&gt;The command list is obviously on the official documentation here &lt;a href=&#34;http://nodejs.org/api/debugger.html&#34; title=&#34;http://nodejs.org/api/debugger.html&#34;&gt;http://nodejs.org/api/debugger.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;As I pre-announced some, the most used are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;step in: just with s&lt;/li&gt;
+&lt;li&gt;step out: writing o&lt;/li&gt;
+&lt;li&gt;next step: n&lt;/li&gt;
+&lt;li&gt;pause (just writing that)&lt;/li&gt;
+&lt;li&gt;watch(&amp;#8216;variableName&amp;#8217;) : this will print the variable value on each step&lt;/li&gt;
+&lt;li&gt;unwatch(&amp;#8216;variableName&amp;#8217;) : delete some watch to stop printing it&lt;/li&gt;
+&lt;li&gt;list(4) : prints the context in a 4 line radious of the code, you can provide some other number&lt;/li&gt;
+&lt;li&gt;repl : very important it allows as I said before to eval something in the current context like the browser&amp;#8217;s console (we can see but we can&amp;#8217;t modify ). Exit with CTRL+C&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;There is extra &amp;#8220;problems&amp;#8221; to people who use gulp or grunt (almost everyone) to execute some previous task before running. But if that is your case you can use for example nodemon with the nodeArgs option like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;nodemon({script: &#39;./app.js&#39;, nodeArgs: [&#39;debug&#39;]})&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Another common case: test unit. With debug? Yes. For example if we execute&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;mocha debug test/example.js&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;then we also get the debugger.&lt;/p&gt;
+
+&lt;p&gt;Combining mocha and grunt/gulp you can do this currently (also with nodemon):&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;nodemon({script: &#39;./node_modules/mocha/bin/_mocha&#39;, nodeArgs: [&#39;debug&#39;]});&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;where you put your path to the _mocha (with the underscore, is just a file on the mocha module) file on the script option. And you get your test on debug with your previous tasks configured.&lt;/p&gt;
+
+&lt;p&gt;You get a ENOSPC Error?&lt;/p&gt;
+
+&lt;p&gt;That&amp;#8217;s because of too many files open (either or you have an editor like Sublime or nodemon is including too much files).&lt;/p&gt;
+
+&lt;p&gt;You can solve this by increasing the max_user_watches with this command&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;sudo sysctl fs.inotify.max_user_watches=20000&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;The correct number depends on your needs. You can see your current by executing this&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;more /proc/sys/fs/inotify/max_user_watches&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Also remember to execute nodemon with the -i node_modules argument.&lt;/p&gt;
+
+&lt;p&gt;So, if you didn&amp;#8217;t do this yet, do it, is easy and very useful. Just do a simple for script and try it by yourself. Is going to make your life easier.&lt;/p&gt;
+
+&lt;p&gt;Do you have an idea to improve this article? tell me to nicosommi@gmail.com&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>BW-REST</title>
+      <link>http://nicosommi.github.com/index.php/2013/12/02/bw-rest-2/</link>
+      <pubDate>Mon, 02 Dec 2013 01:41:11 +0000</pubDate>
+      
+      <guid>http://nicosommi.github.com/index.php/2013/12/02/bw-rest-2/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;http://nicosommi.com/?p=174&#34; title=&#34;BW-REST&#34;&gt;&lt;em&gt;Para ver este artículo en español click aquí.&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;NOTE:&lt;/strong&gt; TIBCO Announciates his support for REST Webservice finally from ActiveMatrix 6.0.&lt;/p&gt;
+
+&lt;p&gt;When we are working with Tibco BusinessWorks it&amp;#8217;s becoming more frequent the need to provide a REST API, just as the rest of the world. BW-REST goes beyond that and not only gives you the posibility to expose you services as a REST API, but also allows you to build an entire web application with HTML Templating, Cookies, Static resource routing, etc. It can be useful for several use cases like creating a rapid web application with latest javascript frameworks because you don&amp;#8217;t want another layer on your app. Because you came from GI. Because you don&amp;#8217;t want to spend more money on another developer. Because you don&amp;#8217;t want to bring another error point to your application. Because you just need a little app to mantain the entities inside that project. Just a few cases. With BW-REST you can develop a complete web application like in the example: using backbone, require.js, jquery-ui, coffeescript, etc. It&amp;#8217;s open source!&lt;/p&gt;
+
+&lt;p&gt;&lt;a title=&#34;repo&#34; href=&#34;http://github.com/nicosommi/bw-rest&#34; target=&#34;_blank&#34;&gt;You can found it here &lt;a href=&#34;http://github.com/nicosommi/bw-rest&#34;&gt;http://github.com/nicosommi/bw-rest&lt;/a&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;See the video here!&lt;/p&gt;
+
+&lt;p&gt;Features v 0.1&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;JADE templating support&lt;/li&gt;
+&lt;li&gt;Controller support&lt;/li&gt;
+&lt;li&gt;Project-relative paths&lt;/li&gt;
+&lt;li&gt;Support for regular expressions&lt;/li&gt;
+&lt;li&gt;Support query string and url parameters&lt;/li&gt;
+&lt;li&gt;Static resource support (recursivelly)&lt;/li&gt;
+&lt;li&gt;Built in implementation customizable by defaultvars&lt;/li&gt;
+&lt;li&gt;Cookie support&lt;/li&gt;
+&lt;li&gt;Multiple server on the same project/archive&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;LICENSE: LGPL v3 ©2013 BW-REST&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Explore BW-TEST</title>
+      <link>http://nicosommi.github.com/index.php/2013/12/02/explore-bw-test-2/</link>
+      <pubDate>Mon, 02 Dec 2013 01:38:50 +0000</pubDate>
+      
+      <guid>http://nicosommi.github.com/index.php/2013/12/02/explore-bw-test-2/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;http://nicosommi.com/?p=209&#34; title=&#34;Explorando BW-TEST&#34;&gt;&lt;em&gt;Para ver este artículo en español click aquí.&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;It is really easy! Look the video!&lt;/p&gt;
+
+&lt;p&gt;BW-TEST is another open source library. This one is for automating your tests. This time you will be able to do your tests within TIBCO Designer. It allows you to integrate your BusinessWorks developed project to your continuous integration server like jenkins. Also, it allows you to practice TDD! So, you can automate your test. You offer a better service. You use the same tool. You save time and money. Features&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;xunit compatible (tested with jenkins)&lt;/li&gt;
+&lt;li&gt;multiple assertion support by using Assertions.process once in your test&lt;/li&gt;
+&lt;li&gt;test suites support&lt;/li&gt;
+&lt;li&gt;xml and html reports&lt;/li&gt;
+&lt;li&gt;startup once running&lt;/li&gt;
+&lt;li&gt;support running on every request&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;You can found the source code in &lt;a href=&#34;http://github.com/nicosommi/bw-test&#34; title=&#34;bw-test&#34;&gt;http://github.com/nicosommi/bw-test&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;License LGPL v3 ©2013 BW-TEST&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Only on nicosommi</title>
+    <link>http://nicosommi.github.com/tags/only/</link>
+    <description>Recent content in Only on nicosommi</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>es-AR</language>
+    <lastBuildDate>Wed, 07 Sep 2016 00:10:13 +0000</lastBuildDate>
+    <atom:link href="http://nicosommi.github.com/tags/only/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Contenedores unicamente de volumenes en docker (volume only containers)</title>
+      <link>http://nicosommi.github.com/index.php/2016/09/06/contenedores-unicamente-de-volumenes-en-docker-volume-only-containers/</link>
+      <pubDate>Wed, 07 Sep 2016 00:10:13 +0000</pubDate>
+      
+      <guid>http://nicosommi.github.com/index.php/2016/09/06/contenedores-unicamente-de-volumenes-en-docker-volume-only-containers/</guid>
+      <description>&lt;p&gt;En estos dias estuve trabajando mucho con Docker para diversos proyectos, aprendiendo mucho en el camino, y note que hay un tema particular que me costo digerir.&lt;/p&gt;
+
+&lt;p&gt;Los volumenes compartidos entre containers que necesitan permanecer en una ubicacion determinada del host son soportados de una manera extraña que se da casi por casualidad.&lt;/p&gt;
+
+&lt;p&gt;Es decir, si quiero que mi container bindee una carpeta a una carpeta del host, esto es muy sencillo si quiero hacerlo para un solo container, basta con un argumento a docker run, como el siguiente&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;docker run -it -v /etc:/etc coreos/apache /bin/bash
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Pero que tal si quiero que esto suceda en varios servicios y a su vez utilizando docker-compose?&lt;/p&gt;
+
+&lt;p&gt;Bueno esto tampoco es dificil, por ejemplo algo asi&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;version: &#39;2&#39;
+services:
+  webserver:
+    image: coreos/apache
+    volumes:
+      - /etc:/etc
+  app2:
+    build: .
+    volumes:
+      - /etc:/etc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Podriamos utilizar los &amp;#8216;named&amp;#8217; volumes a nivel service para compartirlos, pero en ese caso no estariamos especificando el volume del host.&lt;/p&gt;
+
+&lt;p&gt;Ahora bien, si este patron de mapeo de volumenes lo utilizamos varias veces, uno tiende a reutilizar el codigo, y aqui es donde he encontrado este patron muy utilizado que queria señalar:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;yaml&#34;&gt;version: &#39;2&#39;
+services:
+  data:
+    image: tianon/true
+    volumes:
+      - /etc:/etc
+  webserver:
+    image: coreos/apache
+    volumes_from:
+      - data
+  app2:
+    build: .
+    volumes_from:
+      - data
+  app3:
+    image: postgres
+    volumes_from:
+      - data
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Bueno aqui ven el patron al que me refiero. Es extraño porque hay incluso imagenes en docker hub que son &amp;#8220;fake&amp;#8221; solo para generar esto (como la indicada, tianon/true). Si bien la idea del comando es realmente tomar los volumenes de otro container, esto lo he visto muchisimo, y es usado porque de esta manera queda mas significativo el mapeo que tomandolo de un container X particularmente (es decir queda mas claro al tomar volumes from &amp;#8216;data&amp;#8217; que tomarlos de &amp;#8216;webserver&amp;#8217;) y bueno porque de docker te dicen que lo hagas asi.&lt;/p&gt;
+
+&lt;p&gt;Creo que vale la pena señalarlo ya que me costo mucho entender que en la version 2 del docker compose esto no tiene nada que ver con los volumenes (que estan pensados para compartir volumenes entre containers) y buscando en internet no suelen encontrarse tan facilmente desde este punto de vista, sino que uno tiene que &amp;#8220;deducir&amp;#8221; que esta es la &amp;#8220;mejor&amp;#8221; forma de utilizarlo, y entonces buscarlo de esta manera (volume only container o data volume container), porque en realidad esto si esta documentado &lt;a href=&#34;https://docs.docker.com/engine/tutorials/dockervolumes/#/creating-and-mounting-a-data-volume-container&#34;&gt;aqui&lt;/a&gt; y es uno de los pocos casos de uso que no cubre el nuevo volumes (segun &lt;a href=&#34;https://github.com/docker/docker/issues/17798&#34;&gt;este issue&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;Como conclusion final vale la pena entonces destacar que en la version 2 del docker compose esto sigue utilizandose de la misma manera que la primer version, mas alla de la adicion de los volumes al YAML.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

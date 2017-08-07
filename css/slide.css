@@ -1,0 +1,48 @@
+h3 {
+  text-align: center;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+.help {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-style: italic;
+}
+
+.slide-header {
+  text-align:center;
+  font-size: 14px;
+}
+
+@media (max-width: 800px) {
+  .slide-header {}
+}
+
+.blog-title {
+  text-transform: lowercase;
+  letter-spacing: 1px;
+  font-size: 20px;
+}
+
+.blog-description {
+  text-transform: uppercase;
+  color: #b3b3b3;
+  font-size: 50%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+}

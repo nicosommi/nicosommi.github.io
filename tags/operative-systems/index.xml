@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Operative Systems on nicosommi</title>
+    <link>http://nicosommi.github.com/tags/operative-systems/</link>
+    <description>Recent content in Operative Systems on nicosommi</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>es-AR</language>
+    <lastBuildDate>Sun, 23 Apr 2017 08:20:25 -0300</lastBuildDate>
+    <atom:link href="http://nicosommi.github.com/tags/operative-systems/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Un posible futuro de los sistemas operativos es tuSO / yourOS</title>
+      <link>http://nicosommi.github.com/post/tuos/</link>
+      <pubDate>Sun, 23 Apr 2017 08:20:25 -0300</pubDate>
+      
+      <guid>http://nicosommi.github.com/post/tuos/</guid>
+      <description>&lt;p&gt;&lt;em&gt;Imaginemos que en el futuro, la experiencia al manejar nuestros dispositivos ya no será como los conocemos ahora (sistemas operativos con aplicaciones) sino que serán meros ejecutadores de contenedores con las aplicaciones que elijamos. Imaginemos construyendo un sistema operativo para nuestro smartphone, justo con lo que necesitamos. Imaginemos una real democratización de nuestras elecciones, de los recursos que las aplicaciones utilizan, de nuestra privacidad. Imaginemos pagar un juego, una canción u otra obra tan sólo vez para todos nuestros dispositivos. Imaginemos&amp;hellip; de eso es este post&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Hace un tiempo vengo estudiando acerca del futuro que tendrán los Sistemas Operativos (incluso comencé un post que nunca publiqué allá por septiembre de 2016). Imagino el futuro de los SO distinto, manteniendo su sentido escencial (seguirán administrando el uso del hardware), cambiando sustancialmente nuestra forma de experimentarlo. Más precisamente pienso esto muchísimo desde que conocí Docker hace ya casi 2 años. Esta nueva capa de abstracción nos permite ver a nuestro sistema operativo como un conjunto de contenedores que ejecutan aplicaciones que, a su vez, también son contenedores.&lt;/p&gt;
+
+&lt;p&gt;Imaginemos correr una aplicación sin instalar, directa o indirectamente sus librerías, y sin conocer como configurarla. Imaginemos correr aplicaciones que no podrán acceder a nada (ni siquiera a a los archivos, puertos, etc) de nuestro sistema principal salvo que nosotros lo autorizemos explícitamente. Todo eso ya existe utilizando docker de manera manual, y se utiliza en servidores de aplicaciones y servicios en la nube. Requiere conocimientos específicos que sólo los que estamos sumergidos en el tema conocemos. Pero imaginemos todo eso en la cotidianeidad del usuario final, usando ya sea nuestro smartphone, tablet, pc de escritorio o cualquier dispositivo inteligente, con suerte hasta incluso consolas de videojuegos, de manera transparente.
+ Imaginemos que nuestros dispositivos sólo sean interfaces de un SO a medida, que siempre es igual y se adapta a los mismos.&lt;br /&gt;
+ Imaginemos tener servicios de aplicaciones en nuestros otros dispositivos o en la nube de manera transparente.&lt;br /&gt;
+ Imaginemos administrar las aplicaciones desde cualquier dispositivo.&lt;br /&gt;
+ Imaginemos comprar aplicaciones, canciones, juegos, y de todo tipo, que corran en todos nuestros dispositivos.&lt;br /&gt;
+ Imaginar&amp;hellip; eso es Moby y Linuxkit (ver más adelante), impulsados en gran medida por Docker.&lt;/p&gt;
+
+&lt;p&gt;Al principio lo veía utópico, pero en parte me sentía reconfortado porque había personas importantes en la industria que también lo pensaban.&lt;br /&gt;
+Por ejemplo, Steve Francia (creador de hugo, ex de Docker ahora en Google) lo expresó alla por el año 2015 aunque más orientado a &lt;a href=&#34;https://es.slideshare.net/spf13/the-future-of-the-operating-system-linuxcon&#34;&gt;aplicaciones distribuidas&lt;/a&gt;.&lt;br /&gt;
+Aun más cercanos a mis reflexiones de llevar los contenedores a dispositivos pequeños, están los ex &lt;a href=&#34;http://blog.hypriot.com/&#34;&gt;&amp;ldquo;docker pirates ARMados con cosas explosivas&amp;rdquo;&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Ya no lo veo tan utópico o descabellado. Sobre todo desde que liberaron &lt;a href=&#34;https://github.com/linuxkit/linuxkit&#34;&gt;linuxkit&lt;/a&gt; (un set de componentes basados en linux) hace pocos días, en conjunto con el ya existente proyecto &lt;a href=&#34;https://github.com/moby/moby&#34;&gt;Moby&lt;/a&gt;, que es una gran iniciativa de la compañía que persigue la idea de empujar el movimiento de los contenedores que tan fuerte viene evolucionando.&lt;/p&gt;
+
+&lt;p&gt;Con Linuxkit y Moby podemos construir un sistema operativo juntando componentes, al estilo &amp;ldquo;Lego&amp;rdquo;, como ellos dicen. En la Dockercon 2017 demostraron en vivo, luego de liberar linuxkit, como construir un sistema operativo de &lt;a href=&#34;https://redis.io/&#34;&gt;Redis&lt;/a&gt; (una base de datos key value) con lo mínimo indispensable. Esta es la tendencia que confirma que mis pensamientos son muy posibles.&lt;/p&gt;
+
+&lt;p&gt;Si bien hay muchísima evolución por delante como para ser aplicada al usuario final (para ser &amp;ldquo;user friendly&amp;rdquo;), creo que cuando un camino es mejor, es inevitable, ya que beneficia negocios y personas. Quizás el primer paso sea que los mayores SO actuales adopten una arquitectura basada en contenedores, para así abrir camino hacia un futuro en el cuál ellos mismos luego pasen a ser proveedores de distintos contenedores de interfaz de usuario, por ejemplo, o paquetes de oficina, stores de aplicaciones/contenedores, etc.&lt;/p&gt;
+
+&lt;p&gt;Otra aplicación muy interesante es la que ya se está dando en dispositivos como raspberry pi y todo lo que es internet de las cosas (IoT), ya que tener un SO mínimo es muy conveniente para aplicaciones especializadas como estas. Cabe destacar que ya hay soporte para ARM además de x86 (gracias al esfuerzo de los docker pirates de hypriot! &lt;a href=&#34;http://blog.hypriot.com/about/&#34;&gt;http://blog.hypriot.com/about/&lt;/a&gt;)&lt;/p&gt;
+
+&lt;p&gt;Con respecto a los móbiles, bien se podrían comenzar proyectos de controladores de hardware que ejecuten indistintamente aplicaciones de Android y iOS, lo que en el futuro incluso dispararía versiones más óptimas de las mismas, permitiéndoles utilizar lenguajes de su elección. También dispararía la componentización y por ende democratización de estos sistemas operativos, que hoy tienen un comportamiento por demás abusivo en cuanto a privacidad.&lt;/p&gt;
+
+&lt;p&gt;Muchas veces se me ha ocurrido de manera errónea intentar ejecutar docker desde android. Eso sería oportuno para solucionar rápidamente inconvenientes de hoy en día, pero Moby en conjunto con linuxkit, u otro conjunto de contenedores básicos nos brindan que pueda surgir, un Ecosistema mucho más natural para estos dispositivos. Es importante destacar que ya existe una lista de sistemas operativos mínimos en desarrollo activo. Esto sin duda dejará para la comunidad, bloques para utilizar, que como consecuencia beneficiarán estas ideas.&lt;br /&gt;
+Yo por mi cuenta, espero ser más y más activo en esta comunidad de contenedores.&lt;/p&gt;
+
+&lt;p&gt;Habrá resistencias de intereses privados por mucho tiempo, pero como la historia reciente lo marca, si el movimiento es firme, ellos terminarán ahogados por la ola de los cambios y los nuevos emprendimientos que allí los lleven.&lt;/p&gt;
+
+&lt;p&gt;Saber que los sistemas operativos puedan ser un conjunto de pequeñas cosas que tengan una simple responsabilidad, para que todos podamos tomar elecciones basadas en nuestro propio juicio, sabiendo a que nos atenemos, y así construir de manera consciente nuestro propio &amp;ldquo;Castillo&amp;rdquo; personal de aplicaciones.&lt;/p&gt;
+
+&lt;p&gt;Se trata de una opinión y también de un deseo personal.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Imaginemos.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;nicosommi&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
