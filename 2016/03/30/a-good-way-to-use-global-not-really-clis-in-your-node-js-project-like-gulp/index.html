@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="ie=edge"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/><style data-href="/component---src-templates-post-tsx.0bd8d5d730e22069bdb9.css">html{font-family:112.5%,1.45em Georgia,Times New Roman,Times,serif}body{margin:2%}h1,h2,h3,h4,h5,h6{font-family:Lucida Grande,Lucida Sans,Lucida Sans Regular,Lucida Sans Unicode,Geneva,Verdana,sans-serif}@media only screen and (max-width:480px){html{font-size:100%}}
+
+/*# sourceMappingURL=component---src-templates-post-tsx.0bd8d5d730e22069bdb9.css.map*/</style><script>window.__EMOTION_CRITICAL_CSS_IDS__ = ["0","dr0eep","1phry7t","1bnxa12","1vohbo4","bue21p"];</script><style>.css-dr0eep{-webkit-text-decoration:none;text-decoration:none;color:black;}.css-dr0eep:hover{color:purple;outline:1px solid gray;outline-offset:2px;}.css-dr0eep:focus{outline:1px dashed gray;outline-offset:2px;}.css-1phry7t{color:gray;margin:0;}.css-1bnxa12{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:space-around;-webkit-justify-content:space-around;-ms-flex-pack:space-around;justify-content:space-around;}.css-1vohbo4{margin:5% 20%;}.css-bue21p{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:end;-webkit-justify-content:flex-end;-ms-flex-pack:end;justify-content:flex-end;font-size:0.75em;line-height:2em;}</style><title data-react-helmet="true">nicosommi</title><meta data-react-helmet="true" name="description" content="nicosommi blog"/><meta data-react-helmet="true" name="keywords" content="blog, developer, javascript, typescript"/><link rel="shortcut icon" href="/icons/icon-48x48.png"/><link rel="manifest" href="/manifest.webmanifest"/><meta name="theme-color" content="#663399"/><script>
+  
+  function gaOptout(){document.cookie=disableStr+'=true; expires=Thu, 31 Dec 2099 23:59:59 UTC;path=/',window[disableStr]=!0}var gaProperty='UA-44929876-1',disableStr='ga-disable-'+gaProperty;document.cookie.indexOf(disableStr+'=true')>-1&&(window[disableStr]=!0);
+  if(!(navigator.doNotTrack == "1" || window.doNotTrack == "1")) {
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  }
+  if (typeof ga === "function") {
+    ga('create', 'UA-44929876-1', 'auto');
+      ga('set', 'anonymizeIp', true);}
+      </script><link as="script" rel="preload" href="/component---src-templates-post-tsx-19e2cbe3c1e012be2de6.js"/><link as="script" rel="preload" href="/0-cda915d49ff0ddb87ebd.js"/><link as="script" rel="preload" href="/app-f3749bbabc88e89f91a9.js"/><link as="script" rel="preload" href="/webpack-runtime-653059b6ace5ab38f14c.js"/><link rel="preload" href="/static/d/380/path---2016-03-30-a-good-way-to-use-global-not-really-clis-in-your-node-js-project-like-gulp-48-a-a29-C7MKxMQqkwSgWrPmzqTRIODD9eY.json" as="fetch" crossOrigin="use-credentials"/></head><body><div id="___gatsby"><div style="outline:none" tabindex="-1" role="group"><div style="margin-bottom:1.45rem"><div style="margin:0 auto;max-width:960px;padding:1.45rem 1.0875rem"><h1 style="margin:0"><a class="css-dr0eep" href="/">nicosommi</a></h1><h6 class="css-1phry7t"><span>developer</span></h6><div class="css-1bnxa12"><h3 class="css-0"><a class="css-dr0eep" href="/posts">posts</a></h3><h3 class="css-0"><a class="css-dr0eep" href="/slides">slides / talks</a></h3><h3 class="css-0"><a class="css-dr0eep" href="/about">about</a></h3></div></div></div><div class="css-1vohbo4"><h1>A common pitfall when using “global” (not really) CLI’s in your node.js project (like gulp)</h1><div>March 30, 2016</div><div><blockquote>
+<p><em><strong>“Little things can make a big difference.”</strong></em></p>
+</blockquote>
+<p>“Little things can make a big difference.” I’m sure you heard that phrase a lot. Well there are cases in which that is true. And this is, at my opinion, one of those cases. Some people know about this detail I’m going to talk about, but most people don’t.</p>
+<p>Why? Almost everyone, including me until recently, when they decide to use a tool, like gulp, on one of their node.js projects, they creates a gulp file on the project root with some tasks like “test” on it for example, and then run something like</p>
+<pre><code class="javascript">gulp test
+</code></pre>
+<p><strong>Right?</strong></p>
+<p><em>Well. I understand you if that’s your case, because they tell you to do so in the official documentation. I did the same some time ago. But, in most cases, that’s a bad thing to do. I will say that you should stop doing that ASAP.</em> Not the gulpfile, that’s ok, but I have what I think it is a solid set of arguments against using gulp as a top level task runner (I mean installed globally). <em>Let me explain you why.</em></p>
+<p>Firstly, I want my node.js project to be cloned and executed right away. Period. <em>I do not want the container / user / developer / anybody to install something globally on their environments</em> besides of the natural requirements for that technology. Because <em>is just unrelated</em> to my node.js project environment. It’s not a global dependency, it is a local dependency<strong>.</strong> The flow should be something more like: git clone, npm install, npm test. <em>And that’s it.</em></p>
+<p><em>Let’s imagine this situation for a minute.</em> I’m making public modules relying on the global gulp. On the other hand, you’re a developer and you’re new to node.js… then you start with some project and you decide to clone one of my modules. Now, suddenly, if you want to run the test or maybe do some other task like contributing to my project, you need to install some global tool called, in this example, gulp. So now you need to read lot’s of docs to know what it is and how it works. <em>All right, I would say that coupling gulp learning curve to my node.js modules is not intuitive and it’s also unfair for those developers who don’t know about our custom tool preference or they just don’t want to learn it. So by doing this, you’re not just creating a dependency for your projects in your environments but also for the users/potential contributors of your module if it’s a public module, or the developers in your team if it’s not.</em></p>
+<blockquote>
+<p><strong>I would say that coupling gulp learning curve to my node.js modules is not intuitive and it’s also unfair for those developers who don’t know about our custom tool preference or they just don’t want to learn it. So by doing this, you’re not just creating a dependency for your projects in your environments but also for the users<em>/potential contributors</em> of your module if it’s a public module, or the developers in your team if it’s not.</strong></p>
+</blockquote>
+<p>Wait, this is not just some hedonistic crap. And it’s not just me believing it’s better. That thing can hurt your open source strategy and it can make you lose time with your team.</p>
+<p><em>And there are even more real conflicts with this… specifically with module versions.</em> If you don’t believe me, just start playing with babel versions 5, 6 along with gulp versions 2 and 3 in two or three different projects, and you will face a lot of problems. Because you’re sharing dependency versions among projects by using a global CLI. Gulp (like almost any other popular CLI in node.js) is not really a global CLI, is a dependency of each one of your projects. So on each case you really need to ask to yourself “is this CLI a real global dependency or is related to my projects individually?”. Because if you decide this wrong, this may force you to update your old projects after you update one, or switch constantly global CLI versions, and this task can be very annoying, <strong><em>making you lose time and money</em></strong>.</p>
+<p>You may think, well anyway I just have a few projects and if I refresh one I can just refresh all of them. Well if you grow you will have troubles this is a side effect on the team plan. It’s creating unexpected efforts. And it may be not so easy to figure out which versions are failing.</p>
+<blockquote>
+<p><em>**Gulp (like almost any other popular CLI in node.js) is not really a global CLI, is a dependency of each one of your projects. So on each case you really need to ask to yourself “is this CLI a real global dependency or is related to my projects individually?” Because if you decide this wrong, this may force you to update your old projects after you update one, or switch constantly global CLI versions, and this task can be very annoying, **\</em>making you lose time and money_**.</p>
+</blockquote>
+<blockquote>
+<p>**_</p>
+</blockquote>
+<p>Even if gulp get a really amazing development process in which they fully stick to backwards compatibility, this is not a recommended practice at all, mainly because you are creating a node.js project, not a gulp project. And it does not depend on one framework as I told you with the babel/gulp letal combination. <em>I remember that day. We literally had to refresh all our modules because they suddenly started to fail in the continuous integration server when the environment changed.</em></p>
+<blockquote>
+<p><strong><em>I remember that day. We literally had to refresh all our modules because they suddenly started to fail in the continuous integration server when the environment changed.</em></strong></p>
+</blockquote>
+<p><strong>Introduction to the “trivial” solution</strong></p>
+<p><em>Node.js comes with the npm binary built in</em>. Npm supports, via package.json, running scripts in different stages or phases and also custom scripts. Also, some packages like gulp have a binary link for which <em>npm creates a symbolic link automatically on a project scoped bin folder and npm run includes those links in the PATH automatically for the scripts in the package.json</em>.</p>
+<blockquote>
+<p><strong><em>npm creates a symbolic link automatically on a project scoped bin folder and npm run includes those links in the PATH automatically for the scripts in the package.json.</em></strong></p>
+</blockquote>
+<p>You can see a reference here <a href="https://docs.npmjs.com/cli/run-script">https://docs.npmjs.com/cli/run-script</a></p>
+<p><em>So the point is to use the local gulp binary link in the package.json as a shortcut for executing your internal gulp tasks.</em> And, luckily, that is transparent to us.</p>
+<blockquote>
+<p><strong>So the point is to use the local gulp binary link in the package.json as a shortcut for executing your internal gulp tasks</strong></p>
+</blockquote>
+<p><strong>How to do this?</strong></p>
+<p>Well basically, let’s say you want to replace your <em>gulp test</em> command so you don’t need a global gulp… well ok, then simply add this to your scripts section of your package.json</p>
+<pre><code class="javascript">...(content on your package.json)...
+"scripts": {
+"test": "gulp test"
+}
+...(more content on your package.json)...
+</code></pre>
+<p><strong>And that’s it!</strong> With that line now you just need a node js regular environment with nothing installed globally on it, like this</p>
+<pre><code class="javascript">npm test
+</code></pre>
+<p>Trivial? Well not so fast. This is the small detail. If you read the npm documentation, maybe you are doing this already. But according to my experience and what I see out there, some people do this but they don’t know what happens behind the scenes and most people just use the global gulp<em>. This npm test command is not executing the global gulp. The better way to experiment this is just uninstalling the global gulp. And please do that ASAP!</em> <em>You just need to install gulp (or the CLI you want to make local) locally</em> in your project before you execute the script through <strong>npm run</strong>… remember that. So this is picking the link from the PATH that points to the node_modules version of gulp of your project.</p>
+<pre><code class="javascript">npm uninstall -g gulp
+</code></pre>
+<blockquote>
+<p>**<em>This npm test command is not executing the global gulp.</em> The better way to experiment this is just uninstalling the global gulp. And please do that ASAP! You just need to install gulp (or the CLI you want to make local) locally</p>
+</blockquote>
+<blockquote>
+<p>**</p>
+</blockquote>
+<p>**Sugar for complex cases</p>
+<p>**</p>
+<p>As I said earlier, you can use custom scripts (meaning any name you want) on the scripts element on your package.json. If that’s your case, after you added it on your package.json, you need can run that custom npm script with this command</p>
+<pre><code class="javacript">npm run gulp yourcustomtask
+</code></pre>
+<p>And here, an elegant ultimate approach that let you execute any gulp task you may have with the bin symbolic link fix with a command like <strong><em>npm run gulp anytask</em></strong>, check it out:</p>
+<pre><code class="javascript">...(content on your package.json)...
+"scripts": {
+"test": "gulp test",
+"gulp": "gulp"
+}
+...(more content on your package.json)...
+</code></pre>
+<p><strong>Other examples</strong></p>
+<p>And as I mentioned I’m not talking about just gulp, eslint is another good example of this concept but in a slightly different way, you can configure your IDE to use some global eslint set of rules, but <em>every project may have different rules, and this is a real conflict too because one maybe is in es5 and the other one in ECMAScript 2015</em>, and there lots of examples. <em>Grunt also applies</em><strong>,</strong> you can stop using the global grunt by following this steps too (installing grunt-cli locally instead). Want more? Mocha, some Babel versions. And the list is long. Of course, they are creating a module, they want it to be easy so more developers adopt it. And it’s true, it works, they get more engagement on their modules. But at some point we need to know where to stop and grow from our experience.</p>
+<p><strong>Conclusion</strong></p>
+<p>So in conclusion, I think every project should be self sufficient, self configured, and this approach tries to tackle that. If you create a node.js project you need to stick to the node.js interpreter as a requirement. Nothing global except for that container platform itself which is a natural requirement for your scripts. In this way, if some day another task runner came out and kills gulp, or any pseudo global CLI, you can smoothly switch to the new one. Also you don’t couple the learning curve from the CLI to your module user’s, and you don’t share CLI dependencies between your different projects you may have, letting you have different project with different versions without forcing you to refresh them all.</p>
+<p> </p>
+<p>Please any comment, suggestion, typo, send it to nicosommi@gmail.com</p>
+<p>Thanks for reading.</p></div><div>nico</div></div><div class="css-bue21p"><span>Copyright nicosommi. <span aria-label="nerd face" role="img" class="css-0">🤓</span></span></div></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.page={"componentChunkName":"component---src-templates-post-tsx","jsonName":"2016-03-30-a-good-way-to-use-global-not-really-clis-in-your-node-js-project-like-gulp-48a","path":"/2016/03/30/a-good-way-to-use-global-not-really-clis-in-your-node-js-project-like-gulp/"};window.dataPath="380/path---2016-03-30-a-good-way-to-use-global-not-really-clis-in-your-node-js-project-like-gulp-48-a-a29-C7MKxMQqkwSgWrPmzqTRIODD9eY";/*]]>*/</script><script src="/webpack-runtime-653059b6ace5ab38f14c.js" async=""></script><script src="/app-f3749bbabc88e89f91a9.js" async=""></script><script src="/0-cda915d49ff0ddb87ebd.js" async=""></script><script src="/component---src-templates-post-tsx-19e2cbe3c1e012be2de6.js" async=""></script></body></html>

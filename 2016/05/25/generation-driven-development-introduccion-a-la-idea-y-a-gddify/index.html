@@ -1,0 +1,96 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="ie=edge"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/><style data-href="/component---src-templates-post-tsx.0bd8d5d730e22069bdb9.css">html{font-family:112.5%,1.45em Georgia,Times New Roman,Times,serif}body{margin:2%}h1,h2,h3,h4,h5,h6{font-family:Lucida Grande,Lucida Sans,Lucida Sans Regular,Lucida Sans Unicode,Geneva,Verdana,sans-serif}@media only screen and (max-width:480px){html{font-size:100%}}
+
+/*# sourceMappingURL=component---src-templates-post-tsx.0bd8d5d730e22069bdb9.css.map*/</style><script>window.__EMOTION_CRITICAL_CSS_IDS__ = ["0","dr0eep","1phry7t","1bnxa12","1vohbo4","bue21p"];</script><style>.css-dr0eep{-webkit-text-decoration:none;text-decoration:none;color:black;}.css-dr0eep:hover{color:purple;outline:1px solid gray;outline-offset:2px;}.css-dr0eep:focus{outline:1px dashed gray;outline-offset:2px;}.css-1phry7t{color:gray;margin:0;}.css-1bnxa12{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:space-around;-webkit-justify-content:space-around;-ms-flex-pack:space-around;justify-content:space-around;}.css-1vohbo4{margin:5% 20%;}.css-bue21p{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:end;-webkit-justify-content:flex-end;-ms-flex-pack:end;justify-content:flex-end;font-size:0.75em;line-height:2em;}</style><title data-react-helmet="true">nicosommi</title><meta data-react-helmet="true" name="description" content="nicosommi blog"/><meta data-react-helmet="true" name="keywords" content="blog, developer, javascript, typescript"/><link rel="shortcut icon" href="/icons/icon-48x48.png"/><link rel="manifest" href="/manifest.webmanifest"/><meta name="theme-color" content="#663399"/><script>
+  
+  function gaOptout(){document.cookie=disableStr+'=true; expires=Thu, 31 Dec 2099 23:59:59 UTC;path=/',window[disableStr]=!0}var gaProperty='UA-44929876-1',disableStr='ga-disable-'+gaProperty;document.cookie.indexOf(disableStr+'=true')>-1&&(window[disableStr]=!0);
+  if(!(navigator.doNotTrack == "1" || window.doNotTrack == "1")) {
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  }
+  if (typeof ga === "function") {
+    ga('create', 'UA-44929876-1', 'auto');
+      ga('set', 'anonymizeIp', true);}
+      </script><link as="script" rel="preload" href="/component---src-templates-post-tsx-19e2cbe3c1e012be2de6.js"/><link as="script" rel="preload" href="/0-cda915d49ff0ddb87ebd.js"/><link as="script" rel="preload" href="/app-f3749bbabc88e89f91a9.js"/><link as="script" rel="preload" href="/webpack-runtime-653059b6ace5ab38f14c.js"/><link rel="preload" href="/static/d/878/path---2016-05-25-generation-driven-development-introduccion-a-la-idea-y-a-gddify-a-59-c7a-NLtcNPUnSmOaa95mDhTNYGhc8r4.json" as="fetch" crossOrigin="use-credentials"/></head><body><div id="___gatsby"><div style="outline:none" tabindex="-1" role="group"><div style="margin-bottom:1.45rem"><div style="margin:0 auto;max-width:960px;padding:1.45rem 1.0875rem"><h1 style="margin:0"><a class="css-dr0eep" href="/">nicosommi</a></h1><h6 class="css-1phry7t"><span>developer</span></h6><div class="css-1bnxa12"><h3 class="css-0"><a class="css-dr0eep" href="/posts">posts</a></h3><h3 class="css-0"><a class="css-dr0eep" href="/slides">slides / talks</a></h3><h3 class="css-0"><a class="css-dr0eep" href="/about">about</a></h3></div></div></div><div class="css-1vohbo4"><h1>Generation Driven Development – Introducción a la idea y a gddify</h1><div>May 26, 2016</div><div><p><a href="https://github.com/nicosommi/gddify">gddify en github</a></p>
+<p><a href="/2016/05/27/generation-driven-development-introduction-to-the-idea-and-to-gddify/">read this article in english</a><figure id="attachment_639" style="width: 300px" class="wp-caption alignnone"></p>
+<p><img src="/images/2016/05/sync-300x300.png" alt="Mantenga los bloques de codigo en sus componentes de software actualizados. Incluso perteneciendo al mismo archivo." width="300" height="300" class="size-medium wp-image-639" srcset="/images/2016/05/sync-300x300.png 300w, /images/2016/05/sync-150x150.png 150w, /images/2016/05/sync.png 512w" sizes="(max-width: 300px) 85vw, 300px" /><figcaption class="wp-caption-text">Mantenga los bloques de código en sus componentes de software actualizados. Incluso perteneciendo al mismo archivo.</figcaption></figure></p>
+<p><em>Nota: GDD y gddify son un trabajo en curso.</em></p>
+<p>Las aplicaciones, son ni mas ni menos que materializaciones de un punto de vista. Un punto de vista que esta compuesto por los puntos de vista de los participantes del desarrollo de la misma. Sobre todo de los programadores que son quienes crean entidades que abstraen el comportamiento real del flujo de la información a lenguajes de programación.</p>
+<p>Los puntos de vista, o modelos, se podría decir que son lo observado, mas una carga subjetiva del observador, una meta información. Para los mas técnicos: payload y meta.</p>
+<p>Durante los últimos años me vi muchas veces desarrollando generadores de código. Ya sea utilizando templates (de los miles que hay), o con yeoman (que esta de moda y utiliza templates), o con algún script personalizado.</p>
+<p>También, durante los últimos años, he visto el avance de las Promesas. Estos objetos de javascript que nos prometen la entrega de algo a futuro. Este concepto me pareció siempre muy interesante, y acertado a la vez. Es que no sólo simplifica el modo de escribir funciones, también elimina ambigüedades. Pero por sobre todo, representa mejor la realidad. Y esto es lo que me quiero llevar para explicar GDD (Generation Driven Development).</p>
+<p>A la hora de generar codigo, los programadores estamos acostumbrados ya a usar templates, a utilizar yeoman, o a hacer cosas raras. Sin embargo, si observamos la realidad, un template (benditos templates no me animaría a criticarlos… despues de tantas veces que me han salvado!) es mas bien algo totalmente imposible en el mundo físico, sencillamente no tiene sentido poner dos cosas en el mismo lugar de manera literal. La “mezcla”, en la realidad se produce por ejemplo, por reproducción a nivel celular que luego, crece.</p>
+<p>Ahora bien, alguien podria decir que si bien no sea una fiel representacion de la realidad, los templates han servido a numerosos objetivos y aun lo hacen. Es totalmente cierto. Pero creo que una representación de la realidad mas atinada, como lo hicieron las promesas, tambien simplificara el proceso de desarrollo.</p>
+<p>Toda esta introducción, sumada a necesidades actuales como los microservicios que tiene una carga de mantenimiento de muchos proyectos muy grande (de hecho sigue el single responsibility pattern o patrón de responsabilidad simple), las constantes actualizaciones de librerías, las librerías abandonadas, las compatibilidades que se rompen, la lisa y llana repetición de patrones de operaciones, etc, etc. y ademas sumado a la carga que lleva hoy en dia el desarrollo de generadores, el bajo nivel de test (o de alto esfuerzo en su realizacion) que se puede efectuar sobre los templates y su bajo soporte por los IDE… todo esto como decia, me ha llevado a pensar en que allí había algo por mejorar.</p>
+<p>Volviendo a lo de los puntos de vista. Las aplicaciones son puntos de vista concretos. Ahora bien, si pensamos en generar como siendo esto generar mas puntos de vista, debemos prestar especial atención a la meta información de dichos puntos de vista, que son la percepción de la realidad, para crear y mantener otras percepciones similares. Debemos observar al observador para recrearlo.</p>
+<p>De este concepto, he creado esta practica de desarrollo que llame GDD, que no es ni mas ni menos que añadir en el código fuente, información necesaria para poder generarlo, utilizando como principal herramienta el principal elemento para la meta información del código fuente: los comentarios.</p>
+<h2>Cual es la informacion necesaria?</h2>
+<p>Eso puede ser una larga discusion y seguramente con el paso del tiempo y quizas con la colaboracion de la comunidad podre encontrar cosas que aun no he detectado. Actualmente, en la herramienta para implementar GDD que he desarrollado, gddify, he agregado soporte para lo que mi experiencia me ha marcado (mi punto de vista actual para generar puntos de vista), veamos estos elementos uno a uno:</p>
+<ul>
+<li>
+<p><em>componente sw (swComponent)</em>: es un componente software, que consta de bloques sw. Un proyecto. Por ejemplo, una aplicacion web, un api, un microservicio, o cualquier proyecto.</p>
+</li>
+<li>
+<p><em>bloques sw (swBlock)</em>: es un bloque de software, un conjunto de archivos dentro de un componente, con una funcion particular. Por ejemplo, los archivos de codigo que ejecutan el build, los archivos de un CRUD (o SCUDL), o cualquier otra agrupacion que tenga un significado logico o practico para nuestra arquitectura.</p>
+</li>
+<li>
+<p><em>archivo de codigo fuente (source code files)</em>: este es la unidad base de sincronizacion/generacion. Es un archivo.</p>
+</li>
+</ul>
+<figure id="attachment_630" style="width: 300px" class="wp-caption alignnone"><img src="/images/2016/05/ph.portion-300x255.png" alt="place holders" width="300" height="255" class="size-medium wp-image-630" srcset="/images/2016/05/ph.portion-300x255.png 300w, /images/2016/05/ph.portion.png 466w" sizes="(max-width: 300px) 85vw, 300px" /><figcaption class="wp-caption-text">Dentro de los place holders, se mandentra el codigo del archivo actual a pesar de las actualizaciones</figcaption></figure>
+<ul>
+<li><em>contenedores (place holders)</em>: estos son bloques de codigo que mantienen su contenido siempre para el archivo actual, mas alla de las sincronizaciones que pudiesen ocurrir con otros archivos. Se delimita con meta informacion.</li>
+</ul>
+<p>Ejemplo de implementacion en gddify (js)</p>
+<pre><code class="javascript">/* ph constructor */
+constructor () {
+  this.name = 'nico'
+}
+/* endph */
+</code></pre>
+<ul>
+<li>
+<p><em>reemplazos (replacements)</em>: objetos de informacion para reemplazos, que seran utilizados en la sincronizacion. Sus atributos actuales en gddify son name (nombre, que se utilizara para encontrar correspondencias entre archivos), regex (expresion regular de javascript que utilizaran otros archivos para sincronizarse con este), y value (valor que este archivo tendra en esos reemplazos).</p>
+<p>Ejemplo de implementacion en gddify (js), notar que es esta contenido dentro de un placeholder especial denominado replacements, y que sus atributos estan separados por comas. Habra una linea para cada atributo.</p>
+</li>
+</ul>
+<pre><code class="javascript">/* ph replacements */
+/* name, /myClass/g, myClass */
+/* endph */
+</code></pre><figure id="attachment_629" style="width: 280px" class="wp-caption alignnone">
+<p><img src="/images/2016/05/replacements.portion-280x300.png" alt="replacements" width="280" height="300" class="size-medium wp-image-629" srcset="/images/2016/05/replacements.portion-280x300.png 280w, /images/2016/05/replacements.portion.png 425w" sizes="(max-width: 280px) 85vw, 280px" /><figcaption class="wp-caption-text">un ejemplo complejo de reemplazos</figcaption></figure></p>
+<ul>
+<li>
+<p><em>estampas (stamps)</em>: bloques de codigo que no cambiaran para ninguno de los archivos sincronizados, pero que pueden ser omitidos con otro objeto denominado ignoringStamps (siguiente)</p>
+<p>Ejemplo en gddify (js)</p>
+</li>
+</ul>
+<pre><code class="javascript">/* stamp toJson */
+toJSON () {
+  return { name: this.name }
+}
+/* endstamp */
+</code></pre><figure id="attachment_631" style="width: 199px" class="wp-caption alignnone">
+<p><img src="/images/2016/05/package.js.portion-199x300.png" alt="stamps" width="199" height="300" class="size-medium wp-image-631" srcset="/images/2016/05/package.js.portion-199x300.png 199w, /images/2016/05/package.js.portion.png 583w" sizes="(max-width: 199px) 85vw, 199px" /><figcaption class="wp-caption-text">Los stamps son bloques de codigo compartidos e inmutables entre componentes (pero que se pueden ignorar)</figcaption></figure></p>
+<ul>
+<li>
+<p><em>estampas ignoradas (ignoringStamps)</em>: array de nombres de estampas cuyo contenido este archivo no incluira si apareciesen en una sincronizacion con otro archivo.</p>
+<p>Ejemplo en gddify (js). Notar que al igual que los reemplazos, se encuentra dentro de un place holder especial, en este caso denominado ignoringStamps</p>
+</li>
+</ul>
+<pre><code class="javascript">/* ph ignoringStamps */
+/* toJson, parse */
+/* endstamp */
+</code></pre><figure id="attachment_632" style="width: 300px" class="wp-caption alignnone">
+<p><img src="/images/2016/05/gulpfile.ignoringstamps.portion-300x244.png" alt="Ignoring stamps" width="300" height="244" class="size-medium wp-image-632" srcset="/images/2016/05/gulpfile.ignoringstamps.portion-300x244.png 300w, /images/2016/05/gulpfile.ignoringstamps.portion.png 591w" sizes="(max-width: 300px) 85vw, 300px" /><figcaption class="wp-caption-text">Ignoring stamps son aquellos bloques inmutables que no queremos mostrar en este archivo en particular</figcaption></figure></p>
+<p>La descripción de estos componentes de software de manera correcta, nos permitirá no solo generarlos en el futuro, sino generar particularmente bloques individuales pudiendo combinarlos, y ademas mantenerlos actualizados, sin esfuerzo adicional en la construcción de generadores, y en un solo lenguaje sin templates. He allí el valor que creo que este modo de desarrollar tiene gracias al cambio de modelo con el que ataca el problema que considero es mas cercano a al sentido común.</p>
+<p>Actualmente una arquitectura de microservicios tiene una desventaja muy importante que es la dificultad de mantenimiento. Esto ocurre mas alla del delivery continuo, de la integración continua, etc. Esto es debido a lo costoso de mantener muchos proyectos.</p>
+<p>Por otro lado, este trabajo genera des-sincronizacion por falta del adecuado mantenimiento, impactando en la calidad de los componentes producidos.</p>
+<p>Considero que GDD tiene el potencial de disminuir ese costo considerablemente ya que permite compartir bloques de código y archivos entre proyectos, manteniendolos actualizados de manera sencilla, y asi acercar los microservicios y otras arquitecturas complejas que requieren modularización a todo el mundo y no solo a quienes puedan afrontar altos gastos en el departamento de sistemas. Mejorar el mundo de las aplicaciones en calidad y precio. Ese es mi objetivo personal y el compromiso y la visión de <a href="http://integracionesagiles.com">Integraciones Agiles</a>.</p>
+<h2>Conclusión</h2>
+<p>Esto es una simple introducción al modelo de visualizar el problema, pronto publicare mas detalles de la usabilidad del mismo, de como acostumbrarse, problemas frecuentes, ejemplos de aplicación, códigos de ejemplo, y mucho mas.</p>
+<h2>Colaboración</h2>
+<p>Me encuentro desarrollando esto de manera open source y sin ganar dinero a cambio, y para poder continuar dedicando tiempo a estos proyectos, necesito el aporte de la comunidad. Por favor no dude en contactarme si esta interesado en temas de donaciones, servicios, consultoria, negocios, etc.</p>
+<p><a href="http://integracionesagiles.com">http://integracionesagiles.com</a></p>
+<p><a href="https://github.com/nicosommi/gddify">gddify en github</a></p></div><div>nico</div></div><div class="css-bue21p"><span>nicosommi by copyright. <span aria-label="crab" role="img" class="css-0">🦀</span></span></div></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.page={"componentChunkName":"component---src-templates-post-tsx","jsonName":"2016-05-25-generation-driven-development-introduccion-a-la-idea-y-a-gddify-a59","path":"/2016/05/25/generation-driven-development-introduccion-a-la-idea-y-a-gddify/"};window.dataPath="878/path---2016-05-25-generation-driven-development-introduccion-a-la-idea-y-a-gddify-a-59-c7a-NLtcNPUnSmOaa95mDhTNYGhc8r4";/*]]>*/</script><script src="/webpack-runtime-653059b6ace5ab38f14c.js" async=""></script><script src="/app-f3749bbabc88e89f91a9.js" async=""></script><script src="/0-cda915d49ff0ddb87ebd.js" async=""></script><script src="/component---src-templates-post-tsx-19e2cbe3c1e012be2de6.js" async=""></script></body></html>
