@@ -1,0 +1,1763 @@
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[nicosommi]]></title><description><![CDATA[developer blog]]></description><link>http://github.com/dylang/node-rss</link><generator>RSS for Node</generator><lastBuildDate>Tue, 28 Aug 2018 12:17:56 GMT</lastBuildDate><item><title><![CDATA[ansible plus docker]]></title><description><![CDATA[Ansible y docker: primeros pasos Por nicosommi name: agenda Agenda Situación frecuente Repaso de Ansible Llenando los gaps Demo Conclusión Q…]]></description><link>http://nicosommi.com/2018/03/25/ansible-plus-docker</link><guid isPermaLink="false">http://nicosommi.com/2018/03/25/ansible-plus-docker</guid><pubDate>Sun, 25 Mar 2018 18:38:10 GMT</pubDate><content:encoded>&lt;!-- class: middle --&gt;
+&lt;!-- layout: true --&gt;
+&lt;hr&gt;
+&lt;div style=&quot;display: flex; flex-direction: row;&quot;&gt;
+    &lt;img src=&quot;/images/assets/docker.png&quot;&gt;&lt;/img&gt;
+    &lt;img src=&quot;/images/assets/ansible.png&quot;&gt;&lt;/img&gt;
+&lt;/div&gt;
+&lt;br&gt;
+&lt;h1&gt;Ansible y docker: primeros pasos&lt;/h1&gt;
+&lt;h2&gt;Por nicosommi&lt;/h2&gt;
+&lt;hr&gt;
+&lt;p&gt;name: agenda&lt;/p&gt;
+&lt;h2&gt;Agenda&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Situación frecuente&lt;/li&gt;
+&lt;li&gt;Repaso de Ansible&lt;/li&gt;
+&lt;li&gt;Llenando los gaps&lt;/li&gt;
+&lt;li&gt;Demo&lt;/li&gt;
+&lt;li&gt;Conclusión&lt;/li&gt;
+&lt;li&gt;Q &amp;#x26; A&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Situación frecuente&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Crear imágenes&lt;/li&gt;
+&lt;li&gt;Subir imágenes al registry&lt;/li&gt;
+&lt;li&gt;Subir compose al server por SSH&lt;/li&gt;
+&lt;li&gt;Crear servicio/s con imágen&lt;/li&gt;
+&lt;li&gt;Deployar stack en el swarm o hacer run/up
+???&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2&gt;Problemas&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Naturaleza heterogénea&lt;/li&gt;
+&lt;li&gt;Complejo de utilizar&lt;/li&gt;
+&lt;li&gt;Difícil de mantener&lt;/li&gt;
+&lt;li&gt;Pocas oportunidades de expansión&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Nos tenemos que acordar y saber los comandos&lt;/li&gt;
+&lt;li&gt;Dos deploys no son necesariamente iguales&lt;/li&gt;
+&lt;li&gt;Cada tarea demanda mucho esfuerzo&lt;/li&gt;
+&lt;li&gt;Tenemos que documentar el proceso&lt;/li&gt;
+&lt;li&gt;Quizás hay nodos que no corren en docker como RDS&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Ansible&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Sencillo de utilizar&lt;/li&gt;
+&lt;li&gt;Reutilizable&lt;/li&gt;
+&lt;li&gt;Ubiquo&lt;/li&gt;
+&lt;li&gt;Auditable&lt;/li&gt;
+&lt;li&gt;Independiente de la plataforma&lt;/li&gt;
+&lt;li&gt;Ecosistema amplio&lt;br&gt;
+&lt;code&gt;http://docs.ansible.com/ansible/latest/list_of_all_modules.html&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Abre un mundo de posibilidades&lt;br&gt;
+&lt;code&gt;https://galaxy.ansible.com/&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;utiliza ssh&lt;/li&gt;
+&lt;li&gt;esta en todos lados (containers, hosts, dbs/rds, storage, lambda, etc)&lt;/li&gt;
+&lt;li&gt;galaxy con roles y playbook ejemplos&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Ansible - Conceptos&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Inventarios&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;[host]
+docker.host ansible_host=50.15.200.200 ansible_port=22
+[web]
+web.host ansible_host=50.15.200.200 ansible_port=2222
+[api]
+api.host ansible_host=50.15.200.200 ansible_port=2223
+[load-balancer]
+50.15.200.200 ansible_port=2223
+[app:children]
+api
+web
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;???&lt;/h2&gt;
+&lt;h2&gt;Ansible - Conceptos&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Modulos&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;&gt; ansible -i hosts -m copy -a &apos;src=index.html dest=/app/index.html&apos; docker.host
+&gt; ansible -i hosts -m shell -a &apos;grep DISTRIB_RELEASE /etc/lsb-release&apos; all
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;???&lt;/h2&gt;
+&lt;h2&gt;Ansible - Conceptos&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Grupos y variables&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;group_vars/app
+group_vars/api
+host_vars/api.host
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;???&lt;/h2&gt;
+&lt;h2&gt;Ansible - Conceptos&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Playbooks, tasks y handlers&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-yaml&quot;&gt;- name: test playbook
+  hosts: docker.host
+  tasks:
+    - name: Installs nginx
+      apt: pkg=nginx state=installed update_cache=true
+    - name: Copy nginx configuration
+      template:
+        src: ansible/nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+      notify: &quot;restart nginx&quot;
+  handlers:
+    - name: Restart nginx server
+      service: name=nginx state=restarted
+      listen: &quot;restart nginx&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;???&lt;/h2&gt;
+&lt;h2&gt;Ansible - Conceptos&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Roles&lt;/li&gt;
+&lt;li&gt;Vault&lt;/li&gt;
+&lt;li&gt;Patterns, Conditions, Loops&lt;/li&gt;
+&lt;li&gt;Etc
+???&lt;/li&gt;
+&lt;li&gt;utiliza ssh&lt;/li&gt;
+&lt;li&gt;galaxy con roles y playbook ejemplos&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Llenando los gaps&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Creando el playbook para provision&lt;/li&gt;
+&lt;li&gt;Creando el playbook para deploy&lt;/li&gt;
+&lt;li&gt;Creando el playbook X&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;???&lt;/h2&gt;
+&lt;h2&gt;Ejemplo&lt;/h2&gt;
+&lt;h2&gt;???&lt;/h2&gt;
+&lt;h1&gt;Q &amp;#x26; A&lt;/h1&gt;
+&lt;h2&gt;???&lt;/h2&gt;
+&lt;h2&gt;Para llevar&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Tutorial de ansible&lt;br&gt;
+&lt;code&gt;https://github.com/turkenh/ansible-interactive-tutorial&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Desafíos y otros casos de uso - Continuous Delivery&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Orchestration&lt;/li&gt;
+&lt;li&gt;Rotación de secretos&lt;/li&gt;
+&lt;li&gt;...cualquier serie de comandos automatizables...
+???&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1&gt;Gracias!&lt;/h1&gt;
+&lt;p&gt;???&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Weekend experiment: a node.js SPA with multi stage builds from docker]]></title><description><![CDATA[Let's build a small node.js single page application (SPA) using the multi stage builds feature from docker to optimize the image size…]]></description><link>http://nicosommi.com/2017/04/weekend-experiment-docker</link><guid isPermaLink="false">http://nicosommi.com/2017/04/weekend-experiment-docker</guid><pubDate>Sat, 29 Apr 2017 09:34:58 GMT</pubDate><content:encoded>&lt;p&gt;&lt;em&gt;Let&apos;s build a small node.js single page application (SPA) using the multi stage builds feature from docker to optimize the image size&lt;/em&gt;&lt;/p&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;With multi stage builds (a feature announced in the docker con last week) we can create a tiny image that get&apos;s pulled and pushed faster to the docker repository.&lt;/p&gt;
+&lt;p&gt;A Single Page Applications (SPA&apos;s) is a convenient use case to test the power of multi stage build easily in the node.js world.&lt;/p&gt;
+&lt;p&gt;Let&apos;s start with this.&lt;/p&gt;
+&lt;h3&gt;First step: install docker 17.05-ce&lt;/h3&gt;
+&lt;p&gt;Easy, go to &lt;a href=&quot;https://www.docker.com/community-edition#/download&quot;&gt;https://www.docker.com/community-edition#/download&lt;/a&gt;
+Choose your platform AND, because we need multi stage builds and its still on the &lt;em&gt;edge channel&lt;/em&gt; we need to choose that instead of the stable channel. Download, install.&lt;/p&gt;
+&lt;h3&gt;Second step: Building a SPA&lt;/h3&gt;
+&lt;p&gt;A single page application is just a static web page that can be served through any traditional web server.&lt;/p&gt;
+&lt;p&gt;For this example, let&apos;s pick a boilerplate SPA like create-react-app.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;npm install -g create-react-app
+
+create-react-app my-app
+cd my-app/
+npm start # if you want to test it and check the browser for it
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;Third step: create a Dockerfile&lt;/h3&gt;
+&lt;p&gt;All right now the important thing, let&apos;s take a look at a candidate Dockerfile&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-docker&quot;&gt;# buildtime
+FROM node AS nodebase
+LABEL maintainer &quot;nicosommi@gmail.com&quot;
+
+ADD . /usr/src/app
+WORKDIR /usr/src/app
+RUN npm i &amp;#x26;&amp;#x26; npm run build
+
+# runtime
+FROM nginx:alpine
+COPY --from=nodebase /usr/src/app/build /usr/share/nginx/html
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;So let&apos;s see.&lt;/p&gt;
+&lt;p&gt;We start with a node:latest image, no problem with the image size because now we have multi stage builds.&lt;/p&gt;
+&lt;p&gt;The LABEL maintainer, that&apos;s recent too, no more MAINTAINER special instruction, now it&apos;s a label.&lt;/p&gt;
+&lt;p&gt;We add the current directory to the appropiate location and set the working directory to it.&lt;/p&gt;
+&lt;p&gt;Install, build... and that&apos;s all that we need to generate our artifacts in our build folder.&lt;/p&gt;
+&lt;p&gt;So after that, we take for the runtime the small nginx:alpine image and we just copy the build folder to the right place.&lt;/p&gt;
+&lt;p&gt;Done!&lt;/p&gt;
+&lt;h3&gt;Fourth step: build and run!&lt;/h3&gt;
+&lt;p&gt;So now, let&apos;s build the image
+&lt;code&gt;docker build -t my-app .&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;And now let&apos;s look it&apos;s size
+&lt;code&gt;docker images&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;All right! less than 16 MB! With the whole thing, linux, nginx and our app!&lt;/p&gt;
+&lt;p&gt;That&apos;s great. Just the node_modules folder size after installation is around 130 MB... so this is a BIG win.&lt;/p&gt;
+&lt;p&gt;Let&apos;s try it&lt;br&gt;
+&lt;code&gt;docker run -d --rm -p 8000:80 --name my-app my-app&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Open chrome in localhost:8000 and enjoy.&lt;/p&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Multi stage builds are great, it let&apos;s you easily build whatever you want and then create a thin self-sufficient pack with exactly what you need to let the user run your application.&lt;/p&gt;
+&lt;p&gt;By making this clear distinction between different stages, docker let&apos;s you think in a more organized way about the Dockerfile.&lt;/p&gt;
+&lt;p&gt;With multi stage builds the LAST stage is the one that is used on your final image. Don&apos;t forget that. &lt;em&gt;For example, the ONBUILD instruction on a previous stage wont have any effect&lt;/em&gt; because it will be overwritten with the last stage of the Dockerfile.&lt;/p&gt;
+&lt;p&gt;As a side note, it is important to say that this may be a trigger to massively use webpack or some kind of bundler for standalone node.js applications. The node_modules folder get&apos;s really big very quickly.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Un posible futuro de los sistemas operativos es tuSO / yourOS]]></title><description><![CDATA[Imaginemos que en el futuro, la experiencia al manejar nuestros dispositivos ya no será como los conocemos ahora (sistemas operativos con…]]></description><link>http://nicosommi.com/2017/04/tuoS</link><guid isPermaLink="false">http://nicosommi.com/2017/04/tuoS</guid><pubDate>Sun, 23 Apr 2017 11:20:25 GMT</pubDate><content:encoded>&lt;p&gt;&lt;em&gt;Imaginemos que en el futuro, la experiencia al manejar nuestros dispositivos ya no será como los conocemos ahora (sistemas operativos con aplicaciones) sino que serán meros ejecutadores de contenedores con las aplicaciones que elijamos. Imaginemos construyendo un sistema operativo para nuestro smartphone, justo con lo que necesitamos. Imaginemos una real democratización de nuestras elecciones, de los recursos que las aplicaciones utilizan, de nuestra privacidad. Imaginemos pagar un juego, una canción u otra obra tan sólo vez para todos nuestros dispositivos. Imaginemos... de eso es este post&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Hace un tiempo vengo estudiando acerca del futuro que tendrán los Sistemas Operativos (incluso comencé un post que nunca publiqué allá por septiembre de 2016). Imagino el futuro de los SO distinto, manteniendo su sentido escencial (seguirán administrando el uso del hardware), cambiando sustancialmente nuestra forma de experimentarlo. Más precisamente pienso esto muchísimo desde que conocí Docker hace ya casi 2 años. Esta nueva capa de abstracción nos permite ver a nuestro sistema operativo como un conjunto de contenedores que ejecutan aplicaciones que, a su vez, también son contenedores.&lt;/p&gt;
+&lt;p&gt;Imaginemos correr una aplicación sin instalar, directa o indirectamente sus librerías, y sin conocer como configurarla. Imaginemos correr aplicaciones que no podrán acceder a nada (ni siquiera a a los archivos, puertos, etc) de nuestro sistema principal salvo que nosotros lo autorizemos explícitamente. Todo eso ya existe utilizando docker de manera manual, y se utiliza en servidores de aplicaciones y servicios en la nube. Requiere conocimientos específicos que sólo los que estamos sumergidos en el tema conocemos. Pero imaginemos todo eso en la cotidianeidad del usuario final, usando ya sea nuestro smartphone, tablet, pc de escritorio o cualquier dispositivo inteligente, con suerte hasta incluso consolas de videojuegos, de manera transparente.
+Imaginemos que nuestros dispositivos sólo sean interfaces de un SO a medida, que siempre es igual y se adapta a los mismos.&lt;br&gt;
+Imaginemos tener servicios de aplicaciones en nuestros otros dispositivos o en la nube de manera transparente.&lt;br&gt;
+Imaginemos administrar las aplicaciones desde cualquier dispositivo.&lt;br&gt;
+Imaginemos comprar aplicaciones, canciones, juegos, y de todo tipo, que corran en todos nuestros dispositivos.&lt;br&gt;
+Imaginar... eso es Moby y Linuxkit (ver más adelante), impulsados en gran medida por Docker.&lt;/p&gt;
+&lt;p&gt;Al principio lo veía utópico, pero en parte me sentía reconfortado porque había personas importantes en la industria que también lo pensaban.&lt;br&gt;
+Por ejemplo, Steve Francia (creador de hugo, ex de Docker ahora en Google) lo expresó alla por el año 2015 aunque más orientado a &lt;a href=&quot;https://es.slideshare.net/spf13/the-future-of-the-operating-system-linuxcon&quot;&gt;aplicaciones distribuidas&lt;/a&gt;.&lt;br&gt;
+Aun más cercanos a mis reflexiones de llevar los contenedores a dispositivos pequeños, están los ex &lt;a href=&quot;http://blog.hypriot.com/&quot;&gt;&quot;docker pirates ARMados con cosas explosivas&quot;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Ya no lo veo tan utópico o descabellado. Sobre todo desde que liberaron &lt;a href=&quot;https://github.com/linuxkit/linuxkit&quot;&gt;linuxkit&lt;/a&gt; (un set de componentes basados en linux) hace pocos días, en conjunto con el ya existente proyecto &lt;a href=&quot;https://github.com/moby/moby&quot;&gt;Moby&lt;/a&gt;, que es una gran iniciativa de la compañía que persigue la idea de empujar el movimiento de los contenedores que tan fuerte viene evolucionando.&lt;/p&gt;
+&lt;p&gt;Con Linuxkit y Moby podemos construir un sistema operativo juntando componentes, al estilo &quot;Lego&quot;, como ellos dicen. En la Dockercon 2017 demostraron en vivo, luego de liberar linuxkit, como construir un sistema operativo de &lt;a href=&quot;https://redis.io/&quot;&gt;Redis&lt;/a&gt; (una base de datos key value) con lo mínimo indispensable. Esta es la tendencia que confirma que mis pensamientos son muy posibles.&lt;/p&gt;
+&lt;p&gt;Si bien hay muchísima evolución por delante como para ser aplicada al usuario final (para ser &quot;user friendly&quot;), creo que cuando un camino es mejor, es inevitable, ya que beneficia negocios y personas. Quizás el primer paso sea que los mayores SO actuales adopten una arquitectura basada en contenedores, para así abrir camino hacia un futuro en el cuál ellos mismos luego pasen a ser proveedores de distintos contenedores de interfaz de usuario, por ejemplo, o paquetes de oficina, stores de aplicaciones/contenedores, etc.&lt;/p&gt;
+&lt;p&gt;Otra aplicación muy interesante es la que ya se está dando en dispositivos como raspberry pi y todo lo que es internet de las cosas (IoT), ya que tener un SO mínimo es muy conveniente para aplicaciones especializadas como estas. Cabe destacar que ya hay soporte para ARM además de x86 (gracias al esfuerzo de los docker pirates de hypriot! &lt;a href=&quot;http://blog.hypriot.com/about/&quot;&gt;http://blog.hypriot.com/about/&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;Con respecto a los móbiles, bien se podrían comenzar proyectos de controladores de hardware que ejecuten indistintamente aplicaciones de Android y iOS, lo que en el futuro incluso dispararía versiones más óptimas de las mismas, permitiéndoles utilizar lenguajes de su elección. También dispararía la componentización y por ende democratización de estos sistemas operativos, que hoy tienen un comportamiento por demás abusivo en cuanto a privacidad.&lt;/p&gt;
+&lt;p&gt;Muchas veces se me ha ocurrido de manera errónea intentar ejecutar docker desde android. Eso sería oportuno para solucionar rápidamente inconvenientes de hoy en día, pero Moby en conjunto con linuxkit, u otro conjunto de contenedores básicos nos brindan que pueda surgir, un Ecosistema mucho más natural para estos dispositivos. Es importante destacar que ya existe una lista de sistemas operativos mínimos en desarrollo activo. Esto sin duda dejará para la comunidad, bloques para utilizar, que como consecuencia beneficiarán estas ideas.&lt;br&gt;
+Yo por mi cuenta, espero ser más y más activo en esta comunidad de contenedores.&lt;/p&gt;
+&lt;p&gt;Habrá resistencias de intereses privados por mucho tiempo, pero como la historia reciente lo marca, si el movimiento es firme, ellos terminarán ahogados por la ola de los cambios y los nuevos emprendimientos que allí los lleven.&lt;/p&gt;
+&lt;p&gt;Saber que los sistemas operativos puedan ser un conjunto de pequeñas cosas que tengan una simple responsabilidad, para que todos podamos tomar elecciones basadas en nuestro propio juicio, sabiendo a que nos atenemos, y así construir de manera consciente nuestro propio &quot;Castillo&quot; personal de aplicaciones.&lt;/p&gt;
+&lt;p&gt;Se trata de una opinión y también de un deseo personal.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Imaginemos.&lt;/em&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[docker secrets]]></title><description><![CDATA[Docker secrets Por nicosommi name: agenda Agenda Agenda e introducción Como surgen? ¿Qué son los secrets? ¿Para que sirven? Anotaciones de…]]></description><link>http://nicosommi.com/2017/03/29/docker-secrets</link><guid isPermaLink="false">http://nicosommi.com/2017/03/29/docker-secrets</guid><pubDate>Wed, 29 Mar 2017 18:38:10 GMT</pubDate><content:encoded>&lt;!-- class: middle --&gt;
+&lt;!-- layout: true --&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;img src=&quot;/images/assets/2017-03-25-13-39-09.png&quot; width=&quot;400px&quot;&gt;&lt;/img&gt;&lt;/p&gt;
+&lt;h1&gt;Docker secrets&lt;/h1&gt;
+&lt;h2&gt;Por nicosommi&lt;/h2&gt;
+&lt;hr&gt;
+&lt;p&gt;name: agenda&lt;/p&gt;
+&lt;h2&gt;Agenda&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Agenda e introducción&lt;/li&gt;
+&lt;li&gt;Como surgen?&lt;/li&gt;
+&lt;li&gt;¿Qué son los secrets?&lt;/li&gt;
+&lt;li&gt;¿Para que sirven?&lt;/li&gt;
+&lt;li&gt;Anotaciones de seguridad&lt;/li&gt;
+&lt;li&gt;Detalles de utilización&lt;/li&gt;
+&lt;li&gt;Preparando nuestras imágenes&lt;/li&gt;
+&lt;li&gt;Creando un secreto sencillo&lt;/li&gt;
+&lt;li&gt;Utilizando secrets con YML&apos;s de docker compose&lt;/li&gt;
+&lt;li&gt;Usando https con secrets&lt;/li&gt;
+&lt;li&gt;Resumen de comandos&lt;/li&gt;
+&lt;li&gt;Q &amp;#x26; A&lt;/li&gt;
+&lt;li&gt;Fin&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2&gt;¿Como surgen?&lt;/h2&gt;
+&lt;p&gt;Porque la comunidad toma decisiones heterogeneas y peligrosas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Usar variables de entorno (12 factor app)&lt;/li&gt;
+&lt;li&gt;Variables de entorno en build&lt;/li&gt;
+&lt;li&gt;Manual build (commit)&lt;/li&gt;
+&lt;li&gt;Custom hacks (curl a webserver)
+... Se necesitan do&apos;s and don&apos;ts&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;accesibles por cualquier proceso, guardada en capas intermedias, compartidas para otros contenedores linkeados&lt;/li&gt;
+&lt;li&gt;hasta se decidio no encriptarlas solo para que la gente no las use para secretos&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;¿Qué son los secrets?&lt;/h2&gt;
+&lt;p&gt;Para docker es un BLOB de datos manejado de manera centralizada.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Compartido para los servicios del swarm que lo necesitan, solo mientras estos ejecutan&lt;/li&gt;
+&lt;li&gt;Solo para swarm... por ahora&lt;/li&gt;
+&lt;li&gt;Hasta 500KB (no TAN large)&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Por ahora solo para runtime&lt;/p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/images/assets/2017-03-22-21-47-13.png&quot; width=&quot;800px&quot;&gt;&lt;/img&gt;
+&lt;/center&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???
+Binary Large OBjects
+Secure Sockets Layer (ahora Transport Layer Security)
+SwarmKit es una libreria que se encarga del node management
+Hay un issue en curso para build time secrets&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2&gt;¿Para que sirven?&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Para guardar certificados SSL, SSH Keys, Username y Passwords, nombres de bases de datos... y cualquier dato sensible que debe estar en runtime, pero no en la imagen ni en el control de versiones&lt;/li&gt;
+&lt;li&gt;Funciona como capa de abstraccion entre las credenciales y los contenedores&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;En los distintos ambientes puedo tener credenciales con el mismo nombre pero distinto contenido y entonces el contenedor es exactamente igual mas alla de que los secrets cambien de contenido&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Anotaciones de seguridad&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Viajan a los managers del swarm por TLS&lt;/li&gt;
+&lt;li&gt;Se almacenan en el Raft log, con todo lo que ello nos garantiza (que está encriptado y es replicado a través de los managers, garantizando la misma HA que el resto de la informacion del swarm)&lt;/li&gt;
+&lt;li&gt;Cuando se detiene un container, se hace unmount y se flushea la memoria&lt;/li&gt;
+&lt;li&gt;Si se pierde conexión con el swarm, se tiene acceso al secret, pero no puede recibir ninguna instrucción hasta que se vuelva a conectar al swarm&lt;br&gt;
+&lt;a href=&quot;http://thesecretlivesofdata.com/raft/&quot;&gt;http://thesecretlivesofdata.com/raft/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Esta encriptado desde la 1.13&lt;/li&gt;
+&lt;li&gt;El rotado de secrets es basicamente actualizar el servicio con el secret viejo y el nuevo, proceder a cambiarlo en el servicio, luego borrarlo del servicio y finalmente borrarlo del swarm&lt;/li&gt;
+&lt;li&gt;El &quot;Raft log&quot; se refiere al consensus algorithm que utiliza swarmkit &lt;em&gt;entre managers&lt;/em&gt; para coordinar nodos y no depender de un solo punto de falla para tomar decisiones. Raft fue diseñado para ser simple de entender y que más sistemas utilizen un buen algoritmo de consenso para ser más tolerantes a fallas. Consiste en un simple sistema de eleccion de lider y de propagacion de estado. Define followers, candidatos y líderes.&lt;/li&gt;
+&lt;li&gt;Cuando no hay lideres, se inician las rondas de timeout random para que un nodo se vuelva candidato, vote por si mismo y reciba votos de los otros nodos. Las rondas terminan cuando un líder es elegido. Después hay un heartbeat timeout y cuando se pierde el lider se hace la re eleccion.
+&lt;a href=&quot;http://thesecretlivesofdata.com/raft/&quot;&gt;http://thesecretlivesofdata.com/raft/&lt;/a&gt;
+Tienen un log y una maquina de estados.
+Si una parte del cluster se cae, el que tiene mayoria igual puede impactar, los que no tienen mayoria dejan pendiente, y cuando reciben el mensaje de quien tenia mayoria, hacen rollback y acceden al cambio del lider que tiene mayoria, también relegando su liderazgo.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Detalles de utilización&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Se montan en /run/secrets/name&lt;/li&gt;
+&lt;li&gt;Solo tiene acceso si es un manager o si tiene permisos específicos&lt;/li&gt;
+&lt;li&gt;Se pueden ver, listar los secrets, pero no se puede borrar uno que está siendo utilizado, para ello se debe rotar el secret&lt;/li&gt;
+&lt;li&gt;Se recomienda poner en el nombre una fecha o numero de version, para hacer más sencillo el control&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;--secret source=mysql&lt;em&gt;password,target=wp&lt;/em&gt;db_password,mode=0400&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Preparando nuestras imágenes&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Para hacer nuestras imagenes secrets-friendly debemos brindar, tal como lo hizo wordpress, una alternativa de archivos a la environment variable que clasicamente se utiliza (MYSQL&lt;em&gt;PASSWORD&lt;/em&gt;FILE además de MYSQL_PASSWORD)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Creando un secreto sencillo&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;$ docker swarm init --advertise-addr eth0 # solo para probar local
+$ openssl rand -base64 20 | docker secret create mi_secreto -
+$ docker service create --name mi_servicio --secret mi_secreto nginx
+$ docker exec $(docker ps --filter name=mi_servicio -q) ls /run/secrets
+$ docker exec $(docker ps --filter name=mi_servicio -q) cat /run/secrets/mi_secreto
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;???
+Si commiteamos el container a una imagen, el secreto es desmontado
+Si tengo mas replicas el comando debe ser adaptado porque hay mas de un hash, tengo que hacerlo mas a mano&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2&gt;Utilizando secrets con YML&apos;s de docker compose&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-yaml&quot;&gt;version: &quot;3.1&quot;
+services:
+  test:
+    image: &quot;alpine&quot;
+    command: &quot;cat /run/secrets/my_secret&quot;
+    secrets:
+      - my_secret
+secrets:
+  my_secret:
+    file: ./mysecret.txt
+    # o external: true para tomarlo del swarm
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;???
+Gracias al stack del compose
+docker stack deploy -c file.yml name&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2&gt;Usando https con secrets&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Generar certificado con let&apos;s encrypt, self-signed u otra CA&lt;/li&gt;
+&lt;li&gt;Preparar nginx config&lt;/li&gt;
+&lt;li&gt;Preparar secrets en el swarm&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;$ docker secret create site.key site.key
+$ docker secret create site.crt site.crt
+$ docker secret create site.conf site.conf
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;4&quot;&gt;
+&lt;li&gt;Crear el servicio&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;$ docker service create --name nginx --secret site.key \
+     --secret site.crt --secret site.conf --publish 3000:443 nginx:latest \
+     sh -c &quot;ln -s /run/secrets/site.conf /etc/nginx/conf.d/site.conf &amp;#x26;&amp;#x26; exec nginx -g &apos;daemon off;&apos;&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;???
+Daemon off es un flag de nginx para docker o debug que lo mantiene en foreground y que es amigo de tener un proceso por container&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2&gt;Resumen de comandos&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;$ docker swarm init --advertise-addr eth0 # solo para probar local
+$ echo &quot;a&quot; | docker secret create mi_secreto -
+$ docker secret inspect mi_secreto
+$ docker secret ls
+$ docker service create --name mi_servicio --secret mi_secreto nginx
+$ docker service update mi_servicio --secret-rm mi_secreto
+$ docker service update mi_servicio --secret-add mi_nuevo_secreto
+$ docker secret rm mi_secreto
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;???
+Aca se pueden ver todos los comandos necesarios para por ejemplo hacer una rotacion de logs&lt;/p&gt;
+&lt;hr&gt;
+&lt;h1&gt;Q &amp;#x26; A&lt;/h1&gt;
+&lt;hr&gt;
+&lt;h1&gt;Gracias!&lt;/h1&gt;</content:encoded></item><item><title><![CDATA[proxies]]></title><description><![CDATA[Proxies en ES6 Agenda Terminología ¿Que es un proxy? Origen:  prokecye  "agency of one who acts instead of another" En español significa…]]></description><link>http://nicosommi.com/2016/10/24/proxies</link><guid isPermaLink="false">http://nicosommi.com/2016/10/24/proxies</guid><pubDate>Mon, 24 Oct 2016 18:38:10 GMT</pubDate><content:encoded>&lt;h1&gt;Proxies en ES6&lt;/h1&gt;
+&lt;hr&gt;
+&lt;h2&gt;Agenda&lt;/h2&gt;
+&lt;small&gt;
+  Terminología  
+  Desarrollo  
+  Casos de uso  
+  Ejercitación  
+  Desarrollo  
+  Casos de uso  
+  Ejercitación  
+&lt;/small&gt;
+&lt;hr&gt;
+&lt;h2&gt;Terminología&lt;/h2&gt;
+&lt;hr&gt;
+&lt;p&gt;¿Que es un proxy?&lt;br&gt;
+Origen: &lt;em&gt;prokecye&lt;/em&gt;&lt;br&gt;
+&quot;agency of one who acts instead of another&quot;&lt;br&gt;
+En español significa &lt;em&gt;apoderado&lt;/em&gt;&lt;br&gt;
+&lt;em&gt;adj.&lt;/em&gt; Dicho de una persona: Que tiene poderes de otra para representarla y proceder en su nombre&lt;/p&gt;
+&lt;p&gt;???
+Ejemplo, firmar un poder para hacer un trámite&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;¿Que es un protocolo?&lt;br&gt;
+Un &lt;em&gt;protocolo&lt;/em&gt; es un conjunto de normas. Esto podria verse como un conjunto interfaces con reglas para usarlas, y ECMAScript define un protocolo para manejar objetos. Este protocolo opera a nivel Meta.&lt;/p&gt;
+&lt;p&gt;???
+La definición no es la misma que suele utilizarse de protocolos para interfaces de otros lenguajes porque también incluye reglas.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Metaprogramming&lt;/em&gt;&lt;br&gt;
+En la programación hay niveles base y meta. El nivel base procesa el input del usuario, mientras que el meta procesa al base.&lt;/p&gt;
+&lt;p&gt;???
+Pueden incluso ser dos lenguajes distintos.
+En es como los closures, los usamos sin saber.
+Hay unos que usamos constantemente: Object.*&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Meta Object Protocol&lt;/em&gt; es como se lo llama al protocolo de manejo de objetos de ECMAScript. Como particularidad, son internos (no son accesibles desde JS). Los engines pueden usarlos o no.&lt;/p&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;Los metodos de un objeto del MOP llaman operaciones del engine, algunas que llaman a otras como [[Get]], que se llaman &lt;em&gt;operaciones derivadas&lt;/em&gt; y las que son independientes, que se llaman &lt;em&gt;operaciones fundamentales&lt;/em&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???
+Ejemplo [[Get]] usa getOwnProperty, getPrototypeOf y Call&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Tipos de metaprogramming&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Introspection: permite sólo leer la estructura&lt;/li&gt;
+&lt;li&gt;Self-modification: permite modificar la estructura&lt;/li&gt;
+&lt;li&gt;Intercession: redefine la semantica de algunas operaciones&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???
+Ejemplos Object.keys, moveProperty, proxy respectivamente&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Elementos del proxy&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;target: es el fallback del handler, el representado
+[[ProxyTarget]]&lt;/li&gt;
+&lt;li&gt;handler: es quien, en caso de definir el método indicado, intercepta la llamada, el representante
+[[ProxyHandler]]&lt;/li&gt;
+&lt;li&gt;proxy: el que compone ambos y delega a uno u otro&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;const proxy: new Proxy(target, handler); // OK
+var p = Proxy(target, handler); // TypeError: calling a builtin Proxy constructor without new is forbidden
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;???
+El método del handler se llama trap.&lt;br&gt;
+Es decir que el proxy &quot;wrappea&quot; al target.&lt;/p&gt;
+&lt;hr&gt;
+&lt;pre&gt;&lt;code&gt;class MyHandler {
+  get(target, key, receiver) {
+    return Reflect[key];
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;???
+Reflect no se puede instanciar, tiene los mismos metodos que el handler, es como Math, todo estatico
+Por ejemplo Reflect.apply es menos verboso que Function.prototype.apply
+Algunas veces nos da información adicional como Reflect.set -&gt; [boolean]&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;¿Que operaciones pueden ser interceptadas?&lt;/em&gt;&lt;br&gt;
+Esto es selectivo, no se puede interceptar todo o solo las fundamentales como podria suponerse.&lt;br&gt;
+Esto es por dos razones&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;porque una operacion estable corre el riesgo de que un proxy la haga inestable&lt;/li&gt;
+&lt;li&gt;porque tener mucho codigo custom intercalado haria el programa muy dificil de entender y debuggear&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???
+ejemplo el === que no puede ser trapeada.
+Estable: sin side effects, que produce siempre el mismo resultado ante los mismos argumentos&lt;br&gt;
+Se podría pensar como que con interceptar sólo operaciones fundamentales, pero esto no es tan útil ya que no inlcuiría get por ejemplo.
+Ver codigo de api client.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Prototype chain&lt;/em&gt;&lt;br&gt;
+Los engines en su comportamiento habitual, al subir por el chain, van a disparar las traps que encuentren.&lt;br&gt;
+Sin embargo, hay ciertas operaciones que suben por el prototype chain si no encuentran la property en el handler como get, set y has, las demas no alteran el prototype chain.&lt;/p&gt;
+&lt;p&gt;???
+Ver codigo y test de ghost.
+Instanceof &quot;lies&quot;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Básicas&lt;/em&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;defineProperty(target, propKey, propDesc) // → boolean  (fundamental)
+  // trigger: Object.defineProperty(proxy, propKey, propDesc)
+deleteProperty(target, propKey) // → boolean  (fundamental)
+  // trigger: delete proxy[propKey], delete proxy.foo
+get(target, propKey, receiver) // → any
+  // trigger: receiver[propKey]
+  // trigger: receiver.foo
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Casos de uso&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;API Client&lt;/li&gt;
+&lt;li&gt;Tracing / Logging&lt;/li&gt;
+&lt;li&gt;Trap undefined property access&lt;/li&gt;
+&lt;li&gt;Type check&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???
+Señalar el tracing puede implementarse cambiando el objeto.
+Type check example: properties que son &quot;fieles&quot; a su tipo incial.
+Ir viendo ejemplos de api client, logging y lock&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Preguntas&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Practica 1&lt;/em&gt;&lt;br&gt;
+Hacer &quot;trap undefined&quot;&lt;br&gt;
+&quot;Objeto que tira excepcion cuando se accede a una propiedad undefined&quot;
+(30 minutos)&lt;/p&gt;
+&lt;p&gt;???
+Debe tirar un ReferenceError si no esta. Debe devolver el valor si esta.
+Probar nested with lock.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Compatibilidad&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Solo FF, CH, Edge, Opera, Safari 10, Node 6&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???
+No hay polyfill.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Tipos de proxy&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Wrappers (solo control) o Virtual Objects (agregan comporamiento)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???
+Wrappers se refiere a esos casos en los que intercepta para controlar el acceso al target, mientras que virtual se refiere a cuando agregan un comportamiento y el virtual object no importa (ejemplo, property check y RMI respectivamente)&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Propiedades del proxy&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Transparencia virtual: no podemos saber si un objeto es un proxy&lt;/li&gt;
+&lt;li&gt;Encapsulamiento: no podemos acceder al handler desde el proxy&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???
+Wrappers se refiere a esos casos en los que intercepta para controlar el acceso al target, mientras que virtual se refiere a cuando agregan un comportamiento y el virtual object no importa (ejemplo, property check y RMI respectivamente)&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Mas casos de uso&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;DOM&lt;/li&gt;
+&lt;li&gt;Indices negativos de array&lt;/li&gt;
+&lt;li&gt;Data binding (polemico)&lt;/li&gt;
+&lt;li&gt;Profiling&lt;/li&gt;
+&lt;li&gt;RMI&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Note:
+DOM: usualmente está implementado entre C++ y JS, y el context switch es costoso, lo que nos lleva a querer hacer el dom en js puro, pero hay cosas que no son tan simples de implementar, y ello fue una importante razon para hacer los proxies en JS (dom mas eficiente) y ademas que nos permite emular el browser (jsdom).&lt;/p&gt;
+&lt;p&gt;Indices negativos como en algunos lenguajes.
+Mencionar Object.observe (ES7) creado para binding por la pobre performance de los proxy, aunque abandonado por react.
+Object.observe no es necesario con la inmutabilidad, tratar browser como remote rendering, no storage y query
+(undo, state). Se dice que es lo que queremos, no lo que necesitamos (Stateful dom).
+Profiling para medir tiempo.
+RMI permite por ejemplo db access directo.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Invariants&lt;/em&gt;&lt;br&gt;
+Si el target es no extensible y no configurable, lo invariante es forzado por el engine.&lt;/p&gt;
+&lt;p&gt;???
+no extensible protege objetos, non configurability protege properties.
+Con los proxy se podría violar la invariabilidad, pero el engine lo prohibe chequeando los parametros y los resultados de los handlers, preventExtension, true y luego false, e igual para isExtensible y getOwnPropertyDescriptor&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Practica 2&lt;/em&gt;&lt;br&gt;
+Mejorar api client&lt;br&gt;
+(30 minutos)&lt;/p&gt;
+&lt;p&gt;???
+elegir algunos de los TODO&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Avanzadas 1&lt;/em&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;getOwnPropertyDescriptor(target, propKey) // → PropDesc|Undefined  (fundamental)
+  // tby: Object.getOwnPropertyDescriptor(proxy, propKey)
+getPrototypeOf(target) // → Object|Null  (fundamental)
+  // tby: Object.getPrototypeOf(proxy)
+has(target, propKey) // → boolean
+  // tby: propKey in proxy
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Avanzadas 2&lt;/em&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;isExtensible(target) // → boolean  (fundamental)
+  // tby: Object.isExtensible(proxy)
+ownKeys(target) // → Array&amp;#x3C;PropertyKey&gt;  (fundamental)
+  // tby: Object.getOwnPropertyPropertyNames(proxy) (only uses string-valued keys)
+  // tby: Object.getOwnPropertyPropertySymbols(proxy) (only uses symbol-valued keys)
+  // tby: Object.keys(proxy) (only uses enumerable string-valued keys;
+  // enumerability is checked via Object.getOwnPropertyDescriptor)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Avanzadas 3&lt;/em&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;preventExtensions(target) // → boolean  (fundamental)
+  // tby: Object.preventExtensions(proxy)
+set(target, propKey, value, receiver) // → boolean
+  // tby: receiver[propKey] = value
+  // tby: receiver.foo = value // propKey = &apos;foo&apos;
+setPrototypeOf(target, proto) // → boolean  (fundamental)
+  // tby: Object.setPrototypeOf(proxy, proto)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Para funciones&lt;/em&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apply(target, thisArgument, argumentsList) // → any
+  // tby: proxy.apply(thisArgument, argumentsList) (fundamental)
+  // tby: proxy.call(thisArgument, ...argumentsList)
+  // tby: proxy(...argumentsList)
+construct(target, argumentsList) // → Object
+  // tby: new proxy(..argumentsList)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Conclusion&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Performance&lt;/li&gt;
+&lt;li&gt;Debug&lt;/li&gt;
+&lt;li&gt;Casos de uso&lt;/li&gt;
+&lt;li&gt;Complejidad&lt;/li&gt;
+&lt;li&gt;Compatibilidad&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Note:
+Performance: Conviene medir la performance en cada caso, evaluar que tan critica es la performance en nuestra app y tomar una decision.
+A mas código interceptado, menor performance, mayor dificultad de entender el codigo y de debug.
+Riesgo: podemos &quot;romper&quot; comportamientos, hacerlo inconsistente
+Casos de uso:&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Preguntas / Discusion / Ideas&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;Gracias!&lt;/p&gt;</content:encoded></item><item><title><![CDATA[docker]]></title><description><![CDATA[Introduccion a docker Por nicosommi name: agenda Agenda Agenda y alcance Fundamentos Casos de uso Por dentro Componentes Ejemplo sencillo Q…]]></description><link>http://nicosommi.com/2016/10/24/docker</link><guid isPermaLink="false">http://nicosommi.com/2016/10/24/docker</guid><pubDate>Mon, 24 Oct 2016 18:38:10 GMT</pubDate><content:encoded>&lt;!-- class: middle --&gt;
+&lt;!-- layout: true --&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;img src=&quot;/images/assets/docker-74de8.png&quot; width=&quot;400px&quot;&gt;&lt;/img&gt;&lt;/p&gt;
+&lt;h1&gt;Introduccion a docker&lt;/h1&gt;
+&lt;h2&gt;Por nicosommi&lt;/h2&gt;
+&lt;hr&gt;
+&lt;p&gt;name: agenda&lt;/p&gt;
+&lt;h2&gt;Agenda&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Agenda y alcance&lt;/li&gt;
+&lt;li&gt;Fundamentos&lt;/li&gt;
+&lt;li&gt;Casos de uso&lt;/li&gt;
+&lt;li&gt;Por dentro&lt;/li&gt;
+&lt;li&gt;Componentes&lt;/li&gt;
+&lt;li&gt;Ejemplo sencillo&lt;/li&gt;
+&lt;li&gt;Q &amp;#x26; A&lt;/li&gt;
+&lt;li&gt;Mas componentes&lt;/li&gt;
+&lt;li&gt;Comandos sobre contenedores e imágenes&lt;/li&gt;
+&lt;li&gt;Ejemplo lateral&lt;/li&gt;
+&lt;li&gt;Técnica para construir un Dockerfile&lt;/li&gt;
+&lt;li&gt;Buenas prácticas&lt;/li&gt;
+&lt;li&gt;Docker para SPA, web apps, etc&lt;/li&gt;
+&lt;li&gt;Anexo: Services&lt;/li&gt;
+&lt;li&gt;Q &amp;#x26; A&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;p&gt;class: center&lt;/p&gt;
+&lt;h2&gt;Que es?&lt;/h2&gt;
+&lt;center&gt;
+  &lt;img src=&quot;/images/assets/docker-89c82.png&quot; width=&quot;400px&quot;&gt;&lt;/img&gt;
+&lt;/center&gt;
+&lt;p&gt;???
+Disculpen el teclado en ingles&lt;/p&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;Técnicamente es una capa de abstracción para la utilización de cgroups, namespaces y UnionFS de linux.&lt;/li&gt;
+&lt;li&gt;Basado en esto, crea el concepto de contenedor y nos permite construir de manera simple imagenes a partir de las cuales correr contenedores de manera aislada.&lt;/li&gt;
+&lt;li&gt;UnionFS que consiste en poner una capa arriba de otra hasta lograr un sistema de archivos coherente&lt;/li&gt;
+&lt;li&gt;Con los namespaces virtualiza los recursos como archivos, recursos de red y usuarios&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Con los cgroups aisla del uso de recursos (cpu, memoria, E/S)&lt;/p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/images/assets/docker-28b55.png&quot; width=&quot;300px&quot;&gt;&lt;/img&gt;
+&lt;/center&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;class: right
+&lt;img style=&quot;position: absolute&quot; src=&quot;/images/assets/docker-04a7d.png&quot; width=&quot;200px&quot;&gt;&lt;/img&gt;&lt;/p&gt;
+&lt;h2&gt;Es una maquina virtual? No.&lt;/h2&gt;
+&lt;h2&gt;Como se diferencia de una?&lt;/h2&gt;
+&lt;hr&gt;
+&lt;p&gt;Se diferencia porque no tiene un sistema operativo host y uno guest, sino que utiliza herramientas de un sistema operativo existente para la creacion de contenedores.&lt;/p&gt;
+&lt;center&gt;
+  &lt;img src=&quot;/images/assets/history.png&quot; width=&quot;600px&quot;&gt;&lt;/img&gt;
+&lt;/center&gt;
+???
+Comentar:
+* historia
+* primero escalabilidad horizontal
+* despues optimizar recursos
+* adicionales: docker swarm independiente
+Nos permite cambiar la unidad de medida de nuestra aplicación de máquinas virtuales o físicas a simples containers.
+&lt;hr&gt;
+&lt;h2&gt;En donde corre?&lt;/h2&gt;
+&lt;p&gt;En sus inicios solo soportaba contenedores linux sobre linux, ahora puede correr contenedores linux-based tanto en mac como en windows y en varios otros providers (aws, etc).
+Tambien, recientemente incorporaron contenedores basados en windows server.&lt;/p&gt;
+&lt;center&gt;
+  &lt;img src=&quot;/images/assets/platforms.png&quot; width=&quot;400px&quot;&gt;&lt;/img&gt;
+&lt;/center&gt;
+&lt;hr&gt;
+&lt;div style=&quot;float: left;&quot;&gt;
+  &lt;img src=&quot;/images/assets/docker-6a999.png&quot; width=&quot;100px&quot;&gt;&lt;/img&gt;
+&lt;/div&gt;
+## &amp;nbsp;Para que sirve?
+Para isolar el entorno de ejecución de una aplicación.
+&lt;hr&gt;
+&lt;div style=&quot;float: left;&quot;&gt;
+  &lt;img src=&quot;/images/assets/pencil.png&quot; width=&quot;80px&quot;&gt;&lt;/img&gt;
+&lt;/div&gt;
+## &amp;nbsp;Datos
+* Es open source desde el 2013.
+* Esta escrito en go.
+* Lo comenzó Solomon Hykes en dotCloud.
+&lt;p&gt;???
+Go esta pensado para concurrencia y productividad y tiene garbage collection&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2&gt;Casos de uso&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;/images/assets/usecases.png&quot; width=&quot;90%&quot;&gt;&lt;/img&gt;
+???
+Invitar a sugerir ideas u opinar sobre las mencionadas
+Texto:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CI/CD&lt;/li&gt;
+&lt;li&gt;Entornos de desarrollo&lt;/li&gt;
+&lt;li&gt;Compilar para distintos targets&lt;/li&gt;
+&lt;li&gt;PaaS&lt;/li&gt;
+&lt;li&gt;Escalabilidad horizontal&lt;/li&gt;
+&lt;li&gt;High availability cluster&lt;/li&gt;
+&lt;li&gt;Aislar ejecucion de codigo de manera segura (webpackbin, etc)&lt;/li&gt;
+&lt;li&gt;Aprendizaje/investigacion&lt;/li&gt;
+&lt;li&gt;Etc...&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Por dentro&lt;/h2&gt;
+&lt;hr&gt;
+&lt;div style=&quot;float: left;&quot;&gt;
+  &lt;img src=&quot;/images/assets/docker-c4f70.png&quot; width=&quot;140px&quot;&gt;&lt;/img&gt;
+&lt;/div&gt;
+## &amp;nbsp;Docker Image
+* Es un template con instrucciones para la construccion de contenedores
+* Tiene una o varias capas de solo lectura a partir del cual se crean contenedores
+* Se pueden extender o empezar de cero
+* Para su descripcion se utiliza una simple interfaz en un archivo de texto denominado Dockerfile
+* El Dockerfile contiene instrucciones, y cada instruccion genera una capa adicional. Estas instrucciones son por ejemplo FROM, MAINTAINER, RUN, ADD, ENV, CMD.
+* Docker simplemente lee las instrucciones, las ejecuta, y devuelve la imagen
+&lt;hr&gt;
+&lt;h2&gt;Docker Container&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Es una instancia de una imagen que se puede correr, parar, mover, borrar, etc.&lt;/li&gt;
+&lt;li&gt;Contiene una fina capa adicional a las de su imagen con permisos de escritura.&lt;/li&gt;
+&lt;li&gt;Adicionalmente puede contar con metadata, como puertos de red, variables de entorno, volumenes, etc.&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Cada contenedor es aislado pero puede tener acceso a recursos del host o de otros contenedores.&lt;/p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/images/assets/docker-bb91f.png&quot; width=&quot;300px&quot;&gt;&lt;/img&gt;
+&lt;/center&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???
+Preguntar diferencia entre contenedor e imagen y clarificar dudas&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2&gt;Acerca del Contenedor&lt;/h2&gt;
+&lt;p&gt;Previamente se utilizaba lxc, luego libcontainer, pero ahora se esta avocando a runC y a llevar adelante OCI (Open Container Initiative).&lt;/p&gt;
+&lt;center&gt;
+  &lt;img src=&quot;/images/assets/docker-71f58.png&quot; width=&quot;240px&quot;&gt;&lt;/img&gt;
+&lt;/center&gt;
+&lt;hr&gt;
+&lt;div style=&quot;float: left;&quot;&gt;
+  &lt;img src=&quot;/images/assets/docker-1c5ae.png&quot; width=&quot;70px&quot;&gt;&lt;/img&gt;
+&lt;/div&gt;
+## &amp;nbsp;Storage
+* Utiliza union fs, que consiste en poner una capa arriba de otra hasta lograr un sistema de archivos coherente
+* Es quien se encarga de manejar los archivos entre las capas de solo lectura y la del contenedor
+* Docker utiliza &apos;copy on write&apos;, es decir que copia una capa sólo cuando la va a cambiar, lo que permite optimizar el tamaño en disco ocupado por la imagen y el tiempo de arranque de los contenedores.
+* Toda la data de imagenes y contenedores se guarda en una carpeta.
+* Hay muchas variantes de union fs (drivers): aufs, overlay/2, btrfs, zfs. Se deben elegir según caso de uso, experiencia del equipo y linux distro.
+&lt;hr&gt;
+&lt;h2&gt;Componentes&lt;/h2&gt;
+&lt;hr&gt;
+&lt;h2&gt;Docker Engine&lt;/h2&gt;
+&lt;p&gt;Aplicacion cliente/servidor. Un daemon es el servidor que levanta una API Rest la cual es utilizada por un CLI para instruirlo.
+&lt;img src=&quot;/images/assets/docker-9cf40.png&quot; alt=&quot;Docker engine&quot;&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2&gt;Machine&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Manager para windows, osx y otros providers, que nos permite correr un docker host y permite manejar multiples hosts en una red desde linux.&lt;/li&gt;
+&lt;li&gt;Nos deja instalar docker en terminales remotas y provisionar swarms.
+&lt;img src=&quot;/images/assets/docker-7ada0.png&quot; width=&quot;95%&quot;&gt;&lt;/img&gt;
+???
+Permite especificar drivers para distintos providers&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Compose&lt;/h2&gt;
+&lt;p&gt;Es una herramienta para definir y correr aplicaciones que consisten de varios containers mediante la especificacion de un archivo docker-compose.yml.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Detecta cambios y recrea solo lo necesario&lt;/li&gt;
+&lt;li&gt;Soporta variables en el compose file&lt;/li&gt;
+&lt;li&gt;Guarda la data persistida en los volumes&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Es muy util para entornos de desarrollo, para deployment en un solo host&lt;/p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/images/assets/docker-32d4f.png&quot; width=&quot;200px&quot;&gt;&lt;/img&gt;
+&lt;/center&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;div style=&quot;float: left;&quot;&gt;
+  &lt;img src=&quot;/images/assets/ubuntu.png&quot; width=&quot;50px&quot;&gt;&lt;/img&gt;
+&lt;/div&gt;
+## &amp;nbsp;Ejemplo sencillo
+```bash
+$ docker run --name miContenedor -it ubuntu:14.04 /bin/bash
+root@3883936319fb:/# lsb_release -a
+(...) Description:	Ubuntu 14.04.5 LTS (...)
+```
+1. Trae la ultima imagen, o si ya existe la utiliza.
+2. Crea, en base a la imagen, un contenedor.
+3. Guarda el contenedor en una carpeta y monta una capa con permisos de escritura.
+4. Asigna una interfaz de red con la cual habla con el host
+5. Setea una IP de una pool
+6. Ejecuta el proceso solicitado (/bin/bash)
+7. Captura y devuelve el output del contenedor por haber indicado -it
+&lt;p&gt;???
+i es para el interactive mode, que deja el stdin esperando
+t asigna un pseudo tty / pty&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;pull&lt;/li&gt;
+&lt;li&gt;hablar de pull y de los otros parametros como name, port, volume&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Wordpress&lt;/h2&gt;
+&lt;pre&gt;
+  &lt;code class=&quot;bash hljs remark-code remark-code-line&quot; style=&quot;font-size: 13px;&quot;&gt;
+  version: &apos;2&apos;
+
+  services:
+     db:
+       image: mysql:5.7
+       volumes:
+         - &quot;./.data/db:/var/lib/mysql&quot;
+       restart: always
+       environment: (...)
+
+     wordpress:
+       depends_on:
+         - db
+       image: wordpress:latest
+       links:
+         - db
+       ports:
+         - &quot;8000:80&quot;
+       restart: always
+       environment: (...)
+  &lt;/code&gt;
+&lt;/pre&gt;
+&lt;p&gt;???
+Environment está cortado por cuestiones de espacio del slide pero es un ejemplo tomado de la página oficial&lt;/p&gt;
+&lt;hr&gt;
+&lt;h1&gt;Q &amp;#x26; A Parcial&lt;/h1&gt;
+&lt;hr&gt;
+&lt;h2&gt;Docker Registry&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Es una libreria de imagenes.&lt;/li&gt;
+&lt;li&gt;Puede ser publico o privado.&lt;/li&gt;
+&lt;li&gt;Una vez construida la imagen, hacemos un push al registry&lt;/li&gt;
+&lt;li&gt;Docker hub es un registry publico oficial&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Hay una imagen publica registry y una para el trusted registry&lt;/p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/images/assets/docker-89504.png&quot; width=&quot;240px&quot;&gt;&lt;/img&gt;
+&lt;/center&gt;
+???
+Trusted registry es con soporte comercial
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Data volumes&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Encontrar&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ docker inspect myContainer
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Se pueden crear volúmenes o montar desde el host&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ docker run -d -P --name web -v /webapp myImage npm start
+$ docker run -d -P --name web -v /src:/webapp myImage npm start
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;???&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;bypass a unionfs&lt;/li&gt;
+&lt;li&gt;si no esta bindeado a host, copia el contenido adentro&lt;/li&gt;
+&lt;li&gt;permite compartir entre containers con compose o con named volumes (flocker por ejemplo)&lt;/li&gt;
+&lt;li&gt;esta diseñado para cambiar el container y que la data persista, incluso aunque ningun container la referencie&lt;/li&gt;
+&lt;li&gt;soporta SCSI, NFS, etc.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Data volume containers&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;&lt;a href=&quot;/index.php/2016/09/06/contenedores-unicamente-de-volumenes-en-docker-volume-only-containers/&quot;&gt;Es una práctica&lt;/a&gt;&lt;/em&gt; que consiste en crear un contenedor que sólo contiene data que luego será utilizada por otros contenedores&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ docker create -v /dbdata --name mydb postgres /bin/true
+$ docker run -d --volumes-from mydb --name db1 postgres
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;h2&gt;Network&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Puede ser bridge, none y host&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ docker network ls
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Pueden verse los detalles&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ docker network inspect bridge
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Se pueden crear nuestras redes en las cuales correr containers
+???&lt;/li&gt;
+&lt;li&gt;un container puede pertenecer a varias redes&lt;/li&gt;
+&lt;li&gt;se ven entre los de la misma red&lt;/li&gt;
+&lt;li&gt;puede ser overlay (swarm mode) o custom driver&lt;/li&gt;
+&lt;li&gt;embedded dns en custom networks&lt;/li&gt;
+&lt;li&gt;antes habia links y ahora se solapa un poco con networks, comparte envs, escribe el hosts&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Docker Aplicado&lt;/h2&gt;
+&lt;hr&gt;
+&lt;div style=&quot;float: left;&quot;&gt;
+  &lt;img src=&quot;/images/assets/docker-28b55.png&quot; width=&quot;70px&quot;&gt;&lt;/img&gt;
+&lt;/div&gt;
+## &amp;nbsp;Operaciones sobre contenedores
+* Run, Start, Stop
+```bash
+# crea un contenedor en base a una imagen y corre el comando bash
+$ docker run --name miContenedor alpine echo &quot;Hola&quot;
+# arrancar un contenedor ya creado
+$ docker start miContenedor
+# parar contenedor con time to kill
+$ docker stop -t 10 miContenedor
+# also valid: docker restart -t 10 miContenedor
+```
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;Borrar, Listar, Inspeccionar&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ docker rm miContenedor
+$ docker ps
+$ docker ps --all
+$ docker inspect miContenedor
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;???&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;hablar de señales y su relacion con stop&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;div style=&quot;float: left;&quot;&gt;
+  &lt;img src=&quot;/images/assets/docker-c4f70.png&quot; width=&quot;70px&quot;&gt;&lt;/img&gt;
+&lt;/div&gt;
+## &amp;nbsp;Operaciones sobre imagenes
+* Cargar, Listar, Inspeccionar
+```bash
+$ docker pull repo/image:tag
+$ docker load -i imagen.tar
+$ docker images
+$ docker inspect alpine
+```
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;Borrar, Construir, Taggear, Subir&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ docker rmi repo/image:tag
+$ docker build -t image-name .
+$ docker tag image-name repo/image-name:tag
+$ docker push repo/image-name:tag
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;???&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;es necesario un docker login myrepo:2376&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Ejemplo existente&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ docker run --name ffox -d -p 5001:5001 kaixhin/vnc
+&lt;/code&gt;&lt;/pre&gt;
+&lt;center&gt;
+  &lt;img src=&quot;/images/assets/vncffox.png&quot; width=&quot;200px&quot;&gt;&lt;/img&gt;
+&lt;/center&gt;
+&lt;p&gt;???
+Luego con un cliente vnc accedemos a un lxde con firefox instalado&lt;/p&gt;
+&lt;hr&gt;
+&lt;div style=&quot;float: left;&quot;&gt;
+  &lt;img src=&quot;/images/assets/docker-08dc8.png&quot; width=&quot;45px&quot;&gt;&lt;/img&gt;
+&lt;/div&gt;
+## &amp;nbsp;Tecnica para construir un Dockerfile
+1. Se inicia un shell sobre una imagen base
+```bash
+$ docker run -it --name testC ubuntu sh
+```
+2. Se ejecutan los comandos y se van traduciendo a instrucciones de un Dockerfile
+&lt;p&gt;???&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;tar&lt;/li&gt;
+&lt;li&gt;scratch image (reserved word)&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;history&lt;/em&gt; de image&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;commit&lt;/em&gt; del container como no recomendada mas que para pruebas y debugging&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Debug&lt;/h2&gt;
+&lt;p&gt;a. Entramos a un contenedor corriendo&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;# otra alternativa, tomar una
+$ docker exec -it nignxTest /bin/bash
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;b. Miramos los logs conectados&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;docker logs nginxTest
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;h2&gt;Buenas prácticas&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Containers lo más prescindibles posibles&lt;/li&gt;
+&lt;li&gt;Usar .dockerignore&lt;/li&gt;
+&lt;li&gt;Evitar instalar paquetes innecesarios&lt;/li&gt;
+&lt;li&gt;Correr un sólo proceso por container&lt;/li&gt;
+&lt;li&gt;Minimizar la cantidad de capas&lt;/li&gt;
+&lt;li&gt;Organizar argumentos y comandos de multiples lineas con \&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Contemplar el build cache&lt;/p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/images/assets/docker-d0772.png&quot; width=&quot;50%&quot;&gt;&lt;/img&gt;
+&lt;/center&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;prescindible = efimero = pueden ser parados, destruidos y reemplazados&lt;/li&gt;
+&lt;li&gt;usar cache o no&lt;/li&gt;
+&lt;li&gt;el checksum del cache, que se invalida cuando algo cambia en determinadas instrucciones, por ejemplo los archivos agregados con ADD o COPY se chequean por cada uno sin usar la fecha de modificacion, en cambio para RUN el string del comando es suficiente&lt;/li&gt;
+&lt;li&gt;una vez invalidado, ya no se utiliza para las subsecuentes capas&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Ejemplos docker para web&lt;/h2&gt;
+&lt;hr&gt;
+&lt;h2&gt;SPA build&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-Dockerfile&quot;&gt;FROM node:6
+ADD . /src
+WORKDIR /src
+RUN rm -fR ./node_modules &amp;#x26;&amp;#x26; \
+  npm i
+ENTRYPOINT [&quot;npm&quot;, &quot;build&quot;]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;???
+Hay maneras alternativas de ejecutar CMD, esa es la preferida (JSON array) ya que no tiene nada implicito (como el ´shell´ form que hace &quot;/bin/sh -c&quot; lo que oculta señales por ejemplo docker stop)
+--entrypoint overrides&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;tiene que haber al menos un cmd o entrypoint&lt;/li&gt;
+&lt;li&gt;entrypoint para ejecutables&lt;/li&gt;
+&lt;li&gt;cmd es mas para preparar parametros&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;SPA serve&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-Dockerfile&quot;&gt;version: &apos;2&apos;
+services:
+  spa:
+    image: nginx
+    volumes:
+      - &quot;.:/usr/share/nginx/html:ro&quot;
+    ports:
+      - &quot;10000:80&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;h2&gt;API&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-Dockerfile&quot;&gt;FROM node:6
+EXPOSE 3000
+ADD . /src
+WORKDIR /src
+RUN npm rebuild &amp;#x26;&amp;#x26; \
+  npm test
+CMD [&quot;npm&quot;, &quot;start&quot;]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;???
+Hay muchas alternativas, hay una tarea de diseño implícita&lt;/p&gt;
+&lt;hr&gt;
+&lt;div style=&quot;float: left;&quot;&gt;
+  &lt;img src=&quot;/images/assets/docker-32d4f.png&quot; width=&quot;50px&quot;&gt;&lt;/img&gt;
+&lt;/div&gt;
+##&amp;nbsp; Compose
+```Dockerfile
+# docker-compose.yml just for api
+version: &apos;2&apos;
+services:
+  api:
+    image: mirepo.com/api-image:production
+    ports:
+      - &quot;3000:3000&quot;
+    depends_on:
+      - mongo
+    environment:
+      PORT: 3000
+  mongo:
+    image: mongo
+    ports:
+      - &quot;27017:27017&quot;
+    volumes:
+      - ./mongodata:/data/db
+```
+&lt;p&gt;???
+Links puede utilizarse para definir alias pero no es necesario&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2&gt;Comandos para compose&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Correr, Parar, Borrar&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ docker-compose up -d
+$ docker-compose stop -t 10
+$ docker-compose rm
+$ docker-compose --help
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;h2&gt;Anexo: Docker services&lt;/h2&gt;
+&lt;p&gt;Es una abstracción de los contenedores.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Permite a un swarm de docker nodes trabajar juntos mediante la ejecucion de replica tasks, que son docker images tambien&lt;/li&gt;
+&lt;li&gt;Se puede especificar la cantidad de replica tasks y el manager del swarm se encarga de distribuir la carga entre los nodos&lt;/li&gt;
+&lt;li&gt;Para el cliente, el servicio luce como un docker daemon regular&lt;/li&gt;
+&lt;li&gt;Los servicios son los que brindan escalabilidad y flexibilidad de updates
+???
+swarm = el plural de docker nodes... manada/multitud/enjambre/nube&lt;/li&gt;
+&lt;li&gt;temas avanzados pendientes: swarm, service discovery, pagina oficial, shipping yard, etc&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2&gt;Operaciones con services&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ docker service create \
+  --name my-service \
+  --replicas 3 \
+  nginx:alpine
+
+$ docker-compose scale service-name=2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;???&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;services global/replicated&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1&gt;Q &amp;#x26; A&lt;/h1&gt;
+&lt;hr&gt;
+&lt;h1&gt;Gracias!&lt;/h1&gt;</content:encoded></item><item><title><![CDATA[Contenedores unicamente de volumenes en docker (volume only containers)]]></title><description><![CDATA[En estos dias estuve trabajando mucho con Docker para diversos proyectos, aprendiendo mucho en el camino, y note que hay un tema particular…]]></description><link>http://nicosommi.com/2016/09/06/contenedores-unicamente-de-volumenes-en-docker-volume-only-containers/</link><guid isPermaLink="false">http://nicosommi.com/2016/09/06/contenedores-unicamente-de-volumenes-en-docker-volume-only-containers/</guid><pubDate>Wed, 07 Sep 2016 00:10:13 GMT</pubDate><content:encoded>&lt;p&gt;En estos dias estuve trabajando mucho con Docker para diversos proyectos, aprendiendo mucho en el camino, y note que hay un tema particular que me costo digerir.&lt;/p&gt;
+&lt;p&gt;Los volumenes compartidos entre containers que necesitan permanecer en una ubicacion determinada del host son soportados de una manera extraña que se da casi por casualidad.&lt;/p&gt;
+&lt;p&gt;Es decir, si quiero que mi container bindee una carpeta a una carpeta del host, esto es muy sencillo si quiero hacerlo para un solo container, basta con un argumento a docker run, como el siguiente&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;docker run -it -v /etc:/etc coreos/apache /bin/bash
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Pero que tal si quiero que esto suceda en varios servicios y a su vez utilizando docker-compose?&lt;/p&gt;
+&lt;p&gt;Bueno esto tampoco es dificil, por ejemplo algo asi&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;yaml&quot;&gt;version: &apos;2&apos;
+services:
+  webserver:
+    image: coreos/apache
+    volumes:
+      - /etc:/etc
+  app2:
+    build: .
+    volumes:
+      - /etc:/etc
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Podriamos utilizar los ‘named’ volumes a nivel service para compartirlos, pero en ese caso no estariamos especificando el volume del host.&lt;/p&gt;
+&lt;p&gt;Ahora bien, si este patron de mapeo de volumenes lo utilizamos varias veces, uno tiende a reutilizar el codigo, y aqui es donde he encontrado este patron muy utilizado que queria señalar:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;yaml&quot;&gt;version: &apos;2&apos;
+services:
+  data:
+    image: tianon/true
+    volumes:
+      - /etc:/etc
+  webserver:
+    image: coreos/apache
+    volumes_from:
+      - data
+  app2:
+    build: .
+    volumes_from:
+      - data
+  app3:
+    image: postgres
+    volumes_from:
+      - data
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Bueno aqui ven el patron al que me refiero. Es extraño porque hay incluso imagenes en docker hub que son “fake” solo para generar esto (como la indicada, tianon/true). Si bien la idea del comando es realmente tomar los volumenes de otro container, esto lo he visto muchisimo, y es usado porque de esta manera queda mas significativo el mapeo que tomandolo de un container X particularmente (es decir queda mas claro al tomar volumes from ‘data’ que tomarlos de ‘webserver’) y bueno porque de docker te dicen que lo hagas asi.&lt;/p&gt;
+&lt;p&gt;Creo que vale la pena señalarlo ya que me costo mucho entender que en la version 2 del docker compose esto no tiene nada que ver con los volumenes (que estan pensados para compartir volumenes entre containers) y buscando en internet no suelen encontrarse tan facilmente desde este punto de vista, sino que uno tiene que “deducir” que esta es la “mejor” forma de utilizarlo, y entonces buscarlo de esta manera (volume only container o data volume container), porque en realidad esto si esta documentado &lt;a href=&quot;https://docs.docker.com/engine/tutorials/dockervolumes/#/creating-and-mounting-a-data-volume-container&quot;&gt;aqui&lt;/a&gt; y es uno de los pocos casos de uso que no cubre el nuevo volumes (segun &lt;a href=&quot;https://github.com/docker/docker/issues/17798&quot;&gt;este issue&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;Como conclusion final vale la pena entonces destacar que en la version 2 del docker compose esto sigue utilizandose de la misma manera que la primer version, mas alla de la adicion de los volumes al YAML.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Generation Driven Development – Introduction to the idea and to gddify]]></title><description><![CDATA[gddify on github leer este articulo en español Keep your source code blocks updated on every software component on your architecture. Even…]]></description><link>http://nicosommi.com/2016/05/27/generation-driven-development-introduction-to-the-idea-and-to-gddify/</link><guid isPermaLink="false">http://nicosommi.com/2016/05/27/generation-driven-development-introduction-to-the-idea-and-to-gddify/</guid><pubDate>Fri, 27 May 2016 13:38:42 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://github.com/nicosommi/gddify&quot;&gt;gddify on github&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;/2016/05/25/generation-driven-development-introduccion-a-la-idea-y-a-gddify/&quot;&gt;leer este articulo en español&lt;/a&gt;&lt;figure id=&quot;attachment_639&quot; style=&quot;width: 300px&quot; class=&quot;wp-caption alignnone&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/2016/05/sync-300x300.png&quot; alt=&quot;Keep your source code blocks updated on every software component on your architecture. Even if they belong to the same file.&quot; width=&quot;300&quot; height=&quot;300&quot; class=&quot;size-medium wp-image-639&quot; srcset=&quot;/images/2016/05/sync-300x300.png 300w, /images/2016/05/sync-150x150.png 150w, /images/2016/05/sync.png 512w&quot; sizes=&quot;(max-width: 300px) 85vw, 300px&quot; /&gt;&lt;figcaption class=&quot;wp-caption-text&quot;&gt;Keep your source code blocks updated on every software component on your architecture. Even if they belong to the same file.&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Note: GDD and gddify are a work in progress.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Applications are concrete points of view. A point of view that is composed by other points of view. Those from every person that participates in their development. Specially the developers, who create the abstraction from the real information flow using a programming language.&lt;/p&gt;
+&lt;p&gt;Points of view, or models, are the thing that is observed, plus an additional subjective load from the observer, a meta information. Payload and meta.&lt;/p&gt;
+&lt;p&gt;Over the last year, many times I have created source code generators. Either using one of the template languages out there (swig, ejs, lodash, etc, etc) or using yeoman. Even with custom scripts.&lt;/p&gt;
+&lt;p&gt;Also, over the last years, I saw how promises get into the equation on the async world. This javascript objects that promise us some information to be delivered in the future. I always though that this was a very interesting concept, and that it was very clever. Is not only that simplifies the way you can write functions, but also addresses ambiguity in the error handling mechanism. But better of all, it represents the reality better. This is the point which I want to take in order to explain GDD (generation driven development).&lt;/p&gt;
+&lt;p&gt;As I said earlier, when generating source code, we (developers) are used to use some kind of templating language, or yeoman or some custom script. However, if we take a look at the reality, a template (God bless the templates, I will never criticize them after all that they did for me) is physically impossible, it just does not make any sense to put two things together on the same place and mix them up literally. The “mix”, in the reality, is like a cell-level genesis that grows.&lt;/p&gt;
+&lt;p&gt;Someone may tell me here that, even if templates are not too close to the reality, they helped us to accomplish many objectives, even unimaginable. And that’s true. Absolutely. But I think that a better picture of the reality here, like promises did, may also simplify the development process.&lt;/p&gt;
+&lt;p&gt;But let’s take a look at some common problems right now:&lt;/p&gt;
+&lt;p&gt;– microservices: a lot of overhead on maintenance because the number of projects that compose your architecture&lt;/p&gt;
+&lt;p&gt;– constant module update: it happens a lot that you use a module out there that may not be updated at the right time for you, you have to fork it and create your own.&lt;/p&gt;
+&lt;p&gt;– technology decisions: new utilities are released every day, some are the right choice for us and others don’t, and the impact here is important because it may lead to a certain amount of refactor work later on&lt;/p&gt;
+&lt;p&gt;– unmaintained modules: it’s a common case that some libraries are abandonware because of different reasons&lt;/p&gt;
+&lt;p&gt;– broken module compatibility: also, there are modules that relies on other modules, and wrappers-only-modules often don’t get updated as fast as the original module, or when they change the version and the interface gets changed too in some way and now we need to adapt all of our projects.&lt;/p&gt;
+&lt;p&gt;– repeated source code patterns: there are source code patterns that we repeat over and over on our components&lt;/p&gt;
+&lt;p&gt;– build a generator: is something new and you have to learn how to use it, how to test it, or use some third party generator and learn how it works (like MEAN)&lt;/p&gt;
+&lt;p&gt;– template issues: IDE’s are not prepared to parse two languages in the same file on most cases&lt;/p&gt;
+&lt;p&gt;All these are reasons made me think that there is something better out there. There are things to improve.&lt;/p&gt;
+&lt;p&gt;Going back to points of view. Applications are concrete points of view. So, if we think on how to generate more points of view, we will need to pay special attention to the meta information, which are the perception of the reality, to create and maintain other similar perceptions. We need to observe the observer in order to create it.&lt;/p&gt;
+&lt;p&gt;From this idea I created this development practice that I called GDD, which stands for Generation Driven Development, which is just to add meta information on the source code that is needed in order to generate it again but with little differences, using the main meta information tool on source code: the comments.&lt;/p&gt;
+&lt;h2&gt;Which is that necessary information?&lt;/h2&gt;
+&lt;p&gt;This can be a long discussion and surely with time and maybe the collaboration of the community I will find things that today I do not see.&lt;/p&gt;
+&lt;p&gt;Actually, the tool that I created to implement GDD, gddify, supports the thing that my experience told me (my current point of view to create points of view). So let’s take a look at those elements one by one:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;sw component (swComponent)&lt;/em&gt;: a software component that contains software blocks. A project. Examples: a webapp, an API, a microservice, or any project.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;sw block (swBlock)&lt;/em&gt;: a sw block, a group of files inside a software component with a particular purpose. For example, the files that build the source code into the compiled code (in the js world, maybe gulp related files), or the files involved in a SCUDL (even specs!), or any other group that means something logically or practically to our architecture.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;source code files&lt;/em&gt;: this is the minimum unit for generation. a file.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure id=&quot;attachment_630&quot; style=&quot;width: 300px&quot; class=&quot;wp-caption alignnone&quot;&gt;&lt;img src=&quot;/images/2016/05/ph.portion-300x255.png&quot; alt=&quot;place holders&quot; width=&quot;300&quot; height=&quot;255&quot; class=&quot;size-medium wp-image-630&quot; srcset=&quot;/images/2016/05/ph.portion-300x255.png 300w, /images/2016/05/ph.portion.png 466w&quot; sizes=&quot;(max-width: 300px) 85vw, 300px&quot; /&gt;&lt;figcaption class=&quot;wp-caption-text&quot;&gt;Inside place holders, that content will be always the same for that particular file even after updates&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;place holders&lt;/em&gt;: This are source code blocks that keep their content the same for that specific file. It is delimited with meta information.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Example using gddify (js)&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;javascript&quot;&gt;/* ph constructor */
+constructor () {
+  this.name = &apos;nico&apos;
+}
+/* endph */
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;replacements&lt;/em&gt;: objects with information for replacements, which will be used in the synchronization. Their current attributes in gddify are name (which will be used to match the same point from other files), regex (regular expression, which is used to synchronize other files with this one) and value (which is the value for that replacement here in this file).&lt;/p&gt;
+&lt;p&gt;Example using gddify (js), please notice that this replacement information is contained inside a special placeholder called replacements and that their attributes are comma separated, and one per line.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;javascript&quot;&gt;/* ph replacements */
+/* name, /myClass/g, myClass */
+/* endph */
+&lt;/code&gt;&lt;/pre&gt;&lt;figure id=&quot;attachment_629&quot; style=&quot;width: 280px&quot; class=&quot;wp-caption alignnone&quot;&gt;
+&lt;p&gt;&lt;img src=&quot;/images/2016/05/replacements.portion-280x300.png&quot; alt=&quot;replacements&quot; width=&quot;280&quot; height=&quot;300&quot; class=&quot;size-medium wp-image-629&quot; srcset=&quot;/images/2016/05/replacements.portion-280x300.png 280w, /images/2016/05/replacements.portion.png 425w&quot; sizes=&quot;(max-width: 280px) 85vw, 280px&quot; /&gt;&lt;figcaption class=&quot;wp-caption-text&quot;&gt;a replacement example&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;stamps&lt;/em&gt;: source code blocks shared across components. They keeps always the same content. But, they can be ignored from files.&lt;/p&gt;
+&lt;p&gt;Example using gddify (js)&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;javascript&quot;&gt;/* stamp toJson */
+toJSON () {
+  return { name: this.name }
+}
+/* endstamp */
+&lt;/code&gt;&lt;/pre&gt;&lt;figure id=&quot;attachment_631&quot; style=&quot;width: 199px&quot; class=&quot;wp-caption alignnone&quot;&gt;
+&lt;p&gt;&lt;img src=&quot;/images/2016/05/package.js.portion-199x300.png&quot; alt=&quot;stamps&quot; width=&quot;199&quot; height=&quot;300&quot; class=&quot;size-medium wp-image-631&quot; srcset=&quot;/images/2016/05/package.js.portion-199x300.png 199w, /images/2016/05/package.js.portion.png 583w&quot; sizes=&quot;(max-width: 199px) 85vw, 199px&quot; /&gt;&lt;figcaption class=&quot;wp-caption-text&quot;&gt;Stamps are code blocks shared and immutable across components (that can be ignored)&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;ignoring stamps&lt;/em&gt;: array of names of stamps that will be ignored on this file.&lt;/p&gt;
+&lt;p&gt;Example using gddify (js). Notice that, like replacements, ignored stamps are contained in a special place holder called ignoringStamps.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;javascript&quot;&gt;/* ph ignoringStamps */
+/* toJson, parse */
+/* endstamp */
+&lt;/code&gt;&lt;/pre&gt;&lt;figure id=&quot;attachment_632&quot; style=&quot;width: 300px&quot; class=&quot;wp-caption alignnone&quot;&gt;
+&lt;p&gt;&lt;img src=&quot;/images/2016/05/gulpfile.ignoringstamps.portion-300x244.png&quot; alt=&quot;Ignoring stamps&quot; width=&quot;300&quot; height=&quot;244&quot; class=&quot;size-medium wp-image-632&quot; srcset=&quot;/images/2016/05/gulpfile.ignoringstamps.portion-300x244.png 300w, /images/2016/05/gulpfile.ignoringstamps.portion.png 591w&quot; sizes=&quot;(max-width: 300px) 85vw, 300px&quot; /&gt;&lt;figcaption class=&quot;wp-caption-text&quot;&gt;Ignoring stamps are those code blocks that we do not want to show this particular file&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;The description of this software components on the right way, will allow us not just create more components, but also combine blocks, and keep them updated, with no additional effort building generators, and with just one programming language, and with no templates. That is the value that this way of development has, thanks to the change on the model which is at my opinion, better to address these common problems of today.&lt;/p&gt;
+&lt;p&gt;I consider that GDD has the potential to lower that cost considerably, because it allows you to share code blocks across projects, keeping them up to date easily, and thus brings microservices and other kind of complex architectures that requires modularization to everyone and not only to those who can pay high expenses on development. Improve applications quality and price. That is my personal objetive and the compromise and vision of &lt;a href=&quot;http://integracionesagiles.com&quot;&gt;Integraciones Agiles&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;This is a simple introduction to the model of visualizing the problem, soon I will publish more details on the usability, on how to get used to the process, common issues, use cases, more code examples, and much more.&lt;/p&gt;
+&lt;h2&gt;Contribute&lt;/h2&gt;
+&lt;p&gt;I’m doing this open source without making any money, so in order to keep dedicating time to this kind of projects I need the support of the community. Please do no hesitate to contact me for contributions to the idea, to the source code, donations, services, consultancy or business.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://integracionesagiles.com&quot;&gt;http://integracionesagiles.com&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/nicosommi/gddify&quot;&gt;gddify en github&lt;/a&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Generation Driven Development – Introducción a la idea y a gddify]]></title><description><![CDATA[gddify en github read this article in english Mantenga los bloques de código en sus componentes de software actualizados. Incluso…]]></description><link>http://nicosommi.com/2016/05/25/generation-driven-development-introduccion-a-la-idea-y-a-gddify/</link><guid isPermaLink="false">http://nicosommi.com/2016/05/25/generation-driven-development-introduccion-a-la-idea-y-a-gddify/</guid><pubDate>Thu, 26 May 2016 00:08:30 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://github.com/nicosommi/gddify&quot;&gt;gddify en github&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;/2016/05/27/generation-driven-development-introduction-to-the-idea-and-to-gddify/&quot;&gt;read this article in english&lt;/a&gt;&lt;figure id=&quot;attachment_639&quot; style=&quot;width: 300px&quot; class=&quot;wp-caption alignnone&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/2016/05/sync-300x300.png&quot; alt=&quot;Mantenga los bloques de codigo en sus componentes de software actualizados. Incluso perteneciendo al mismo archivo.&quot; width=&quot;300&quot; height=&quot;300&quot; class=&quot;size-medium wp-image-639&quot; srcset=&quot;/images/2016/05/sync-300x300.png 300w, /images/2016/05/sync-150x150.png 150w, /images/2016/05/sync.png 512w&quot; sizes=&quot;(max-width: 300px) 85vw, 300px&quot; /&gt;&lt;figcaption class=&quot;wp-caption-text&quot;&gt;Mantenga los bloques de código en sus componentes de software actualizados. Incluso perteneciendo al mismo archivo.&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Nota: GDD y gddify son un trabajo en curso.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Las aplicaciones, son ni mas ni menos que materializaciones de un punto de vista. Un punto de vista que esta compuesto por los puntos de vista de los participantes del desarrollo de la misma. Sobre todo de los programadores que son quienes crean entidades que abstraen el comportamiento real del flujo de la información a lenguajes de programación.&lt;/p&gt;
+&lt;p&gt;Los puntos de vista, o modelos, se podría decir que son lo observado, mas una carga subjetiva del observador, una meta información. Para los mas técnicos: payload y meta.&lt;/p&gt;
+&lt;p&gt;Durante los últimos años me vi muchas veces desarrollando generadores de código. Ya sea utilizando templates (de los miles que hay), o con yeoman (que esta de moda y utiliza templates), o con algún script personalizado.&lt;/p&gt;
+&lt;p&gt;También, durante los últimos años, he visto el avance de las Promesas. Estos objetos de javascript que nos prometen la entrega de algo a futuro. Este concepto me pareció siempre muy interesante, y acertado a la vez. Es que no sólo simplifica el modo de escribir funciones, también elimina ambigüedades. Pero por sobre todo, representa mejor la realidad. Y esto es lo que me quiero llevar para explicar GDD (Generation Driven Development).&lt;/p&gt;
+&lt;p&gt;A la hora de generar codigo, los programadores estamos acostumbrados ya a usar templates, a utilizar yeoman, o a hacer cosas raras. Sin embargo, si observamos la realidad, un template (benditos templates no me animaría a criticarlos… despues de tantas veces que me han salvado!) es mas bien algo totalmente imposible en el mundo físico, sencillamente no tiene sentido poner dos cosas en el mismo lugar de manera literal. La “mezcla”, en la realidad se produce por ejemplo, por reproducción a nivel celular que luego, crece.&lt;/p&gt;
+&lt;p&gt;Ahora bien, alguien podria decir que si bien no sea una fiel representacion de la realidad, los templates han servido a numerosos objetivos y aun lo hacen. Es totalmente cierto. Pero creo que una representación de la realidad mas atinada, como lo hicieron las promesas, tambien simplificara el proceso de desarrollo.&lt;/p&gt;
+&lt;p&gt;Toda esta introducción, sumada a necesidades actuales como los microservicios que tiene una carga de mantenimiento de muchos proyectos muy grande (de hecho sigue el single responsibility pattern o patrón de responsabilidad simple), las constantes actualizaciones de librerías, las librerías abandonadas, las compatibilidades que se rompen, la lisa y llana repetición de patrones de operaciones, etc, etc. y ademas sumado a la carga que lleva hoy en dia el desarrollo de generadores, el bajo nivel de test (o de alto esfuerzo en su realizacion) que se puede efectuar sobre los templates y su bajo soporte por los IDE… todo esto como decia, me ha llevado a pensar en que allí había algo por mejorar.&lt;/p&gt;
+&lt;p&gt;Volviendo a lo de los puntos de vista. Las aplicaciones son puntos de vista concretos. Ahora bien, si pensamos en generar como siendo esto generar mas puntos de vista, debemos prestar especial atención a la meta información de dichos puntos de vista, que son la percepción de la realidad, para crear y mantener otras percepciones similares. Debemos observar al observador para recrearlo.&lt;/p&gt;
+&lt;p&gt;De este concepto, he creado esta practica de desarrollo que llame GDD, que no es ni mas ni menos que añadir en el código fuente, información necesaria para poder generarlo, utilizando como principal herramienta el principal elemento para la meta información del código fuente: los comentarios.&lt;/p&gt;
+&lt;h2&gt;Cual es la informacion necesaria?&lt;/h2&gt;
+&lt;p&gt;Eso puede ser una larga discusion y seguramente con el paso del tiempo y quizas con la colaboracion de la comunidad podre encontrar cosas que aun no he detectado. Actualmente, en la herramienta para implementar GDD que he desarrollado, gddify, he agregado soporte para lo que mi experiencia me ha marcado (mi punto de vista actual para generar puntos de vista), veamos estos elementos uno a uno:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;componente sw (swComponent)&lt;/em&gt;: es un componente software, que consta de bloques sw. Un proyecto. Por ejemplo, una aplicacion web, un api, un microservicio, o cualquier proyecto.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;bloques sw (swBlock)&lt;/em&gt;: es un bloque de software, un conjunto de archivos dentro de un componente, con una funcion particular. Por ejemplo, los archivos de codigo que ejecutan el build, los archivos de un CRUD (o SCUDL), o cualquier otra agrupacion que tenga un significado logico o practico para nuestra arquitectura.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;archivo de codigo fuente (source code files)&lt;/em&gt;: este es la unidad base de sincronizacion/generacion. Es un archivo.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure id=&quot;attachment_630&quot; style=&quot;width: 300px&quot; class=&quot;wp-caption alignnone&quot;&gt;&lt;img src=&quot;/images/2016/05/ph.portion-300x255.png&quot; alt=&quot;place holders&quot; width=&quot;300&quot; height=&quot;255&quot; class=&quot;size-medium wp-image-630&quot; srcset=&quot;/images/2016/05/ph.portion-300x255.png 300w, /images/2016/05/ph.portion.png 466w&quot; sizes=&quot;(max-width: 300px) 85vw, 300px&quot; /&gt;&lt;figcaption class=&quot;wp-caption-text&quot;&gt;Dentro de los place holders, se mandentra el codigo del archivo actual a pesar de las actualizaciones&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;contenedores (place holders)&lt;/em&gt;: estos son bloques de codigo que mantienen su contenido siempre para el archivo actual, mas alla de las sincronizaciones que pudiesen ocurrir con otros archivos. Se delimita con meta informacion.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Ejemplo de implementacion en gddify (js)&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;javascript&quot;&gt;/* ph constructor */
+constructor () {
+  this.name = &apos;nico&apos;
+}
+/* endph */
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;reemplazos (replacements)&lt;/em&gt;: objetos de informacion para reemplazos, que seran utilizados en la sincronizacion. Sus atributos actuales en gddify son name (nombre, que se utilizara para encontrar correspondencias entre archivos), regex (expresion regular de javascript que utilizaran otros archivos para sincronizarse con este), y value (valor que este archivo tendra en esos reemplazos).&lt;/p&gt;
+&lt;p&gt;Ejemplo de implementacion en gddify (js), notar que es esta contenido dentro de un placeholder especial denominado replacements, y que sus atributos estan separados por comas. Habra una linea para cada atributo.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;javascript&quot;&gt;/* ph replacements */
+/* name, /myClass/g, myClass */
+/* endph */
+&lt;/code&gt;&lt;/pre&gt;&lt;figure id=&quot;attachment_629&quot; style=&quot;width: 280px&quot; class=&quot;wp-caption alignnone&quot;&gt;
+&lt;p&gt;&lt;img src=&quot;/images/2016/05/replacements.portion-280x300.png&quot; alt=&quot;replacements&quot; width=&quot;280&quot; height=&quot;300&quot; class=&quot;size-medium wp-image-629&quot; srcset=&quot;/images/2016/05/replacements.portion-280x300.png 280w, /images/2016/05/replacements.portion.png 425w&quot; sizes=&quot;(max-width: 280px) 85vw, 280px&quot; /&gt;&lt;figcaption class=&quot;wp-caption-text&quot;&gt;un ejemplo complejo de reemplazos&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;estampas (stamps)&lt;/em&gt;: bloques de codigo que no cambiaran para ninguno de los archivos sincronizados, pero que pueden ser omitidos con otro objeto denominado ignoringStamps (siguiente)&lt;/p&gt;
+&lt;p&gt;Ejemplo en gddify (js)&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;javascript&quot;&gt;/* stamp toJson */
+toJSON () {
+  return { name: this.name }
+}
+/* endstamp */
+&lt;/code&gt;&lt;/pre&gt;&lt;figure id=&quot;attachment_631&quot; style=&quot;width: 199px&quot; class=&quot;wp-caption alignnone&quot;&gt;
+&lt;p&gt;&lt;img src=&quot;/images/2016/05/package.js.portion-199x300.png&quot; alt=&quot;stamps&quot; width=&quot;199&quot; height=&quot;300&quot; class=&quot;size-medium wp-image-631&quot; srcset=&quot;/images/2016/05/package.js.portion-199x300.png 199w, /images/2016/05/package.js.portion.png 583w&quot; sizes=&quot;(max-width: 199px) 85vw, 199px&quot; /&gt;&lt;figcaption class=&quot;wp-caption-text&quot;&gt;Los stamps son bloques de codigo compartidos e inmutables entre componentes (pero que se pueden ignorar)&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;estampas ignoradas (ignoringStamps)&lt;/em&gt;: array de nombres de estampas cuyo contenido este archivo no incluira si apareciesen en una sincronizacion con otro archivo.&lt;/p&gt;
+&lt;p&gt;Ejemplo en gddify (js). Notar que al igual que los reemplazos, se encuentra dentro de un place holder especial, en este caso denominado ignoringStamps&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;javascript&quot;&gt;/* ph ignoringStamps */
+/* toJson, parse */
+/* endstamp */
+&lt;/code&gt;&lt;/pre&gt;&lt;figure id=&quot;attachment_632&quot; style=&quot;width: 300px&quot; class=&quot;wp-caption alignnone&quot;&gt;
+&lt;p&gt;&lt;img src=&quot;/images/2016/05/gulpfile.ignoringstamps.portion-300x244.png&quot; alt=&quot;Ignoring stamps&quot; width=&quot;300&quot; height=&quot;244&quot; class=&quot;size-medium wp-image-632&quot; srcset=&quot;/images/2016/05/gulpfile.ignoringstamps.portion-300x244.png 300w, /images/2016/05/gulpfile.ignoringstamps.portion.png 591w&quot; sizes=&quot;(max-width: 300px) 85vw, 300px&quot; /&gt;&lt;figcaption class=&quot;wp-caption-text&quot;&gt;Ignoring stamps son aquellos bloques inmutables que no queremos mostrar en este archivo en particular&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;La descripción de estos componentes de software de manera correcta, nos permitirá no solo generarlos en el futuro, sino generar particularmente bloques individuales pudiendo combinarlos, y ademas mantenerlos actualizados, sin esfuerzo adicional en la construcción de generadores, y en un solo lenguaje sin templates. He allí el valor que creo que este modo de desarrollar tiene gracias al cambio de modelo con el que ataca el problema que considero es mas cercano a al sentido común.&lt;/p&gt;
+&lt;p&gt;Actualmente una arquitectura de microservicios tiene una desventaja muy importante que es la dificultad de mantenimiento. Esto ocurre mas alla del delivery continuo, de la integración continua, etc. Esto es debido a lo costoso de mantener muchos proyectos.&lt;/p&gt;
+&lt;p&gt;Por otro lado, este trabajo genera des-sincronizacion por falta del adecuado mantenimiento, impactando en la calidad de los componentes producidos.&lt;/p&gt;
+&lt;p&gt;Considero que GDD tiene el potencial de disminuir ese costo considerablemente ya que permite compartir bloques de código y archivos entre proyectos, manteniendolos actualizados de manera sencilla, y asi acercar los microservicios y otras arquitecturas complejas que requieren modularización a todo el mundo y no solo a quienes puedan afrontar altos gastos en el departamento de sistemas. Mejorar el mundo de las aplicaciones en calidad y precio. Ese es mi objetivo personal y el compromiso y la visión de &lt;a href=&quot;http://integracionesagiles.com&quot;&gt;Integraciones Agiles&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;Esto es una simple introducción al modelo de visualizar el problema, pronto publicare mas detalles de la usabilidad del mismo, de como acostumbrarse, problemas frecuentes, ejemplos de aplicación, códigos de ejemplo, y mucho mas.&lt;/p&gt;
+&lt;h2&gt;Colaboración&lt;/h2&gt;
+&lt;p&gt;Me encuentro desarrollando esto de manera open source y sin ganar dinero a cambio, y para poder continuar dedicando tiempo a estos proyectos, necesito el aporte de la comunidad. Por favor no dude en contactarme si esta interesado en temas de donaciones, servicios, consultoria, negocios, etc.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://integracionesagiles.com&quot;&gt;http://integracionesagiles.com&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/nicosommi/gddify&quot;&gt;gddify en github&lt;/a&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[A common pitfall when using “global” (not really) CLI’s in your node.js project (like gulp)]]></title><description><![CDATA[“ Little things can make a big difference. ” “Little things can make a big difference.” I’m sure you heard that phrase a lot. Well there are…]]></description><link>http://nicosommi.com/2016/03/30/a-good-way-to-use-global-not-really-clis-in-your-node-js-project-like-gulp/</link><guid isPermaLink="false">http://nicosommi.com/2016/03/30/a-good-way-to-use-global-not-really-clis-in-your-node-js-project-like-gulp/</guid><pubDate>Wed, 30 Mar 2016 16:47:00 GMT</pubDate><content:encoded>&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;“Little things can make a big difference.”&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;“Little things can make a big difference.” I’m sure you heard that phrase a lot. Well there are cases in which that is true. And this is, at my opinion, one of those cases. Some people know about this detail I’m going to talk about, but most people don’t.&lt;/p&gt;
+&lt;p&gt;Why? Almost everyone, including me until recently, when they decide to use a tool, like gulp, on one of their node.js projects, they creates a gulp file on the project root with some tasks like “test” on it for example, and then run something like&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;javascript&quot;&gt;gulp test
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Right?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Well. I understand you if that’s your case, because they tell you to do so in the official documentation. I did the same some time ago. But, in most cases, that’s a bad thing to do. I will say that you should stop doing that ASAP.&lt;/em&gt; Not the gulpfile, that’s ok, but I have what I think it is a solid set of arguments against using gulp as a top level task runner (I mean installed globally). &lt;em&gt;Let me explain you why.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Firstly, I want my node.js project to be cloned and executed right away. Period. &lt;em&gt;I do not want the container / user / developer / anybody to install something globally on their environments&lt;/em&gt; besides of the natural requirements for that technology. Because &lt;em&gt;is just unrelated&lt;/em&gt; to my node.js project environment. It’s not a global dependency, it is a local dependency&lt;strong&gt;.&lt;/strong&gt; The flow should be something more like: git clone, npm install, npm test. &lt;em&gt;And that’s it.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Let’s imagine this situation for a minute.&lt;/em&gt; I’m making public modules relying on the global gulp. On the other hand, you’re a developer and you’re new to node.js… then you start with some project and you decide to clone one of my modules. Now, suddenly, if you want to run the test or maybe do some other task like contributing to my project, you need to install some global tool called, in this example, gulp. So now you need to read lot’s of docs to know what it is and how it works. &lt;em&gt;All right, I would say that coupling gulp learning curve to my node.js modules is not intuitive and it’s also unfair for those developers who don’t know about our custom tool preference or they just don’t want to learn it. So by doing this, you’re not just creating a dependency for your projects in your environments but also for the users/potential contributors of your module if it’s a public module, or the developers in your team if it’s not.&lt;/em&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;I would say that coupling gulp learning curve to my node.js modules is not intuitive and it’s also unfair for those developers who don’t know about our custom tool preference or they just don’t want to learn it. So by doing this, you’re not just creating a dependency for your projects in your environments but also for the users&lt;em&gt;/potential contributors&lt;/em&gt; of your module if it’s a public module, or the developers in your team if it’s not.&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Wait, this is not just some hedonistic crap. And it’s not just me believing it’s better. That thing can hurt your open source strategy and it can make you lose time with your team.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;And there are even more real conflicts with this… specifically with module versions.&lt;/em&gt; If you don’t believe me, just start playing with babel versions 5, 6 along with gulp versions 2 and 3 in two or three different projects, and you will face a lot of problems. Because you’re sharing dependency versions among projects by using a global CLI. Gulp (like almost any other popular CLI in node.js) is not really a global CLI, is a dependency of each one of your projects. So on each case you really need to ask to yourself “is this CLI a real global dependency or is related to my projects individually?”. Because if you decide this wrong, this may force you to update your old projects after you update one, or switch constantly global CLI versions, and this task can be very annoying, &lt;strong&gt;&lt;em&gt;making you lose time and money&lt;/em&gt;&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;You may think, well anyway I just have a few projects and if I refresh one I can just refresh all of them. Well if you grow you will have troubles this is a side effect on the team plan. It’s creating unexpected efforts. And it may be not so easy to figure out which versions are failing.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;**Gulp (like almost any other popular CLI in node.js) is not really a global CLI, is a dependency of each one of your projects. So on each case you really need to ask to yourself “is this CLI a real global dependency or is related to my projects individually?” Because if you decide this wrong, this may force you to update your old projects after you update one, or switch constantly global CLI versions, and this task can be very annoying, **\&lt;/em&gt;making you lose time and money_**.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;**_&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Even if gulp get a really amazing development process in which they fully stick to backwards compatibility, this is not a recommended practice at all, mainly because you are creating a node.js project, not a gulp project. And it does not depend on one framework as I told you with the babel/gulp letal combination. &lt;em&gt;I remember that day. We literally had to refresh all our modules because they suddenly started to fail in the continuous integration server when the environment changed.&lt;/em&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;I remember that day. We literally had to refresh all our modules because they suddenly started to fail in the continuous integration server when the environment changed.&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Introduction to the “trivial” solution&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Node.js comes with the npm binary built in&lt;/em&gt;. Npm supports, via package.json, running scripts in different stages or phases and also custom scripts. Also, some packages like gulp have a binary link for which &lt;em&gt;npm creates a symbolic link automatically on a project scoped bin folder and npm run includes those links in the PATH automatically for the scripts in the package.json&lt;/em&gt;.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;npm creates a symbolic link automatically on a project scoped bin folder and npm run includes those links in the PATH automatically for the scripts in the package.json.&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;You can see a reference here &lt;a href=&quot;https://docs.npmjs.com/cli/run-script&quot;&gt;https://docs.npmjs.com/cli/run-script&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;So the point is to use the local gulp binary link in the package.json as a shortcut for executing your internal gulp tasks.&lt;/em&gt; And, luckily, that is transparent to us.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;So the point is to use the local gulp binary link in the package.json as a shortcut for executing your internal gulp tasks&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;How to do this?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Well basically, let’s say you want to replace your &lt;em&gt;gulp test&lt;/em&gt; command so you don’t need a global gulp… well ok, then simply add this to your scripts section of your package.json&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;javascript&quot;&gt;...(content on your package.json)...
+&quot;scripts&quot;: {
+&quot;test&quot;: &quot;gulp test&quot;
+}
+...(more content on your package.json)...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;And that’s it!&lt;/strong&gt; With that line now you just need a node js regular environment with nothing installed globally on it, like this&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;javascript&quot;&gt;npm test
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Trivial? Well not so fast. This is the small detail. If you read the npm documentation, maybe you are doing this already. But according to my experience and what I see out there, some people do this but they don’t know what happens behind the scenes and most people just use the global gulp&lt;em&gt;. This npm test command is not executing the global gulp. The better way to experiment this is just uninstalling the global gulp. And please do that ASAP!&lt;/em&gt; &lt;em&gt;You just need to install gulp (or the CLI you want to make local) locally&lt;/em&gt; in your project before you execute the script through &lt;strong&gt;npm run&lt;/strong&gt;… remember that. So this is picking the link from the PATH that points to the node_modules version of gulp of your project.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;javascript&quot;&gt;npm uninstall -g gulp
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;**&lt;em&gt;This npm test command is not executing the global gulp.&lt;/em&gt; The better way to experiment this is just uninstalling the global gulp. And please do that ASAP! You just need to install gulp (or the CLI you want to make local) locally&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;**&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;**Sugar for complex cases&lt;/p&gt;
+&lt;p&gt;**&lt;/p&gt;
+&lt;p&gt;As I said earlier, you can use custom scripts (meaning any name you want) on the scripts element on your package.json. If that’s your case, after you added it on your package.json, you need can run that custom npm script with this command&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;javacript&quot;&gt;npm run gulp yourcustomtask
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And here, an elegant ultimate approach that let you execute any gulp task you may have with the bin symbolic link fix with a command like &lt;strong&gt;&lt;em&gt;npm run gulp anytask&lt;/em&gt;&lt;/strong&gt;, check it out:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;javascript&quot;&gt;...(content on your package.json)...
+&quot;scripts&quot;: {
+&quot;test&quot;: &quot;gulp test&quot;,
+&quot;gulp&quot;: &quot;gulp&quot;
+}
+...(more content on your package.json)...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Other examples&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;And as I mentioned I’m not talking about just gulp, eslint is another good example of this concept but in a slightly different way, you can configure your IDE to use some global eslint set of rules, but &lt;em&gt;every project may have different rules, and this is a real conflict too because one maybe is in es5 and the other one in ECMAScript 2015&lt;/em&gt;, and there lots of examples. &lt;em&gt;Grunt also applies&lt;/em&gt;&lt;strong&gt;,&lt;/strong&gt; you can stop using the global grunt by following this steps too (installing grunt-cli locally instead). Want more? Mocha, some Babel versions. And the list is long. Of course, they are creating a module, they want it to be easy so more developers adopt it. And it’s true, it works, they get more engagement on their modules. But at some point we need to know where to stop and grow from our experience.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Conclusion&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;So in conclusion, I think every project should be self sufficient, self configured, and this approach tries to tackle that. If you create a node.js project you need to stick to the node.js interpreter as a requirement. Nothing global except for that container platform itself which is a natural requirement for your scripts. In this way, if some day another task runner came out and kills gulp, or any pseudo global CLI, you can smoothly switch to the new one. Also you don’t couple the learning curve from the CLI to your module user’s, and you don’t share CLI dependencies between your different projects you may have, letting you have different project with different versions without forcing you to refresh them all.&lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;p&gt;Please any comment, suggestion, typo, send it to nicosommi@gmail.com&lt;/p&gt;
+&lt;p&gt;Thanks for reading.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[How, adopting cucumber js and other agile practices, can help you improve your development process]]></title><description><![CDATA[How’s that? Well, I just experienced that last month, we were chatting with Dallas and after a discussion about our cucumber  features  I…]]></description><link>http://nicosommi.com/2015/10/21/how-adopting-cucumber-js-and-other-agile-practices-can-help-you-improve-your-development-process/</link><guid isPermaLink="false">http://nicosommi.com/2015/10/21/how-adopting-cucumber-js-and-other-agile-practices-can-help-you-improve-your-development-process/</guid><pubDate>Wed, 21 Oct 2015 14:47:35 GMT</pubDate><content:encoded>&lt;h2&gt;How’s that?&lt;/h2&gt;
+&lt;p&gt;Well, I just experienced that last month, we were chatting with Dallas and after a discussion about our cucumber &lt;strong&gt;features&lt;/strong&gt; I said to him “So cucumber made our scrum better, how about that?” so he told me to write about that and I think that is actually an interesting experience to share.&lt;/p&gt;
+&lt;p&gt;We started using agile practices with our team at the very beginning of our project. Very soon we started using &lt;strong&gt;cucumber&lt;/strong&gt; (first time for me), because our team used it before in Ruby and they were happy with it. And &lt;strong&gt;there is a JS version&lt;/strong&gt; for it. Oh yes it is, and it works pretty well. Read more &lt;a href=&quot;https://cucumber.io/docs/reference/javascript&quot; target=&quot;_blank&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;But… why cucumber?&lt;/h2&gt;
+&lt;p&gt;Well, first off it’s convenient for executives so you can easily start using it, because they can actually understand what’s going on without a deep technical/specific knowledge, and they can see better the things the team had done with a quick look. And because of that, now communication with executives is better, and you can practice a better scrum, which can have a great impact for programmers and for the final product. And that’s a fact that everyone who worked with agile practices knows. Of course you can find a better explanation about cucumber itself by looking their &lt;a href=&quot;https://cucumber.io/&quot; target=&quot;_blank&quot;&gt;homepage&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;It was a great decision for us.&lt;/p&gt;
+&lt;h2&gt;Other tools and practices?&lt;/h2&gt;
+&lt;p&gt;Yes. &lt;a href=&quot;http://martinfowler.com/bliki/TestDrivenDevelopment.html&quot; target=&quot;_blank&quot;&gt;TDD&lt;/a&gt;/BDD, &lt;a href=&quot;https://github.com/gotwarlost/istanbul&quot; target=&quot;_blank&quot;&gt;test coverage&lt;/a&gt; and &lt;a href=&quot;https://www.bithound.io/&quot; target=&quot;_blank&quot;&gt;source code quality&lt;/a&gt; controls. All those practices/tools were helpful. It’s not just cucumber.&lt;/p&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;Well this article is not a pro scrum nor a pro cucumber article. I think they are great, but is not what I want to talk about in this post. Also, this experience perse is nothing new, I just found interesting to point out how we saw it. So what &lt;strong&gt;I&lt;/strong&gt; really &lt;strong&gt;want&lt;/strong&gt; &lt;strong&gt;to share&lt;/strong&gt; is &lt;strong&gt;this particular experience,&lt;/strong&gt; in which cucumber, in combination with those other practices and tools actually made our scrum, better.&lt;/p&gt;
+&lt;p&gt;We already made a lot of improvements to our agile framework.&lt;/p&gt;
+&lt;p&gt;Like for example we recently started to work with one dashboard per team instead of one per project like we did before (it sounds dumb to me now I mention that, but you can just work on one prioritized list at a time… otherwise priorities lose sense, but is a common mistake that some people, to think that they are doing better because now developers can work on a lot of stuff but it’s wrong, because they are now confused wasting lots of time with context switch tasks).&lt;/p&gt;
+&lt;p&gt;Also we changed the way we create our stories to be those who strictly add business value to our application (before this, what we usually do was to create technical chores as user stories with points, another common mistake that leads to finish sprints without any real business value to the end user… which defeats the whole purpose of scrum, dummy mistake).&lt;/p&gt;
+&lt;p&gt;But recently we discovered a new issue on our development process: **shared features. And that’s what I want to talk about.&lt;/p&gt;
+&lt;p&gt;**&lt;/p&gt;
+&lt;h2&gt;Ok, but technically speaking, how it happened?&lt;/h2&gt;
+&lt;p&gt;Well we experienced it with the authentication/authorization &lt;strong&gt;feature&lt;/strong&gt; &lt;em&gt;-gherkin speaking-&lt;/em&gt; (which is maybe the better example because of how scrum create user stories for many people, based on roles and creating the “walking skeleton” from that point of view).&lt;/p&gt;
+&lt;p&gt;So the User Stories usually says something like “As a user/admin/whatever I want to do something”, all right? But anyway the common thing is to create one story for that. But it’s actually mixed: authentication, authorization, and the particular “something” for that story.&lt;/p&gt;
+&lt;p&gt;At first, we were doing special cucumber &lt;strong&gt;scenarios&lt;/strong&gt; on each cucumber &lt;strong&gt;feature&lt;/strong&gt; to test roles, token expiration, and so on (they have different messages, HTTP statuses, etc). There was no direct functionality related to it, as I said, it’s a cross service shared functionality. An aspect of the user story. Take this feature for item creation as an example (simplified):&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Given a valid access token
+When a new item creation request is received
+Then create a new item on the list
+
+Given an invalid access token
+When a new item creation request is received
+Then throw an unauthorized error
+
+Given an expired access token
+When a new item creation request is received
+Then throw an expired token error
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As you can see &lt;strong&gt;in this example feature&lt;/strong&gt;, there is &lt;strong&gt;one different scenario per authorization&lt;/strong&gt; &lt;strong&gt;scenario on each business&lt;/strong&gt; &lt;strong&gt;feature&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;It turns out that when we created the first feature for the first user story, we just made an inline authentication and authorization source code, which is the common path to follow when practicing a TDD/BDD approach.&lt;/p&gt;
+&lt;p&gt;On the second feature, on the final refactor step, and with the help of some source code quality check tool like bithound or code climate detecting code duplicates afterwards on our commits, we moved that logic into a common space with some common design techniques for reusability. In this particular node case it was just a separate file with the common authentication/authorization function.&lt;/p&gt;
+&lt;p&gt;Later, we split up our service into many services, so to different repositories… and I was actually writing the source code of a specific integration chore to provide authorization/authentication to the first particular brand new service, and again because TDD/BDD, I quickly realized that I needed to create a superfluous unrelated cucumber feature to test that. Let’s say the item creation feature that I shown previously.&lt;/p&gt;
+&lt;p&gt;Well. That was the signal. I realized &lt;strong&gt;that having the same cucumber scenario over and over on several features implies lots of cucumber steps (test related source code) actually testing the same portion of code&lt;/strong&gt;. If you use istanbul or some other test coverage tool like I do, you will probably understand what I’m talking about. The same branches are being tested twice or N-times being N the feature quantity &lt;strong&gt;in which you actually remember to test that&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;So when the “chore” was completed it was obvious that, if we had a particular special feature for it, let’s say an access token/authorization feature (which implies a user story with points), we can test more scenarios and save scenarios for other business features. For example, in this case… using an expired token, or a wrong one, or no token at all, those scenarios can now be tested just in one feature for it, and on every other feature it will be implied with just two trivial scenarios that just test that the function is present on that particular feature (that the branch exist on that particular service, and I said two are needed because just one could throw a false positive).&lt;/p&gt;
+&lt;p&gt;So our new business feature like item creation became something like this&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Given a valid access token
+When a new item creation request is received
+Then create a new item on the list
+
+Given a invalid access token
+When a new item creation request is received
+Then throw an unauthorized error
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And we created another feature for the authorization and authentication like this one&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Given a valid access token
+When a generic message is received
+Then respond ok
+
+Given a invalid access token
+When a generic message is received
+Then throw an unauthorized error
+
+Given a expired access token
+When a generic message is received
+Then throw an unauthorized error
+
+Given a absent access token
+When a generic message is received
+Then throw an unauthorized error
+
+Given an incomplete access token
+When a generic message is received
+Then throw an unauthorized error with a custom message
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;In short terms,  you need a user story for this kind of shared feature.&lt;/p&gt;
+&lt;p&gt;Now you may think “Ey well, don’t try to change the business (user stories) from the source code, it’s just better to test what the business says, don’t touch the user stories and if you have to write more source code, well just write it and shut up”. And that’s ok. But I don’t want to change the business. I just think &lt;strong&gt;that there is a better model to approach it&lt;/strong&gt;. It saves work, increasing productivity (not writing unnecessary steps that tests the code already tested) and increasing also the final product quality (writing scenarios that may came out by getting deep into the newly created feature for the shared feature like in this case the custom error message on a incomplete access token).&lt;/p&gt;
+&lt;p&gt;Also we realized that the authentication actually has a business value by itself. Now our API is more secure. So we definitely changed that chore into a user story with points instead.&lt;/p&gt;
+&lt;p&gt;This is just one more concrete example on how cucumber act as a bridge between the technical (source code) aspect and the business aspect (or the user story), and this is done in two ways, not just one, and I mean not just to make it more understandable for non-technical people but also showing the business better to the technical people so now developers can improve their workflow to be smoother. But you need to use the right tools and practices.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Partial class approach for ES5/ES6]]></title><description><![CDATA[Source code When you create components that have some code quality control like code climate, bithound or something like that. There are…]]></description><link>http://nicosommi.com/2015/08/10/partial-class-approach-for-es6/</link><guid isPermaLink="false">http://nicosommi.com/2015/08/10/partial-class-approach-for-es6/</guid><pubDate>Mon, 10 Aug 2015 02:50:50 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://github.com/nicosommi/partialClass&quot; target=&quot;_blank&quot;&gt;Source code&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;When you create components that have some code quality control like code climate, bithound or something like that. There are plenty errors that you will found on your component, from code duplication to very specific details.&lt;/p&gt;
+&lt;p&gt;One of those rules is the &lt;strong&gt;class complexity&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;So you have a giant class. You may &lt;strong&gt;need or want to split it up into different files&lt;/strong&gt;. Of course, you can do some hacks with the javascript language to get that done. Of course, you can take a different design solution and make smaller classes. Of course, you can do a lot of things, but what I’m trying to show here is an approach to get &lt;strong&gt;something like the partial class declaration from OOP languages like C#&lt;/strong&gt;. Keeping files simple and small. You need to cover some features like private methods, public ones, properties, bind problems ( so you can use “this” on every method), etc. And at the same time you should produce self documented code.&lt;/p&gt;
+&lt;p&gt;So I came up with a simple solution but that has some key points to unlock some features (private methods with symbols and using a standard function to attach to the class prototype). It is not something trivial actually but not so hard neither. It consist on some &lt;strong&gt;easy to follow steps&lt;/strong&gt; (on the example code, using the Babel plugin implementation for ES6 and ES5 compatibility):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Instead of creating a file for your class, create a folder for it.&lt;/li&gt;
+&lt;li&gt;Create an index.js inside of it that contains the actual class&lt;/li&gt;
+&lt;li&gt;Create some file with the function/functions that you want to have in different files&lt;/li&gt;
+&lt;li&gt;Chose one of the alternatives to assign the method to the main class on the index. For example Object.assign(MyClass.prototype, objNewMethods). This is maybe the best option since it bind the functions automatically. UPDATE: It seems like there is a caveat using Object.assign to copy methods… I will work on it soon to check that it happens and then update the article/source code with a better solution.&lt;/li&gt;
+&lt;li&gt;If you want to split up symbols (usually used for private methods) you need a separate file to instantiate them and use the same one among different files (for example to call a private method from another file).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;That’s basically all! &lt;strong&gt;See&lt;/strong&gt; &lt;a href=&quot;http://github.com/nicosommi/partialClass&quot;&gt;this repo&lt;/a&gt; to take a look at a working source code.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Now you have a class in several files, small and self documented files with functions with reduced complexity.&lt;/strong&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Crear un componente javascript y open source de calidad en minutos]]></title><description><![CDATA[Read this article in english Ir al componente en npm Hace unos meses con el equipo en Free All Media empezamos a construir un proyecto…]]></description><link>http://nicosommi.com/2015/07/17/crear-un-componente-javascript-y-open-source-de-calidad-en-minutos/</link><guid isPermaLink="false">http://nicosommi.com/2015/07/17/crear-un-componente-javascript-y-open-source-de-calidad-en-minutos/</guid><pubDate>Fri, 17 Jul 2015 01:34:25 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;/?p=403&quot;&gt;Read this article in english&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.npmjs.com/package/generator-oss-component&quot;&gt;Ir al componente en npm&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Hace unos meses con el equipo en Free All Media empezamos a construir un proyecto javascript que rapidamente fue creciendo en lineas de codigo y en lo que en ese momento llamabamos componentes, pero que consistia en una coleccion de carpetas con archivos javascript en ellas. Teniamos la certidumbre al iniciar que &lt;strong&gt;ibamos a componentizar la aplicacion&lt;/strong&gt; en algun momento, &lt;strong&gt;pero todavia no sabiamos cuando&lt;/strong&gt; esto iba a ser apoyado por las prioridades del negocio.&lt;/p&gt;
+&lt;p&gt;Luego de un tiempo, llego el momento de crear un nuevo set de servicios, que tenian componentes en comun con el set de servicios anterior. Entonces fue donde ocurrio el suceso: la &lt;strong&gt;necesidad de compartir componentes con al menos un proyecto&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;En ese momento se nos presento un problema clasico ingenieril de eficacia y eficiencia. Teniamos alrededor de 15 componentes distintos, y sabiamos que el mejor camino para tomar era el de hacer un componente distinto en cada uno de ellos en lugar de acoplar sus responsabilidades y hacer componentes “magicos”. Siempre procuramos intentar ir por el mejor camino que podemos visualizar, entonces no dudamos en ir por alli. &lt;strong&gt;Pero el negocio no estaba tan contento de gastar tanto tiempo en crear 15 componentes&lt;/strong&gt; en lugar de 1 por una simple cuestion de orgullo profesional (con todas las garantias de calidad que un componente necesita para estar a la altura del resto de los componentes de la organizacion, que mas adelante detallo).&lt;/p&gt;
+&lt;p&gt;Hablando en numeros, &lt;strong&gt;cada componente manualmente tardaria en inicializarse varias horas&lt;/strong&gt;, dependiendo la funcionalidad del mismo. Fue entonces que negociamos con el negocio y &lt;strong&gt;decidimos hacer un generador de componentes&lt;/strong&gt; en lugar de hacerlos individualmente, con el objetivo de optimizar por completo el tiempo de desarrollo de los patrones que se repetian.&lt;/p&gt;
+&lt;p&gt;Este generador tiene la responsabilidad de inicializar un componente open source con una serie de caracteristicas deseables para los mismos:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Un &lt;strong&gt;readme acorde&lt;/strong&gt;, con las secciones y badges deseables&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;test coverage&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;integracion continua&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;calidad de codigo&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;chequeo de dependencias&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;tareas de compilado&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;testeo de compatibilidad con browsers&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;compatibilidad con &lt;strong&gt;standards ECMA 6 y 5&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;archivos de linting&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;muchos mas caracteristicas por venir: comportamiento mas complejo, mas integraciones y mejores preguntas&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Por suerte este componente &lt;strong&gt;dio rapidamente el resultado esperado&lt;/strong&gt; y si bien esta en sus primeras versiones y con implementaciones muy particulares, nos es de muchisima utilidad, ya que &lt;strong&gt;en lugar de varias horas, ahora conseguimos un componente listo para utilizar y con un monton de caracteristicas de calidad listas en cuestion de minutos&lt;/strong&gt;. Sabemos que la funcionalidad debido a la infinidad de opciones muy probablemente ira incrementandose con el tiempo y haciendo de este componente algo todavia mas completo y detallado aun.&lt;/p&gt;
+&lt;p&gt;Desde luego el componente para generar componentes open source de calidad es tambien un componente open source generado por si mismo (se creo primero el componente open source basico y una vez lograda una mediana calidad del mismo, se “piso” consigo mismo). De hecho, &lt;strong&gt;para conseguir una mayor eficiencia a lo largo del tiempo con los componentes que se generen con este generador, se sugiere no tocar a mano los artefactos generados por el mismo&lt;/strong&gt; (aunque hoy en dia es necesario para ciertas cosas en particular, en un futuro no deberia serlo).&lt;/p&gt;
+&lt;p&gt;En definitiva creo que vale el aporte a la comunidad, y este post es una humilde sugerencia e invitacion para que lo adopten aquellos que quieran generar un componente con diversas caracteristicas adicionales tan solo contestando unas simples preguntas y sobre todo en unos pocos minutos.&lt;/p&gt;
+&lt;p&gt;Como se utiliza?&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Lo mas recomendado es&lt;/strong&gt; &lt;a href=&quot;https://github.com/FreeAllMedia/generator-oss-component/&quot; target=&quot;_blank&quot;&gt;leer el README&lt;/a&gt; pero basicamente:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;creas tu repositorio en github&lt;/li&gt;
+&lt;li&gt;lo linkeas en coveralls y en travis (basico para integracion continua y test coverage)&lt;/li&gt;
+&lt;li&gt;si queres en las otras herramientas que se soportan en la aplicacion y que se deseen utilizar.&lt;/li&gt;
+&lt;li&gt;(si no tenes yeoman instalado) npm install -g yo bower grunt-cli gulp&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;npm install -g generator-oss-component&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;inicialiar repo en github, ir a la carpeta y tipear: yo oss-component&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;contestar las preguntas usando las credenciales si son necesarias para las posibles integraciones&lt;/li&gt;
+&lt;li&gt;comenza a codear&lt;/li&gt;
+&lt;li&gt;despues, ejecuta travis setup npm asi tu componente se autopublica&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Si no la encontras estas invitado a contrubuir desde luego, abriendo issues o enviando pull requests.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Create a javascript quality open source component in minutes]]></title><description><![CDATA[Leer este articulo en espaniol Go to the component on npm Some months ago with the team from Free All Media we started to build a new…]]></description><link>http://nicosommi.com/2015/07/17/create-a-javascript-quality-open-source-component-in-minutes/</link><guid isPermaLink="false">http://nicosommi.com/2015/07/17/create-a-javascript-quality-open-source-component-in-minutes/</guid><pubDate>Fri, 17 Jul 2015 01:34:06 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;/?p=395&quot;&gt;Leer este articulo en espaniol&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.npmjs.com/package/generator-oss-component&quot;&gt;Go to the component on npm&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Some months ago with the team from Free All Media we started to build a new javascript project, which &lt;strong&gt;rapidly began to grow in code lines and in what we called components&lt;/strong&gt;, but consisted only in a folder collection with javascript files on it. We knew at the very beginning that &lt;strong&gt;sooner or later creating component will be necesary, but we didn’t knew yet when&lt;/strong&gt; the business would support it by increasing the priority.&lt;/p&gt;
+&lt;p&gt;After some time, &lt;strong&gt;we had to create a new set of services, which shared some component functionality&lt;/strong&gt; with the previous one. &lt;strong&gt;Then it happened: the real need&lt;/strong&gt; of sharing components with at least one more project. At that moment we confront the classic engineering problem of being as efficient and efective as possible. We had around 15 different folders and we knew that the best path was to create one component for each functionality instead of trying to create one giant component to maybe save some time and costs (with repos, deployment tasks, etc, etc). We always try to go by the best path we see, so we had no doubts about sticking with the one component per functionality option. &lt;strong&gt;But the business wasn’t very happy with spending money in creating so many components with all that creation overhead&lt;/strong&gt; and with all the extra costs, specially when we could just create one component and use that. Speaking of numbers, &lt;strong&gt;each component would take many hours&lt;/strong&gt; to get created and published correctly, maybe a little more or a little less depending upon the particular component needs. It was just then when we made some business with the business and we decided to &lt;strong&gt;create a component generator&lt;/strong&gt; with the target of optimizing the time and the related costs associated, specially on shared patterns.&lt;/p&gt;
+&lt;p&gt;This generator has &lt;strong&gt;the responsibility of initialize a new open source component with a set of desirable features for them:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;A good README&lt;/strong&gt; with &lt;strong&gt;badges&lt;/strong&gt; and common sections&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;LICENSE file&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Test coverage support&lt;/strong&gt; (generation and report integration with travis and coveralls)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Continuous integration&lt;/strong&gt; (with &lt;strong&gt;travis&lt;/strong&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;gulp tasks&lt;/strong&gt; for compile sources and testing them&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;browser compatibility tests&lt;/strong&gt; using karma and a optional sauce labs integration&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ES6 and ES5&lt;/strong&gt; compatibility using babel&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;linting files&lt;/strong&gt; a eslint file and the required dependencies&lt;/li&gt;
+&lt;li&gt;many more on the way: more integrations, more detailed questions and a smarter behavior&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Luckily us this component quickly &lt;strong&gt;give us the expected result&lt;/strong&gt; and, &lt;strong&gt;even knowing that this is a still very early version&lt;/strong&gt;, it’s very useful and it has a great potential but &lt;strong&gt;it saves us hours of working already&lt;/strong&gt;. We know that there are lots of tools out there to integrate a generic open source component to, but &lt;strong&gt;we believe that given the fact that this is open source, the best way to reach that point is having the contribution of the open source community&lt;/strong&gt; like the normal process to cover such giant amount of options, if we everyone put’s his own particular alternatives on it we will have lot’s of options some day.&lt;/p&gt;
+&lt;p&gt;Of course &lt;strong&gt;this open source component generator is an open source component by itself&lt;/strong&gt; (the first was the component, and once he got mature, he override himself, but just for stetics). In fact, in order to get better efficiency through time with the generated components, &lt;strong&gt;we strongly suggest to try to reduce to the minimum any modification to the auto generated artifacts&lt;/strong&gt; (currently some little manual changes are needed).&lt;/p&gt;
+&lt;p&gt;In conclusion, I think it worth enough the contribution to the community and this post is just an &lt;strong&gt;invitation&lt;/strong&gt; to &lt;strong&gt;contribute&lt;/strong&gt; to our project if you want to or just &lt;strong&gt;use it&lt;/strong&gt; if you want to get a new component in just minutes.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;How do you use it?&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;First highly recommended steps is to &lt;strong&gt;read the README, but basically&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;em&gt;create the github repo&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;link it with coveralls and travis (basic to get ci and test coverage)&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;if you want to add another tool supported by the component and you want to use.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;(if you don’t have yeoman) npm install -g yo bower grunt-cli gulp&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;npm install -g generator-oss-component&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;initialize the repo with github and go to that folder and type&lt;em&gt;: yo oss-component&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;answer the questions using the credentials if needed for the integrations to be done&lt;/li&gt;
+&lt;li&gt;execute travis setup npm if you want to auto publish to npm your component&lt;/li&gt;
+&lt;li&gt;start coding&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Remember if you do not find the application to integrate with we invite you to &lt;strong&gt;send us a pull request&lt;/strong&gt; by following the contribution guide on the README 🙂&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Mmmmm…. mozilla…]]></title><description><![CDATA[Estos dias estuve leyendo sobre el alejamiento de  Brendan Eich  de Mozilla (noticia difundida en varios lugares por ejemplo  aca ). En…]]></description><link>http://nicosommi.com/2014/06/21/mmmmm-mozilla/</link><guid isPermaLink="false">http://nicosommi.com/2014/06/21/mmmmm-mozilla/</guid><pubDate>Sat, 21 Jun 2014 19:12:03 GMT</pubDate><content:encoded>&lt;p&gt;Estos dias estuve leyendo sobre el alejamiento de &lt;a href=&quot;http://es.wikipedia.org/wiki/Brendan_Eich&quot; title=&quot;Brendan Eich&quot;&gt;Brendan Eich&lt;/a&gt; de Mozilla (noticia difundida en varios lugares por ejemplo &lt;a href=&quot;http://www.latimes.com/business/hiltzik/la-fi-mh-gay-marriage-20140404-story.html&quot; title=&quot;aca&quot;&gt;aca&lt;/a&gt;). En principio muy sorpresivo debido a que si bien es totalmente reprobable lo que hizo (dono dinero a un movimiento que iba en contra del matrimonio gay), su alejamiento por el apalancamiento de ese simple hecho es algo quizas exagerado. Es verdad, al ser el CEO de una fundacion con tanta influencia es normal quizas que sea objeto de numerosas criticas, sin embargo en el dia a dia uno escucha decir barbaridades a miles y miles de personas en todos los ambitos y mucho peores que este hecho, y ademas como menciona &lt;a href=&quot;http://www.csmonitor.com/USA/2014/0405/Mozilla-s-Brendan-Eich-and-gay-marriage-Intolerance-over-tolerance-video&quot; title=&quot;aca&quot;&gt;aca&lt;/a&gt; es casi comico tal intolerancia siendo que hasta Obama se opuso a esta ley en su momento. Pero &lt;strong&gt;supongamos que no fue exagerado y que Mozilla como fundacion se puso intachable en sus valores&lt;/strong&gt; (Eich renuncio, entre muchas otras cosas que sucedieron, porque otros empleados de Mozilla se lo pidieron encarecidamente). OK. Perfecto.&lt;/p&gt;
+&lt;p&gt;Ahora bien, luego de unos dias en los que de a poco me fui dando cuenta por interes personal de la gran influencia de Eich en Mozilla, me tope con un comentario de un usuario criticando a firefox por asociarse con Adobe para mostrar contenido protegido por DRM. El usuario comentaba con &lt;a href=&quot;https://fsf.org/news/fsf-condemns-partnership-between-mozilla-and-adobe-to-support-digital-restrictions-management&quot; title=&quot;este link&quot;&gt;este link&lt;/a&gt; en el que se anuncia que &lt;strong&gt;la Fundacion de Software Libre esta muy decepcionada porque Mozilla va en contra de los valores que la fundaron inicialmente&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Tan facilmente no iba a cambiar de opinion con respecto a Mozilla sin antes chequear un poco. La palabra oficial de Mozilla se puede encontrar &lt;a href=&quot;https://blog.mozilla.org/blog/2014/05/14/drm-and-the-challenge-of-serving-users/&quot; title=&quot;aca&quot;&gt;aca&lt;/a&gt; y es muy logica ya que habla de la experiencia del usuario final, y la comparacion con otros browsers (???) y de que esto es opcional ya que uno puede usar firefox sin incluir DRM. Sin embargo, como siempre, la logica siempre puede respetarse incluso en absurdos, los fundamentos son muy importantes. En esta accion, &lt;strong&gt;Mozilla parece no ser tan intachable en sus valores&lt;/strong&gt;. Y trata de justificar la utilizacion de codigo cerrado con la utilizacion de un wrapper de codigo abierto (???).&lt;/p&gt;
+&lt;p&gt;Luego decidi por supuesto leer la opinion de Eich y encontre &lt;a href=&quot;https://brendaneich.com/2013/10/the-bridge-of-khazad-drm/&quot; title=&quot;esto&quot;&gt;esto&lt;/a&gt; que si bien es un poco viejo (de cuando Eich estaba en Mozilla), es muy util ya que muestra su oposicion a la implementacion de DRM y todo este tema y los diversos motivos. Entre otros motivos (&lt;strong&gt;como presiones de Hollywood, Google, Microsoft, etc&lt;/strong&gt;), estan por ejemplo &lt;a href=&quot;https://plus.google.com/app/basic/stream/z13qtnxhuojytbjbr04ci3cowrmtehsy324&quot; title=&quot;este&quot;&gt;este&lt;/a&gt; que nos habla que &lt;strong&gt;DRM, por cuestiones tecnicas, no sirve para proteger las copias de los videos sino que sirve para que los productores de contenido puedan apalancar sobre los fabricantes de dispositivos&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Esto me hizo sospechar de intereses economicos y encontre &lt;a href=&quot;http://www.redstate.com/2014/05/17/brendan-eich-removed-get-closed-source-drm-firefox/&quot; title=&quot;este&quot;&gt;este&lt;/a&gt; articulo que &lt;strong&gt;sugiere que la presion de Hollywood fue lo que realmente expulso a Eich de Mozilla&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Un sabor amargo me quedo despues de todo esto. Por el futuro de firefox, por la carta que traduje hace poco.&lt;/p&gt;
+&lt;p&gt;Esto no es un veredicto final, pero es verdad que la asociacion con Adobe para “dar un beneficio al usuario”, rompe los valores de la fundacion… y es algo que no cierra, sobre todo porque el usuario siempre fue libre de usar chrome, ie, o instalar un plugin externo.&lt;/p&gt;
+&lt;p&gt;:/&lt;/p&gt;
+&lt;p&gt;Por ahora seguire con Firefox porque sigue garantizando cierta privacidad… pero en el futuro… que navegador tenemos que usar? Depende ciertamente de lo que vaya sucediendo y de las decisiones estrategicas de la fundacion, pero &lt;strong&gt;esto ciertamente marca un precedente y Mozilla ahora no genera tanta confianza en su transparencia.&lt;/strong&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Asusta pero es exitante – Traducción al español de la carta de Mark Surman de Mozilla (Scary, but exciting)]]></title><description><![CDATA[Hoy recibí un mail lindo y prometedor y quisiera que los que hablan sólo español puedan también leerlo. Es de Mark Surman de Mozilla. Y dice…]]></description><link>http://nicosommi.com/2014/05/02/asusta-pero-es-exitante-traduccion-al-espanol-de-la-carta-de-mark-surman-de-mozilla-scary-but-exciting/</link><guid isPermaLink="false">http://nicosommi.com/2014/05/02/asusta-pero-es-exitante-traduccion-al-espanol-de-la-carta-de-mark-surman-de-mozilla-scary-but-exciting/</guid><pubDate>Fri, 02 May 2014 01:56:10 GMT</pubDate><content:encoded>&lt;p&gt;Hoy recibí un mail lindo y prometedor y quisiera que los que hablan sólo español puedan también leerlo.&lt;/p&gt;
+&lt;p&gt;Es de Mark Surman de Mozilla. Y dice:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;“Desde donde yo lo veo, el futuro luce exitante pero también asusta un poco.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Primero lo que asusta (Que puedo decir? Soy muy precavido y prefiero terminar bien):&lt;/p&gt;
+&lt;p&gt;Ahora mismo internet preserva tu derecho a acceder a todo contenido legal y programas sin interferencia. Es lo mismo cual sea tu campo: mirar House of Cards, leer Wikipedia o construir un sitio web para tu nuevo negocio – todo en el mismo término que todos los demás.&lt;/p&gt;
+&lt;p&gt;Esto es lo que hace que la web sea lo que es hoy, un motor global de innovación y emprendedurismo. Probablemente escuchaste acerca de la “neutralidad de la red” (net neutrality). Estamos preocupados de que esto deje de ser así.&lt;/p&gt;
+&lt;p&gt;Estoy preocupado acerca de esto en distintos niveles. El fin de la neutralidad de la red puede sentar un precedente para una internet crecientemente cerrada, controlada de manera centralizada y diseñada para servir a unos pocos en lugar de servir a muchos. Básicamente, todas esas cosas malas contra las que lucha Mozilla, siendo que fué creado para evitarlas. Desanima. Pero…&lt;/p&gt;
+&lt;p&gt;Lo exitante (Dije que íbamos a llegar acá):&lt;/p&gt;
+&lt;p&gt;Las cosas no están tan quietas como parecen – y la verdad es, el futuro está en nuestras manos. No en “nuestras” como refiriéndome a nosotros en el staff de Mozilla. Con nosotros me refiero a vos, a mí, tus amigos y mis amigos, y todos los usuarios de la web del pasado, presente y del futuro. Tenemos que ponernos de pie por una Internet abierta. Por una web que es construida para el bien de la humanidad. Por una internet que nos enlaza para estar más cerca entre nosotros, en lugar de que unos empujen a otros afuera.&lt;/p&gt;
+&lt;p&gt;Y esta pelea empieza ahora mismo. En las próximas semanas y meses estamos lanzando una campaña de larga escala para atraer usuarios de todo el mudno para defender una web que sirve al bien público y no a unas pocas gigantes compañías. Para pelear y construir la web que queremos ver en el mundo. El primer paso es responder a una pregunta muy simple: Que tipo de web querés? Hacénoslo saber, y unite a los millones que están ayudando a formar el futuro del recurso público más grande del mundo.&lt;/p&gt;
+&lt;p&gt;Y si después de decirnos tu pequeño vistazo de tus esperanzas para la web (y ver que es lo que otros en el mundo tienen para decir), tenemos algo para darle forma a esa realidad – la nueva actualización del navegador Firefox. No voy a entrar en detalles de porqué es maravilloso (aunque desearía poder hacerlo), pero he aquí es un pequeño vistazo: es más seguro, es más rápido, es más personalizable y luce realmente bien. Para ponerlo sencillo, el nuevo Firefox fué hecho con la misión de ponerte a vos primero.&lt;/p&gt;
+&lt;p&gt;Al final del día, la genial comunidad global Mozilla es la razón por la cual peleamos la pelea, resolvemos problemas difíciles y tomamos acciones importantes. Y mientras nuestra misión no cambie (y no lo hará), estamos haciendo paquetes más grandes y mejores para asegurarnos que nuestra comunidad es parte de nuestro crecimiento y parte de nuestro futuro. El nuevo Firefox es sólo el comienzo.&lt;/p&gt;
+&lt;p&gt;Sigue conectado.&lt;/p&gt;
+&lt;p&gt;Mark”&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://webwewant.mozilla.org/es/?utm_source=newsletter&amp;#x26;utm_medium=newsletter&amp;#x26;utm_content=foundationemail&amp;#x26;utm_campaign=glow2014&quot;&gt;Para más información sobre Firefox click aquí.&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Texto Original&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“From where I’m sitting, the future looks exciting, but also a bit scary.&lt;/p&gt;
+&lt;p&gt;First, the scary (What can I say? I’m a worrier, and I’d rather end on the high note.):&lt;/p&gt;
+&lt;p&gt;Right now the internet preserves your right to access all lawful content and software without interference. It is an equal playing field: you can watch House of Cards, read Wikipedia or build a website for your new business — all on the same terms as everybody else.&lt;/p&gt;
+&lt;p&gt;This is what has made the web what it is today, a global engine for innovation and entrepreneurship. You’ve probably heard about it as “net neutrality.” We’re worried it’s about to go away.&lt;/p&gt;
+&lt;p&gt;I’m worried about this on a number of levels. The end of net neutrality could set a precedent for an internet that is increasingly closed, centrally controlled and designed to serve the few instead of the many. Basically, all of the bad things Mozilla was built to fight. It’s discouraging. But…&lt;/p&gt;
+&lt;p&gt;The exciting (I told you we’d get there):&lt;/p&gt;
+&lt;p&gt;Things are not quite as bleak as they seem — and the truth is, the future is up to us. Not “us” as in Mozilla staff. “Us” as in you, and me, and your friends and my friends, and all web users past, present and future. We have to stand up for the open internet. For a web that is built for the good of humanity. For a web that ties us closer together, rather than one that pushes us further apart.&lt;/p&gt;
+&lt;p&gt;And that fight starts right now. In the next few weeks and months we are launching a large-scale campaign to engage users worldwide to defend a web that serves the public good, not a few giant companies. To fight for and build the kind of web we want to see in the world. The first step is to answer one simple question:&lt;/p&gt;
+&lt;p&gt;What kind of web do you want? Let us know, and then join the millions who are helping shape the future of the world’s largest public resource.&lt;/p&gt;
+&lt;p&gt;And after you’ve given us a little insight into your hopes for the web (and seen what others around the world have to say), we’ve got something to help shape that reality — the newest update to the Firefox browser. I won’t go into all the details as to why it’s awesome (though I wish I could), but here’s the upshot: it’s more secure, it’s faster, it’s more customizable and it’s also really good-looking. Simply put, the new Firefox was made with a mission to put you first.&lt;/p&gt;
+&lt;p&gt;At the end of that day, Mozilla’s amazing global community is the reason we fight the fight, solve difficult problems and take important actions. And while our mission has not (and will not) change, we’re making bigger and better plans to make sure our community is part of our growth, and part of our future. The new Firefox is just the beginning.&lt;/p&gt;
+&lt;p&gt;Stay tuned,&lt;/p&gt;
+&lt;p&gt;Mark”&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Cualquier sugerencia sobre la traducción nicosommi@gmail.com&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Debugging node]]></title><description><![CDATA[Para ver este artículo en español click aquí. When we write scripts on node.js there is always some things flying around our minds.There is…]]></description><link>http://nicosommi.com/2014/05/02/debugging-node/</link><guid isPermaLink="false">http://nicosommi.com/2014/05/02/debugging-node/</guid><pubDate>Fri, 02 May 2014 01:39:40 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;/?p=250&quot; title=&quot;Debugueando node&quot;&gt;&lt;em&gt;Para ver este artículo en español click aquí.&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;When we write scripts on node.js there is always some things flying around our minds.There is a lot of things to think about. Is simple, but you need to know what are you doing because if you don’t you can get into a mess quickly. Javascript. npm. The good, the bad and the uggly.&lt;/p&gt;
+&lt;p&gt;One of the things that scared me the most in this node-hell at my begining was the debug method. Some of us are used to use frequently different kinds of logging utilities, from the built in console object to cool npm packages like debug, ain2, winston, etc. But what about the old well known debug process? Yes! I’m talking about that one that allow us to watch expressiones in the current context, view the backtrace, and that kind of things.&lt;/p&gt;
+&lt;p&gt;In my experience I was debugging node when I started to use it, but in a heavy way. Using eclipse. I came from Java so that was familiar for me and the V8 eclipse plugin works great and it’s easy to use. You just start node with –debug flag and connect the plugin to that port. It’s a very good alternative. You can also use Chrome browser the same way. But today I’m working on a lighter environment. Now I use Sublime Text and Gedit. Lose the fear to the console is something that we must do. Many of us learn that from ubuntu, git and such. Lose the fear to the console is actually a key part for a light and easy debug with node.&lt;/p&gt;
+&lt;p&gt;So easy as the well known debugger on complex IDE but in the console. Some programmers are used to this kind of debugging, but for people that worked mostly with Java, C#, TIBCO and that kind of high level programming languages that is not the common thing and this was my first time debugging through the console for real.&lt;/p&gt;
+&lt;p&gt;First of all let’s take a look at the need. This came from real environments in which you have to solve a complexs issues all the time. Console logging sometimes does not give us the flexibility we need and in the time we need to know what is happening. Sometimes is just difficult to reproduce just one execution of some case. Many people can discuss about this and some maybe prefer to just trust in his skills… I don’t, I just prefer to not feel that pressure, I just want to know how to debug and detect problems watching the environment and using the tools the language provides for doing that.&lt;/p&gt;
+&lt;p&gt;Well… now that we know the benefits, let’s go deep on how do you do this. It’s so simple… like everything in js. We just need to put the &lt;strong&gt;debugger;&lt;/strong&gt; sentence in the places that we want, taking care of the asynchrounous nature of most apps on node, of course. Then we just execute the app with the debug argument….&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;node debug script.js&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;That simple. That leave us in the debug console. Now is easy, but from command line. Command we are use to execute with F8, F10, and all that, now are commands like ‘n’, ‘s’, ‘c’, or ‘repl’. Yes, n is for next, s if for step into, c is for continue or run. Repl is for entering to a console to eval.&lt;/p&gt;
+&lt;p&gt;The command list is obviously on the official documentation here &lt;a href=&quot;http://nodejs.org/api/debugger.html&quot; title=&quot;http://nodejs.org/api/debugger.html&quot;&gt;http://nodejs.org/api/debugger.html&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;As I pre-announced some, the most used are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;step in: just with s&lt;/li&gt;
+&lt;li&gt;step out: writing o&lt;/li&gt;
+&lt;li&gt;next step: n&lt;/li&gt;
+&lt;li&gt;pause (just writing that)&lt;/li&gt;
+&lt;li&gt;watch(‘variableName’) : this will print the variable value on each step&lt;/li&gt;
+&lt;li&gt;unwatch(‘variableName’) : delete some watch to stop printing it&lt;/li&gt;
+&lt;li&gt;list(4) : prints the context in a 4 line radious of the code, you can provide some other number&lt;/li&gt;
+&lt;li&gt;repl : very important it allows as I said before to eval something in the current context like the browser’s console (we can see but we can’t modify ). Exit with CTRL+C&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;There is extra “problems” to people who use gulp or grunt (almost everyone) to execute some previous task before running. But if that is your case you can use for example nodemon with the nodeArgs option like this:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;nodemon({script: &apos;./app.js&apos;, nodeArgs: [&apos;debug&apos;]})&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Another common case: test unit. With debug? Yes. For example if we execute&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;mocha debug test/example.js&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;then we also get the debugger.&lt;/p&gt;
+&lt;p&gt;Combining mocha and grunt/gulp you can do this currently (also with nodemon):&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;nodemon({script: &apos;./node_modules/mocha/bin/_mocha&apos;, nodeArgs: [&apos;debug&apos;]});&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;where you put your path to the _mocha (with the underscore, is just a file on the mocha module) file on the script option. And you get your test on debug with your previous tasks configured.&lt;/p&gt;
+&lt;p&gt;You get a ENOSPC Error?&lt;/p&gt;
+&lt;p&gt;That’s because of too many files open (either or you have an editor like Sublime or nodemon is including too much files).&lt;/p&gt;
+&lt;p&gt;You can solve this by increasing the max&lt;em&gt;user&lt;/em&gt;watches with this command&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo sysctl fs.inotify.max_user_watches=20000&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The correct number depends on your needs. You can see your current by executing this&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;more /proc/sys/fs/inotify/max_user_watches&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Also remember to execute nodemon with the -i node_modules argument.&lt;/p&gt;
+&lt;p&gt;So, if you didn’t do this yet, do it, is easy and very useful. Just do a simple for script and try it by yourself. Is going to make your life easier.&lt;/p&gt;
+&lt;p&gt;Do you have an idea to improve this article? tell me to nicosommi@gmail.com&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Debugueando node]]></title><description><![CDATA[To see this article in english click here. Cuando programamos en Node.js siempre hay cositas que vuelan por la cabeza. Hay muchas cosas en…]]></description><link>http://nicosommi.com/2014/04/20/debugging-node-seriously/</link><guid isPermaLink="false">http://nicosommi.com/2014/04/20/debugging-node-seriously/</guid><pubDate>Sun, 20 Apr 2014 15:17:15 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;/?p=284&quot; title=&quot;Debugging node&quot;&gt;&lt;em&gt;To see this article in english click here.&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Cuando programamos en Node.js siempre hay cositas que vuelan por la cabeza. Hay muchas cosas en las que pensar. Muchas cosas que tener en cuenta. Es simple, pero hay que saber lo que se está haciendo al altísimo precio de llegar a un lío muy importante. Javascript. Npm. Lo bueno, lo malo y lo feo.&lt;/p&gt;
+&lt;p&gt;Una de las cosas que más me asustaban en este node-hell es poder depurar nuestro script. Muchos solemos usar muy frecuentemente logging de distintos tipos, desde el simple console.log hasta paquetes más copados como debug, ain2, winston o algo así. Pero muchos evaden el viejo y conocido debug, que nos permite agregar watch expressions, evaluar ejecuciones en el contexto actual, observar el backtrace, y otras cositas mas.&lt;/p&gt;
+&lt;p&gt;En mi experiencia había debuggeado previamente node en mis comienzos, pero de una forma muy distinta. Usando eclipse. Vengo de Java así que me resultaba familiar, y el debugger V8 se conecta sin problemas a un proceso node ejecutando en modo debug (con –debug). Sin lugar a dudas es una muy buena alternativa. Sin embargo hoy tengo un entorno de desarrollo mucho más dinámico y liviano en memoria. También puedo abrir el chrome y hacer lo mismo que del eclipse pero desde ahí. Pero hay dos motivos en contra de eso: los que no usamos Chrome (yo uso Firefox por ahora) y los que encima no desarrollamos necesariamente algo web con node.js y no necesitamos abrir el browser. Gedit y Sublime son los editores que uso frecuentemente. Perder el miedo a la consola es algo que aprendemos todos los que somos habitué de ubuntu, git, y esas cosas. Perder el miedo a la consola es también clave para no complicarse la vida con la depuración en node.js.&lt;/p&gt;
+&lt;p&gt;Es tan sencillo como lo siguiente: es un debugger como los que conocemos de toda la vida pero comandado por consola. Desde algunos lenguajes ya vienen acostumbrados a esto, sin embargo yo que vengo de Java, y anteriormente C# y TIBCO, estoy acostumbrado a debuggers de todo tipo pero es la primera vez que experimento con la consola.&lt;/p&gt;
+&lt;p&gt;Primero que nada repasemos la necesidad. Esto surge de la experiencia en ambientes reales en donde solucionar un problema complejo en ambientes productivos es algo habitual. Los logging de consola algunas veces son precarios en algunos aspectos y nos limitan a la hora de solucionar un problema rápidamente. Muchos podrán discutir sobre este tema apoyados en su rapidez y lucidez mental constante. Yo prefiero saber que no dependo de eso. Prefiero no sentir esa presión. Prefiero saber como debuggear y detectar el problema mirando mejor el contexto. Demás está decir que algunas veces los errores son tan complicados que la reproducción del mismo nos lleva mucho tiempo y sincronización, y por ende estaría buenísimo si descubrimos el error en la menor cantidad de intentos posibles.&lt;/p&gt;
+&lt;p&gt;Mencionados ya los beneficios de usar un debugger, vayamos al acto. El uso trivial es sencillo: ponemos un debugger; en donde nos plazca y luego ejecutamos la aplicación con el argumento debug.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;node debug script.js&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Algo tan simple como eso ya nos deja en la consola de debug. Ahora es sencillo, para lo que antes haciamos en entornos gráficos ahora tenemos un string que dispara el comando. Por ejemplo poniendo ‘cont’ o ‘c’ el debugger avanzará hasta el próximo debugger;&lt;/p&gt;
+&lt;p&gt;Hay una lista completa de comandos en la sección Commands reference en el siguiente link &lt;a href=&quot;http://nodejs.org/api/debugger.html&quot; title=&quot;http://nodejs.org/api/debugger.html&quot;&gt;http://nodejs.org/api/debugger.html&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Los más destacados son&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;step in: se hace escribiendo s&lt;/li&gt;
+&lt;li&gt;step out: escribiendo o&lt;/li&gt;
+&lt;li&gt;next step: n&lt;/li&gt;
+&lt;li&gt;pause&lt;/li&gt;
+&lt;li&gt;watch(‘variableName’) : imprimira el valor en cada paso&lt;/li&gt;
+&lt;li&gt;unwatch(‘variableName’) : dejara de monitorear el valor&lt;/li&gt;
+&lt;li&gt;list(4) : imprime el contexto en un radio de 4 lineas&lt;/li&gt;
+&lt;li&gt;repl : importantísimo, nos permite evaluar algo en el contexto actual como el console del browser (tenemos todo lo del contexto pero no podemos modificarlo). Salimos con ctrl+c&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Hay “complicaciones” extra para quienes utilizan gulp/grunt (casi todos) ejecutando algunas tareas previas a iniciar la aplicación… pero buenas noticias, se puede utilizar algo como por ejemplo nodemon en esos casos, con la opción nodeArgs.&lt;/p&gt;
+&lt;p&gt;Por ejemplo:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;nodemon({script: &apos;./app.js&apos;, nodeArgs: [&apos;debug&apos;]})&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Otro caso común. Test unit. Con debug? Sí. Por ejemplo si ejecutamos&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;mocha debug test/ejemplo.js&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;entonces nos llevará a la consola de debug.&lt;/p&gt;
+&lt;p&gt;Combinando mocha y grunt/gulp se puede hacer esto (también con nodemon):&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;nodemon({script: &apos;./node_modules/mocha/bin/_mocha&apos;, nodeArgs: [&apos;debug&apos;]});&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;donde ponés la ruta a tu instalación global del ejecutable _mocha (con guión bajo) y listo, con eso tenés tus test con el debugger built in y tus tareas previas ejecutadas.&lt;/p&gt;
+&lt;p&gt;Obteniendo un error ENOSPC?&lt;/p&gt;
+&lt;p&gt;Eso es porque hay muchos archivos abiertos (o tenés un editor que suele abrir muchos archivos como Sublime o nodemon está incluyendo muchos archivos).&lt;/p&gt;
+&lt;p&gt;Lo podés solucionar incrementando el valor de max&lt;em&gt;user&lt;/em&gt;watches con este comando&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo sysctl fs.inotify.max_user_watches=20000&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;El número correcto depende de tus necesidades. Podés ver que tenés actualmente ejecutando esto&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;more /proc/sys/fs/inotify/max_user_watches&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;También recordá executar nodemon con el argumento -i nodemodules&lt;/p&gt;
+&lt;p&gt;En definitiva. Si todavía no lo hiciste animate que es sencillo. Hace un script sencillo que cuente hasta 100 en un for y probalo vos mismo.&lt;/p&gt;
+&lt;p&gt;Tenés una idea para mejorar este artículo? Mandámela a nicosommi@gmail.com&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Explorando BW-TEST]]></title><description><![CDATA[To see this article in english click here. Es muy simple! Mirá el video! BW-TEST es otra librería open source. Esta es para automatizar tus…]]></description><link>http://nicosommi.com/2013/12/05/explore-bw-test/</link><guid isPermaLink="false">http://nicosommi.com/2013/12/05/explore-bw-test/</guid><pubDate>Thu, 05 Dec 2013 21:11:21 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;/?p=287&quot; title=&quot;Explore BW-TEST&quot;&gt;&lt;em&gt;To see this article in english click here.&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Es muy simple! Mirá el video!&lt;/p&gt;
+&lt;p&gt;BW-TEST es otra librería open source. Esta es para automatizar tus test. Esta vez vas a poder tus test con TIBCO Designer. Te permite integrar Business Works a tu servidor de integracion contínua como Jenkins. También te permite practicar TDD! Entonces, repasando: ahorras dinero porque perdes menos tiempo testeando, ofreces un mejor servicio y de mayor calidad con el servidor de integracion continua.&lt;/p&gt;
+&lt;p&gt;Caracteristicas&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;xunit compatible (tested with jenkins)&lt;/li&gt;
+&lt;li&gt;multiple assertion support by using Assertions.process once in your test&lt;/li&gt;
+&lt;li&gt;test suites support&lt;/li&gt;
+&lt;li&gt;xml and html reports&lt;/li&gt;
+&lt;li&gt;startup once running&lt;/li&gt;
+&lt;li&gt;support running on every request&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Podes encontrar el codigo fuente aca: &lt;a href=&quot;http://github.com/nicosommi/bw-test&quot; title=&quot;bw-test&quot;&gt;http://github.com/nicosommi/bw-test&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Licencia LGPL v3 ©2013 BW-TEST&lt;/p&gt;</content:encoded></item><item><title><![CDATA[BW-REST]]></title><description><![CDATA[Para ver este artículo en español click aquí. NOTE:  TIBCO Announciates his support for REST Webservice finally from ActiveMatrix 6.0. When…]]></description><link>http://nicosommi.com/2013/12/02/bw-rest-2/</link><guid isPermaLink="false">http://nicosommi.com/2013/12/02/bw-rest-2/</guid><pubDate>Mon, 02 Dec 2013 01:41:11 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;/?p=174&quot; title=&quot;BW-REST&quot;&gt;&lt;em&gt;Para ver este artículo en español click aquí.&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;NOTE:&lt;/strong&gt; TIBCO Announciates his support for REST Webservice finally from ActiveMatrix 6.0.&lt;/p&gt;
+&lt;p&gt;When we are working with Tibco BusinessWorks it’s becoming more frequent the need to provide a REST API, just as the rest of the world. BW-REST goes beyond that and not only gives you the posibility to expose you services as a REST API, but also allows you to build an entire web application with HTML Templating, Cookies, Static resource routing, etc. It can be useful for several use cases like creating a rapid web application with latest javascript frameworks because you don’t want another layer on your app. Because you came from GI. Because you don’t want to spend more money on another developer. Because you don’t want to bring another error point to your application. Because you just need a little app to mantain the entities inside that project. Just a few cases. With BW-REST you can develop a complete web application like in the example: using backbone, require.js, jquery-ui, coffeescript, etc. It’s open source!&lt;/p&gt;
+&lt;p&gt;&lt;a title=&quot;repo&quot; href=&quot;http://github.com/nicosommi/bw-rest&quot; target=&quot;_blank&quot;&gt;You can found it here http://github.com/nicosommi/bw-rest&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;See the video here!&lt;/p&gt;
+&lt;p&gt;Features v 0.1&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;JADE templating support&lt;/li&gt;
+&lt;li&gt;Controller support&lt;/li&gt;
+&lt;li&gt;Project-relative paths&lt;/li&gt;
+&lt;li&gt;Support for regular expressions&lt;/li&gt;
+&lt;li&gt;Support query string and url parameters&lt;/li&gt;
+&lt;li&gt;Static resource support (recursivelly)&lt;/li&gt;
+&lt;li&gt;Built in implementation customizable by defaultvars&lt;/li&gt;
+&lt;li&gt;Cookie support&lt;/li&gt;
+&lt;li&gt;Multiple server on the same project/archive&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;LICENSE: LGPL v3 ©2013 BW-REST&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Explore BW-TEST]]></title><description><![CDATA[Para ver este artículo en español click aquí. It is really easy! Look the video! BW-TEST is another open source library. This one is for…]]></description><link>http://nicosommi.com/2013/12/02/explore-bw-test-2/</link><guid isPermaLink="false">http://nicosommi.com/2013/12/02/explore-bw-test-2/</guid><pubDate>Mon, 02 Dec 2013 01:38:50 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;/?p=209&quot; title=&quot;Explorando BW-TEST&quot;&gt;&lt;em&gt;Para ver este artículo en español click aquí.&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;It is really easy! Look the video!&lt;/p&gt;
+&lt;p&gt;BW-TEST is another open source library. This one is for automating your tests. This time you will be able to do your tests within TIBCO Designer. It allows you to integrate your BusinessWorks developed project to your continuous integration server like jenkins. Also, it allows you to practice TDD! So, you can automate your test. You offer a better service. You use the same tool. You save time and money. Features&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;xunit compatible (tested with jenkins)&lt;/li&gt;
+&lt;li&gt;multiple assertion support by using Assertions.process once in your test&lt;/li&gt;
+&lt;li&gt;test suites support&lt;/li&gt;
+&lt;li&gt;xml and html reports&lt;/li&gt;
+&lt;li&gt;startup once running&lt;/li&gt;
+&lt;li&gt;support running on every request&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You can found the source code in &lt;a href=&quot;http://github.com/nicosommi/bw-test&quot; title=&quot;bw-test&quot;&gt;http://github.com/nicosommi/bw-test&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;License LGPL v3 ©2013 BW-TEST&lt;/p&gt;</content:encoded></item><item><title><![CDATA[BW-REST]]></title><description><![CDATA[To see this article in english click here. NOTA:  TIBCO finalmente anunció soporte para web services REST desde ActiveMatrix 6.0. Cuando…]]></description><link>http://nicosommi.com/2013/10/18/bw-rest/</link><guid isPermaLink="false">http://nicosommi.com/2013/10/18/bw-rest/</guid><pubDate>Fri, 18 Oct 2013 01:54:52 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;/?p=291&quot; title=&quot;BW-REST&quot;&gt;&lt;em&gt;To see this article in english click here.&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;NOTA:&lt;/strong&gt; TIBCO finalmente anunció soporte para web services REST desde ActiveMatrix 6.0.&lt;/p&gt;
+&lt;p&gt;Cuando trabajamos con TIBCO BusinessWorks se vuelve cada vez mas frecuente la necesidad de proveer una API REST como el resto del mundo. BW-REST va mas alla y no solo te da esa posibilidad sino que tambien te permite construir una aplicacion web completa con HTML Templating, Cookies, Static resource routing, etc. Puede ser util en muchos casos de uso como crear una aplicacion web rapidamente y con los ultimos frameworks javascript. Porque no queres otra capa en tu aplicacion. Porque venis de GI. Porque no podes gastar mas dinero en otro desarrollador. Porque no queres introducir un nuevo punto de falla en la aplicacion. Porque simplemente necesitas una pequena aplicacion para mantener las entidades manipuladas en tu proyecto. Son tan solo algunos casos. Con BW-REST podes hacer aplicaciones como las del ejemplo: usando backbone, require.js, jquery-ui, coffeescript, etc.&lt;/p&gt;
+&lt;p&gt;Es de codigo abierto! &lt;a title=&quot;repo&quot; href=&quot;http://github.com/nicosommi/bw-rest&quot; target=&quot;_blank&quot;&gt;You can found it here http://github.com/nicosommi/bw-rest&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Mira el video!&lt;/p&gt;
+&lt;p&gt;Caracteristicas v 0.1&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;JADE templating support&lt;/li&gt;
+&lt;li&gt;Controller support&lt;/li&gt;
+&lt;li&gt;Project-relative paths&lt;/li&gt;
+&lt;li&gt;Support for regular expressions&lt;/li&gt;
+&lt;li&gt;Support query string and url parameters&lt;/li&gt;
+&lt;li&gt;Static resource support (recursivelly)&lt;/li&gt;
+&lt;li&gt;Built in implementation customizable by defaultvars&lt;/li&gt;
+&lt;li&gt;Cookie support&lt;/li&gt;
+&lt;li&gt;Multiple server on the same project/archive&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Licencia LGPL v3 ©2013 BW-REST&lt;/p&gt;</content:encoded></item></channel></rss>
