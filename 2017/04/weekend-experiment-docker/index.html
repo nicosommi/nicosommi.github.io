@@ -12,17 +12,17 @@
   if (typeof ga === "function") {
     ga('create', 'UA-44929876-1', 'auto');
       ga('set', 'anonymizeIp', true);}
-      </script><link rel="alternate" type="application/rss+xml" href="/rss.xml"/><link as="script" rel="preload" href="/component---src-templates-post-tsx-2478e72759ac13202f17.js"/><link as="script" rel="preload" href="/0-c1f2fecdb44c2623b75b.js"/><link as="script" rel="preload" href="/app-f3749bbabc88e89f91a9.js"/><link as="script" rel="preload" href="/webpack-runtime-c9ffcb2ae949996d3cec.js"/><link rel="preload" href="/static/d/80/path---2017-04-weekend-experiment-docker-6-db-609-pSc7QnrsHTTxjhzwrhWSXTzydJc.json" as="fetch" crossOrigin="use-credentials"/></head><body><div id="___gatsby"><div style="outline:none" tabindex="-1" role="group"><div style="margin-bottom:1.45rem"><div style="margin:0 auto;max-width:960px;padding:1.45rem 1.0875rem"><h1 style="margin:0"><a class="css-dr0eep" href="/">nicosommi</a></h1><h6 class="css-1phry7t"><span>developer</span></h6><div class="css-1bnxa12"><h3 class="css-0"><a class="css-dr0eep" href="/posts">posts</a></h3><h3 class="css-0"><a class="css-dr0eep" href="/slides">slides / talks</a></h3><h3 class="css-0"><a class="css-dr0eep" href="/about">about</a></h3></div></div></div><div class="css-1vohbo4"><h1>Weekend experiment: a node.js SPA with multi stage builds from docker</h1><div>April 29, 2017</div><div><p><em>Let's build a small node.js single page application (SPA) using the multi stage builds feature from docker to optimize the image size</em></p>
+      </script><link rel="alternate" type="application/rss+xml" href="/rss.xml"/><link as="script" rel="preload" href="/component---src-templates-post-tsx-7ffad8dfe13e7dfbc4e2.js"/><link as="script" rel="preload" href="/app-b467c7a838a21ad4cc56.js"/><link as="script" rel="preload" href="/11-06ad2655c3750dad69af.js"/><link as="script" rel="preload" href="/0-45c427d4432629db1e65.js"/><link as="script" rel="preload" href="/webpack-runtime-07bc2fef8b20e16dc626.js"/><link rel="preload" href="/static/d/47/path---2017-04-weekend-experiment-docker-6-db-609-gsd0bFZQg8EUG6pyTdHEmQElw.json" as="fetch" crossOrigin="use-credentials"/></head><body><div id="___gatsby"><div style="outline:none" tabindex="-1" role="group"><div style="margin-bottom:1.45rem"><div style="margin:0 auto;max-width:960px;padding:1.45rem 1.0875rem"><h1 style="margin:0"><a class="css-dr0eep" href="/">nicosommi</a></h1><h6 class="css-1phry7t"><span>systems engineer</span></h6><div class="css-1bnxa12"><h3 class="css-0"><a class="css-dr0eep" href="/posts">posts</a></h3><h3 class="css-0"><a class="css-dr0eep" href="/slides">slides / talks</a></h3><h3 class="css-0"><a class="css-dr0eep" href="/about">about</a></h3></div></div></div><div class="css-1vohbo4"><h1>Weekend experiment: a node.js SPA with multi stage builds from docker</h1><div>April 29, 2017</div><div><p><em>Let&#x27;s build a small node.js single page application (SPA) using the multi stage builds feature from docker to optimize the image size</em></p>
 <h2>Introduction</h2>
-<p>With multi stage builds (a feature announced in the docker con last week) we can create a tiny image that get's pulled and pushed faster to the docker repository.</p>
-<p>A Single Page Applications (SPA's) is a convenient use case to test the power of multi stage build easily in the node.js world.</p>
-<p>Let's start with this.</p>
+<p>With multi stage builds (a feature announced in the docker con last week) we can create a tiny image that get&#x27;s pulled and pushed faster to the docker repository.</p>
+<p>A Single Page Applications (SPA&#x27;s) is a convenient use case to test the power of multi stage build easily in the node.js world.</p>
+<p>Let&#x27;s start with this.</p>
 <h3>First step: install docker 17.05-ce</h3>
-<p>Easy, go to <a href="https://www.docker.com/community-edition#/download">https://www.docker.com/community-edition#/download</a>
+<p>Easy, go to <a href="https://www.docker.com/community-edition#/download" target="" class="css-dr0eep">https://www.docker.com/community-edition#/download</a>
 Choose your platform AND, because we need multi stage builds and its still on the <em>edge channel</em> we need to choose that instead of the stable channel. Download, install.</p>
 <h3>Second step: Building a SPA</h3>
 <p>A single page application is just a static web page that can be served through any traditional web server.</p>
-<p>For this example, let's pick a boilerplate SPA like create-react-app.</p>
+<p>For this example, let&#x27;s pick a boilerplate SPA like create-react-app.</p>
 <pre><code class="language-shell">npm install -g create-react-app
 
 create-react-app my-app
@@ -30,38 +30,38 @@ cd my-app/
 npm start # if you want to test it and check the browser for it
 </code></pre>
 <h3>Third step: create a Dockerfile</h3>
-<p>All right now the important thing, let's take a look at a candidate Dockerfile</p>
+<p>All right now the important thing, let&#x27;s take a look at a candidate Dockerfile</p>
 <pre><code class="language-docker"># buildtime
 FROM node AS nodebase
-LABEL maintainer "nicosommi@gmail.com"
+LABEL maintainer &quot;nicosommi@gmail.com&quot;
 
 ADD . /usr/src/app
 WORKDIR /usr/src/app
-RUN npm i &#x26;&#x26; npm run build
+RUN npm i &amp;&amp; npm run build
 
 # runtime
 FROM nginx:alpine
 COPY --from=nodebase /usr/src/app/build /usr/share/nginx/html
 </code></pre>
-<p>So let's see.</p>
+<p>So let&#x27;s see.</p>
 <p>We start with a node:latest image, no problem with the image size because now we have multi stage builds.</p>
-<p>The LABEL maintainer, that's recent too, no more MAINTAINER special instruction, now it's a label.</p>
+<p>The LABEL maintainer, that&#x27;s recent too, no more MAINTAINER special instruction, now it&#x27;s a label.</p>
 <p>We add the current directory to the appropiate location and set the working directory to it.</p>
-<p>Install, build... and that's all that we need to generate our artifacts in our build folder.</p>
+<p>Install, build... and that&#x27;s all that we need to generate our artifacts in our build folder.</p>
 <p>So after that, we take for the runtime the small nginx:alpine image and we just copy the build folder to the right place.</p>
 <p>Done!</p>
 <h3>Fourth step: build and run!</h3>
-<p>So now, let's build the image
+<p>So now, let&#x27;s build the image
 <code>docker build -t my-app .</code></p>
-<p>And now let's look it's size
+<p>And now let&#x27;s look it&#x27;s size
 <code>docker images</code></p>
 <p>All right! less than 16 MB! With the whole thing, linux, nginx and our app!</p>
-<p>That's great. Just the node_modules folder size after installation is around 130 MB... so this is a BIG win.</p>
-<p>Let's try it<br>
+<p>That&#x27;s great. Just the node_modules folder size after installation is around 130 MB... so this is a BIG win.</p>
+<p>Let&#x27;s try it<br/>
 <code>docker run -d --rm -p 8000:80 --name my-app my-app</code></p>
 <p>Open chrome in localhost:8000 and enjoy.</p>
 <h2>Conclusion</h2>
-<p>Multi stage builds are great, it let's you easily build whatever you want and then create a thin self-sufficient pack with exactly what you need to let the user run your application.</p>
-<p>By making this clear distinction between different stages, docker let's you think in a more organized way about the Dockerfile.</p>
-<p>With multi stage builds the LAST stage is the one that is used on your final image. Don't forget that. <em>For example, the ONBUILD instruction on a previous stage wont have any effect</em> because it will be overwritten with the last stage of the Dockerfile.</p>
-<p>As a side note, it is important to say that this may be a trigger to massively use webpack or some kind of bundler for standalone node.js applications. The node_modules folder get's really big very quickly.</p></div><div>nico</div></div><div class="css-bue21p"><span>Copyright by, guess who? Yeah you guessed it, nicosommi... so don&#x27;t copy, <span aria-label="cat" role="img" class="css-0">🐱</span></span></div></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.page={"componentChunkName":"component---src-templates-post-tsx","jsonName":"2017-04-weekend-experiment-docker-6db","path":"/2017/04/weekend-experiment-docker"};window.dataPath="80/path---2017-04-weekend-experiment-docker-6-db-609-pSc7QnrsHTTxjhzwrhWSXTzydJc";/*]]>*/</script><script src="/webpack-runtime-c9ffcb2ae949996d3cec.js" async=""></script><script src="/app-f3749bbabc88e89f91a9.js" async=""></script><script src="/0-c1f2fecdb44c2623b75b.js" async=""></script><script src="/component---src-templates-post-tsx-2478e72759ac13202f17.js" async=""></script></body></html>
+<p>Multi stage builds are great, it let&#x27;s you easily build whatever you want and then create a thin self-sufficient pack with exactly what you need to let the user run your application.</p>
+<p>By making this clear distinction between different stages, docker let&#x27;s you think in a more organized way about the Dockerfile.</p>
+<p>With multi stage builds the LAST stage is the one that is used on your final image. Don&#x27;t forget that. <em>For example, the ONBUILD instruction on a previous stage wont have any effect</em> because it will be overwritten with the last stage of the Dockerfile.</p>
+<p>As a side note, it is important to say that this may be a trigger to massively use webpack or some kind of bundler for standalone node.js applications. The node_modules folder get&#x27;s really big very quickly.</p></div><div>nico</div></div><div class="css-bue21p"><span>kikiriki <span aria-label="rooster" role="img" class="css-0">🐓</span></span></div></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.page={"componentChunkName":"component---src-templates-post-tsx","jsonName":"2017-04-weekend-experiment-docker-6db","path":"/2017/04/weekend-experiment-docker"};window.dataPath="47/path---2017-04-weekend-experiment-docker-6-db-609-gsd0bFZQg8EUG6pyTdHEmQElw";/*]]>*/</script><script src="/webpack-runtime-07bc2fef8b20e16dc626.js" async=""></script><script src="/0-45c427d4432629db1e65.js" async=""></script><script src="/11-06ad2655c3750dad69af.js" async=""></script><script src="/app-b467c7a838a21ad4cc56.js" async=""></script><script src="/component---src-templates-post-tsx-7ffad8dfe13e7dfbc4e2.js" async=""></script></body></html>
