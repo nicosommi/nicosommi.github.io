@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[nicosommi]]></title><description><![CDATA[developer blog]]></description><link>http://github.com/dylang/node-rss</link><generator>RSS for Node</generator><lastBuildDate>Fri, 31 Aug 2018 13:49:26 GMT</lastBuildDate><item><title><![CDATA[ansible plus docker]]></title><description><![CDATA[Ansible y docker: primeros pasos Por nicosommi name: agenda Agenda Situación frecuente Repaso de Ansible Llenando los gaps Demo Conclusión Q…]]></description><link>http://nicosommi.com/2018/03/25/ansible-plus-docker</link><guid isPermaLink="false">http://nicosommi.com/2018/03/25/ansible-plus-docker</guid><pubDate>Sun, 25 Mar 2018 18:38:10 GMT</pubDate><content:encoded>&lt;!-- class: middle --&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[nicosommi]]></title><description><![CDATA[developer blog]]></description><link>http://github.com/dylang/node-rss</link><generator>RSS for Node</generator><lastBuildDate>Fri, 31 Aug 2018 14:17:13 GMT</lastBuildDate><item><title><![CDATA[ansible plus docker]]></title><description><![CDATA[Ansible y docker: primeros pasos Por nicosommi name: agenda Agenda Situación frecuente Repaso de Ansible Llenando los gaps Demo Conclusión Q…]]></description><link>http://nicosommi.com/2018/03/25/ansible-plus-docker</link><guid isPermaLink="false">http://nicosommi.com/2018/03/25/ansible-plus-docker</guid><pubDate>Sun, 25 Mar 2018 18:38:10 GMT</pubDate><content:encoded>&lt;!-- class: middle --&gt;
 &lt;!-- layout: true --&gt;
 &lt;hr&gt;
 &lt;div style=&quot;display: flex; flex-direction: row;&quot;&gt;
@@ -398,242 +398,7 @@ Aca se pueden ver todos los comandos necesarios para por ejemplo hacer una rotac
 &lt;hr&gt;
 &lt;h1&gt;Q &amp;#x26; A&lt;/h1&gt;
 &lt;hr&gt;
-&lt;h1&gt;Gracias!&lt;/h1&gt;</content:encoded></item><item><title><![CDATA[proxies]]></title><description><![CDATA[Proxies en ES6 Agenda Terminología ¿Que es un proxy? Origen:  prokecye  "agency of one who acts instead of another" En español significa…]]></description><link>http://nicosommi.com/2016/10/24/proxies</link><guid isPermaLink="false">http://nicosommi.com/2016/10/24/proxies</guid><pubDate>Mon, 24 Oct 2016 18:38:10 GMT</pubDate><content:encoded>&lt;h1&gt;Proxies en ES6&lt;/h1&gt;
-&lt;hr&gt;
-&lt;h2&gt;Agenda&lt;/h2&gt;
-&lt;small&gt;
-  Terminología  
-  Desarrollo  
-  Casos de uso  
-  Ejercitación  
-  Desarrollo  
-  Casos de uso  
-  Ejercitación  
-&lt;/small&gt;
-&lt;hr&gt;
-&lt;h2&gt;Terminología&lt;/h2&gt;
-&lt;hr&gt;
-&lt;p&gt;¿Que es un proxy?&lt;br&gt;
-Origen: &lt;em&gt;prokecye&lt;/em&gt;&lt;br&gt;
-&quot;agency of one who acts instead of another&quot;&lt;br&gt;
-En español significa &lt;em&gt;apoderado&lt;/em&gt;&lt;br&gt;
-&lt;em&gt;adj.&lt;/em&gt; Dicho de una persona: Que tiene poderes de otra para representarla y proceder en su nombre&lt;/p&gt;
-&lt;p&gt;???
-Ejemplo, firmar un poder para hacer un trámite&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;¿Que es un protocolo?&lt;br&gt;
-Un &lt;em&gt;protocolo&lt;/em&gt; es un conjunto de normas. Esto podria verse como un conjunto interfaces con reglas para usarlas, y ECMAScript define un protocolo para manejar objetos. Este protocolo opera a nivel Meta.&lt;/p&gt;
-&lt;p&gt;???
-La definición no es la misma que suele utilizarse de protocolos para interfaces de otros lenguajes porque también incluye reglas.&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Metaprogramming&lt;/em&gt;&lt;br&gt;
-En la programación hay niveles base y meta. El nivel base procesa el input del usuario, mientras que el meta procesa al base.&lt;/p&gt;
-&lt;p&gt;???
-Pueden incluso ser dos lenguajes distintos.
-En es como los closures, los usamos sin saber.
-Hay unos que usamos constantemente: Object.*&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Meta Object Protocol&lt;/em&gt; es como se lo llama al protocolo de manejo de objetos de ECMAScript. Como particularidad, son internos (no son accesibles desde JS). Los engines pueden usarlos o no.&lt;/p&gt;
-&lt;hr&gt;
-&lt;ul&gt;
-&lt;li&gt;Los metodos de un objeto del MOP llaman operaciones del engine, algunas que llaman a otras como [[Get]], que se llaman &lt;em&gt;operaciones derivadas&lt;/em&gt; y las que son independientes, que se llaman &lt;em&gt;operaciones fundamentales&lt;/em&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;???
-Ejemplo [[Get]] usa getOwnProperty, getPrototypeOf y Call&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Tipos de metaprogramming&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Introspection: permite sólo leer la estructura&lt;/li&gt;
-&lt;li&gt;Self-modification: permite modificar la estructura&lt;/li&gt;
-&lt;li&gt;Intercession: redefine la semantica de algunas operaciones&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;???
-Ejemplos Object.keys, moveProperty, proxy respectivamente&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Elementos del proxy&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;target: es el fallback del handler, el representado
-[[ProxyTarget]]&lt;/li&gt;
-&lt;li&gt;handler: es quien, en caso de definir el método indicado, intercepta la llamada, el representante
-[[ProxyHandler]]&lt;/li&gt;
-&lt;li&gt;proxy: el que compone ambos y delega a uno u otro&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code&gt;const proxy: new Proxy(target, handler); // OK
-var p = Proxy(target, handler); // TypeError: calling a builtin Proxy constructor without new is forbidden
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;???
-El método del handler se llama trap.&lt;br&gt;
-Es decir que el proxy &quot;wrappea&quot; al target.&lt;/p&gt;
-&lt;hr&gt;
-&lt;pre&gt;&lt;code&gt;class MyHandler {
-  get(target, key, receiver) {
-    return Reflect[key];
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;???
-Reflect no se puede instanciar, tiene los mismos metodos que el handler, es como Math, todo estatico
-Por ejemplo Reflect.apply es menos verboso que Function.prototype.apply
-Algunas veces nos da información adicional como Reflect.set -&gt; [boolean]&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;¿Que operaciones pueden ser interceptadas?&lt;/em&gt;&lt;br&gt;
-Esto es selectivo, no se puede interceptar todo o solo las fundamentales como podria suponerse.&lt;br&gt;
-Esto es por dos razones&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;porque una operacion estable corre el riesgo de que un proxy la haga inestable&lt;/li&gt;
-&lt;li&gt;porque tener mucho codigo custom intercalado haria el programa muy dificil de entender y debuggear&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;???
-ejemplo el === que no puede ser trapeada.
-Estable: sin side effects, que produce siempre el mismo resultado ante los mismos argumentos&lt;br&gt;
-Se podría pensar como que con interceptar sólo operaciones fundamentales, pero esto no es tan útil ya que no inlcuiría get por ejemplo.
-Ver codigo de api client.&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Prototype chain&lt;/em&gt;&lt;br&gt;
-Los engines en su comportamiento habitual, al subir por el chain, van a disparar las traps que encuentren.&lt;br&gt;
-Sin embargo, hay ciertas operaciones que suben por el prototype chain si no encuentran la property en el handler como get, set y has, las demas no alteran el prototype chain.&lt;/p&gt;
-&lt;p&gt;???
-Ver codigo y test de ghost.
-Instanceof &quot;lies&quot;&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Básicas&lt;/em&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;defineProperty(target, propKey, propDesc) // → boolean  (fundamental)
-  // trigger: Object.defineProperty(proxy, propKey, propDesc)
-deleteProperty(target, propKey) // → boolean  (fundamental)
-  // trigger: delete proxy[propKey], delete proxy.foo
-get(target, propKey, receiver) // → any
-  // trigger: receiver[propKey]
-  // trigger: receiver.foo
-&lt;/code&gt;&lt;/pre&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Casos de uso&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;API Client&lt;/li&gt;
-&lt;li&gt;Tracing / Logging&lt;/li&gt;
-&lt;li&gt;Trap undefined property access&lt;/li&gt;
-&lt;li&gt;Type check&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;???
-Señalar el tracing puede implementarse cambiando el objeto.
-Type check example: properties que son &quot;fieles&quot; a su tipo incial.
-Ir viendo ejemplos de api client, logging y lock&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Preguntas&lt;/em&gt;&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Practica 1&lt;/em&gt;&lt;br&gt;
-Hacer &quot;trap undefined&quot;&lt;br&gt;
-&quot;Objeto que tira excepcion cuando se accede a una propiedad undefined&quot;
-(30 minutos)&lt;/p&gt;
-&lt;p&gt;???
-Debe tirar un ReferenceError si no esta. Debe devolver el valor si esta.
-Probar nested with lock.&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Compatibilidad&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Solo FF, CH, Edge, Opera, Safari 10, Node 6&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;???
-No hay polyfill.&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Tipos de proxy&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Wrappers (solo control) o Virtual Objects (agregan comporamiento)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;???
-Wrappers se refiere a esos casos en los que intercepta para controlar el acceso al target, mientras que virtual se refiere a cuando agregan un comportamiento y el virtual object no importa (ejemplo, property check y RMI respectivamente)&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Propiedades del proxy&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Transparencia virtual: no podemos saber si un objeto es un proxy&lt;/li&gt;
-&lt;li&gt;Encapsulamiento: no podemos acceder al handler desde el proxy&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;???
-Wrappers se refiere a esos casos en los que intercepta para controlar el acceso al target, mientras que virtual se refiere a cuando agregan un comportamiento y el virtual object no importa (ejemplo, property check y RMI respectivamente)&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Mas casos de uso&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;DOM&lt;/li&gt;
-&lt;li&gt;Indices negativos de array&lt;/li&gt;
-&lt;li&gt;Data binding (polemico)&lt;/li&gt;
-&lt;li&gt;Profiling&lt;/li&gt;
-&lt;li&gt;RMI&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Note:
-DOM: usualmente está implementado entre C++ y JS, y el context switch es costoso, lo que nos lleva a querer hacer el dom en js puro, pero hay cosas que no son tan simples de implementar, y ello fue una importante razon para hacer los proxies en JS (dom mas eficiente) y ademas que nos permite emular el browser (jsdom).&lt;/p&gt;
-&lt;p&gt;Indices negativos como en algunos lenguajes.
-Mencionar Object.observe (ES7) creado para binding por la pobre performance de los proxy, aunque abandonado por react.
-Object.observe no es necesario con la inmutabilidad, tratar browser como remote rendering, no storage y query
-(undo, state). Se dice que es lo que queremos, no lo que necesitamos (Stateful dom).
-Profiling para medir tiempo.
-RMI permite por ejemplo db access directo.&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Invariants&lt;/em&gt;&lt;br&gt;
-Si el target es no extensible y no configurable, lo invariante es forzado por el engine.&lt;/p&gt;
-&lt;p&gt;???
-no extensible protege objetos, non configurability protege properties.
-Con los proxy se podría violar la invariabilidad, pero el engine lo prohibe chequeando los parametros y los resultados de los handlers, preventExtension, true y luego false, e igual para isExtensible y getOwnPropertyDescriptor&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Practica 2&lt;/em&gt;&lt;br&gt;
-Mejorar api client&lt;br&gt;
-(30 minutos)&lt;/p&gt;
-&lt;p&gt;???
-elegir algunos de los TODO&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Avanzadas 1&lt;/em&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;getOwnPropertyDescriptor(target, propKey) // → PropDesc|Undefined  (fundamental)
-  // tby: Object.getOwnPropertyDescriptor(proxy, propKey)
-getPrototypeOf(target) // → Object|Null  (fundamental)
-  // tby: Object.getPrototypeOf(proxy)
-has(target, propKey) // → boolean
-  // tby: propKey in proxy
-&lt;/code&gt;&lt;/pre&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Avanzadas 2&lt;/em&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;isExtensible(target) // → boolean  (fundamental)
-  // tby: Object.isExtensible(proxy)
-ownKeys(target) // → Array&amp;#x3C;PropertyKey&gt;  (fundamental)
-  // tby: Object.getOwnPropertyPropertyNames(proxy) (only uses string-valued keys)
-  // tby: Object.getOwnPropertyPropertySymbols(proxy) (only uses symbol-valued keys)
-  // tby: Object.keys(proxy) (only uses enumerable string-valued keys;
-  // enumerability is checked via Object.getOwnPropertyDescriptor)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Avanzadas 3&lt;/em&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;preventExtensions(target) // → boolean  (fundamental)
-  // tby: Object.preventExtensions(proxy)
-set(target, propKey, value, receiver) // → boolean
-  // tby: receiver[propKey] = value
-  // tby: receiver.foo = value // propKey = &apos;foo&apos;
-setPrototypeOf(target, proto) // → boolean  (fundamental)
-  // tby: Object.setPrototypeOf(proxy, proto)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Para funciones&lt;/em&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;apply(target, thisArgument, argumentsList) // → any
-  // tby: proxy.apply(thisArgument, argumentsList) (fundamental)
-  // tby: proxy.call(thisArgument, ...argumentsList)
-  // tby: proxy(...argumentsList)
-construct(target, argumentsList) // → Object
-  // tby: new proxy(..argumentsList)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Conclusion&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Performance&lt;/li&gt;
-&lt;li&gt;Debug&lt;/li&gt;
-&lt;li&gt;Casos de uso&lt;/li&gt;
-&lt;li&gt;Complejidad&lt;/li&gt;
-&lt;li&gt;Compatibilidad&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Note:
-Performance: Conviene medir la performance en cada caso, evaluar que tan critica es la performance en nuestra app y tomar una decision.
-A mas código interceptado, menor performance, mayor dificultad de entender el codigo y de debug.
-Riesgo: podemos &quot;romper&quot; comportamientos, hacerlo inconsistente
-Casos de uso:&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;Preguntas / Discusion / Ideas&lt;/em&gt;&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;Gracias!&lt;/p&gt;</content:encoded></item><item><title><![CDATA[docker]]></title><description><![CDATA[Introduccion a docker Por nicosommi name: agenda Agenda Agenda y alcance Fundamentos Casos de uso Por dentro Componentes Ejemplo sencillo Q…]]></description><link>http://nicosommi.com/2016/10/24/docker</link><guid isPermaLink="false">http://nicosommi.com/2016/10/24/docker</guid><pubDate>Mon, 24 Oct 2016 18:38:10 GMT</pubDate><content:encoded>&lt;!-- class: middle --&gt;
+&lt;h1&gt;Gracias!&lt;/h1&gt;</content:encoded></item><item><title><![CDATA[docker]]></title><description><![CDATA[Introduccion a docker Por nicosommi name: agenda Agenda Agenda y alcance Fundamentos Casos de uso Por dentro Componentes Ejemplo sencillo Q…]]></description><link>http://nicosommi.com/2016/10/24/docker</link><guid isPermaLink="false">http://nicosommi.com/2016/10/24/docker</guid><pubDate>Mon, 24 Oct 2016 18:38:10 GMT</pubDate><content:encoded>&lt;!-- class: middle --&gt;
 &lt;!-- layout: true --&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;img src=&quot;/images/assets/docker-74de8.png&quot; width=&quot;400px&quot;&gt;&lt;/img&gt;&lt;/p&gt;
@@ -1149,7 +914,242 @@ $ docker-compose scale service-name=2
 &lt;hr&gt;
 &lt;h1&gt;Q &amp;#x26; A&lt;/h1&gt;
 &lt;hr&gt;
-&lt;h1&gt;Gracias!&lt;/h1&gt;</content:encoded></item><item><title><![CDATA[Contenedores unicamente de volumenes en docker (volume only containers)]]></title><description><![CDATA[En estos dias estuve trabajando mucho con Docker para diversos proyectos, aprendiendo mucho en el camino, y note que hay un tema particular…]]></description><link>http://nicosommi.com/2016/09/06/contenedores-unicamente-de-volumenes-en-docker-volume-only-containers/</link><guid isPermaLink="false">http://nicosommi.com/2016/09/06/contenedores-unicamente-de-volumenes-en-docker-volume-only-containers/</guid><pubDate>Wed, 07 Sep 2016 00:10:13 GMT</pubDate><content:encoded>&lt;p&gt;En estos dias estuve trabajando mucho con Docker para diversos proyectos, aprendiendo mucho en el camino, y note que hay un tema particular que me costo digerir.&lt;/p&gt;
+&lt;h1&gt;Gracias!&lt;/h1&gt;</content:encoded></item><item><title><![CDATA[proxies]]></title><description><![CDATA[Proxies en ES6 Agenda Terminología ¿Que es un proxy? Origen:  prokecye  "agency of one who acts instead of another" En español significa…]]></description><link>http://nicosommi.com/2016/10/24/proxies</link><guid isPermaLink="false">http://nicosommi.com/2016/10/24/proxies</guid><pubDate>Mon, 24 Oct 2016 18:38:10 GMT</pubDate><content:encoded>&lt;h1&gt;Proxies en ES6&lt;/h1&gt;
+&lt;hr&gt;
+&lt;h2&gt;Agenda&lt;/h2&gt;
+&lt;small&gt;
+  Terminología  
+  Desarrollo  
+  Casos de uso  
+  Ejercitación  
+  Desarrollo  
+  Casos de uso  
+  Ejercitación  
+&lt;/small&gt;
+&lt;hr&gt;
+&lt;h2&gt;Terminología&lt;/h2&gt;
+&lt;hr&gt;
+&lt;p&gt;¿Que es un proxy?&lt;br&gt;
+Origen: &lt;em&gt;prokecye&lt;/em&gt;&lt;br&gt;
+&quot;agency of one who acts instead of another&quot;&lt;br&gt;
+En español significa &lt;em&gt;apoderado&lt;/em&gt;&lt;br&gt;
+&lt;em&gt;adj.&lt;/em&gt; Dicho de una persona: Que tiene poderes de otra para representarla y proceder en su nombre&lt;/p&gt;
+&lt;p&gt;???
+Ejemplo, firmar un poder para hacer un trámite&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;¿Que es un protocolo?&lt;br&gt;
+Un &lt;em&gt;protocolo&lt;/em&gt; es un conjunto de normas. Esto podria verse como un conjunto interfaces con reglas para usarlas, y ECMAScript define un protocolo para manejar objetos. Este protocolo opera a nivel Meta.&lt;/p&gt;
+&lt;p&gt;???
+La definición no es la misma que suele utilizarse de protocolos para interfaces de otros lenguajes porque también incluye reglas.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Metaprogramming&lt;/em&gt;&lt;br&gt;
+En la programación hay niveles base y meta. El nivel base procesa el input del usuario, mientras que el meta procesa al base.&lt;/p&gt;
+&lt;p&gt;???
+Pueden incluso ser dos lenguajes distintos.
+En es como los closures, los usamos sin saber.
+Hay unos que usamos constantemente: Object.*&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Meta Object Protocol&lt;/em&gt; es como se lo llama al protocolo de manejo de objetos de ECMAScript. Como particularidad, son internos (no son accesibles desde JS). Los engines pueden usarlos o no.&lt;/p&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;Los metodos de un objeto del MOP llaman operaciones del engine, algunas que llaman a otras como [[Get]], que se llaman &lt;em&gt;operaciones derivadas&lt;/em&gt; y las que son independientes, que se llaman &lt;em&gt;operaciones fundamentales&lt;/em&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???
+Ejemplo [[Get]] usa getOwnProperty, getPrototypeOf y Call&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Tipos de metaprogramming&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Introspection: permite sólo leer la estructura&lt;/li&gt;
+&lt;li&gt;Self-modification: permite modificar la estructura&lt;/li&gt;
+&lt;li&gt;Intercession: redefine la semantica de algunas operaciones&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???
+Ejemplos Object.keys, moveProperty, proxy respectivamente&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Elementos del proxy&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;target: es el fallback del handler, el representado
+[[ProxyTarget]]&lt;/li&gt;
+&lt;li&gt;handler: es quien, en caso de definir el método indicado, intercepta la llamada, el representante
+[[ProxyHandler]]&lt;/li&gt;
+&lt;li&gt;proxy: el que compone ambos y delega a uno u otro&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;const proxy: new Proxy(target, handler); // OK
+var p = Proxy(target, handler); // TypeError: calling a builtin Proxy constructor without new is forbidden
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;???
+El método del handler se llama trap.&lt;br&gt;
+Es decir que el proxy &quot;wrappea&quot; al target.&lt;/p&gt;
+&lt;hr&gt;
+&lt;pre&gt;&lt;code&gt;class MyHandler {
+  get(target, key, receiver) {
+    return Reflect[key];
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;???
+Reflect no se puede instanciar, tiene los mismos metodos que el handler, es como Math, todo estatico
+Por ejemplo Reflect.apply es menos verboso que Function.prototype.apply
+Algunas veces nos da información adicional como Reflect.set -&gt; [boolean]&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;¿Que operaciones pueden ser interceptadas?&lt;/em&gt;&lt;br&gt;
+Esto es selectivo, no se puede interceptar todo o solo las fundamentales como podria suponerse.&lt;br&gt;
+Esto es por dos razones&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;porque una operacion estable corre el riesgo de que un proxy la haga inestable&lt;/li&gt;
+&lt;li&gt;porque tener mucho codigo custom intercalado haria el programa muy dificil de entender y debuggear&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???
+ejemplo el === que no puede ser trapeada.
+Estable: sin side effects, que produce siempre el mismo resultado ante los mismos argumentos&lt;br&gt;
+Se podría pensar como que con interceptar sólo operaciones fundamentales, pero esto no es tan útil ya que no inlcuiría get por ejemplo.
+Ver codigo de api client.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Prototype chain&lt;/em&gt;&lt;br&gt;
+Los engines en su comportamiento habitual, al subir por el chain, van a disparar las traps que encuentren.&lt;br&gt;
+Sin embargo, hay ciertas operaciones que suben por el prototype chain si no encuentran la property en el handler como get, set y has, las demas no alteran el prototype chain.&lt;/p&gt;
+&lt;p&gt;???
+Ver codigo y test de ghost.
+Instanceof &quot;lies&quot;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Básicas&lt;/em&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;defineProperty(target, propKey, propDesc) // → boolean  (fundamental)
+  // trigger: Object.defineProperty(proxy, propKey, propDesc)
+deleteProperty(target, propKey) // → boolean  (fundamental)
+  // trigger: delete proxy[propKey], delete proxy.foo
+get(target, propKey, receiver) // → any
+  // trigger: receiver[propKey]
+  // trigger: receiver.foo
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Casos de uso&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;API Client&lt;/li&gt;
+&lt;li&gt;Tracing / Logging&lt;/li&gt;
+&lt;li&gt;Trap undefined property access&lt;/li&gt;
+&lt;li&gt;Type check&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???
+Señalar el tracing puede implementarse cambiando el objeto.
+Type check example: properties que son &quot;fieles&quot; a su tipo incial.
+Ir viendo ejemplos de api client, logging y lock&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Preguntas&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Practica 1&lt;/em&gt;&lt;br&gt;
+Hacer &quot;trap undefined&quot;&lt;br&gt;
+&quot;Objeto que tira excepcion cuando se accede a una propiedad undefined&quot;
+(30 minutos)&lt;/p&gt;
+&lt;p&gt;???
+Debe tirar un ReferenceError si no esta. Debe devolver el valor si esta.
+Probar nested with lock.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Compatibilidad&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Solo FF, CH, Edge, Opera, Safari 10, Node 6&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???
+No hay polyfill.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Tipos de proxy&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Wrappers (solo control) o Virtual Objects (agregan comporamiento)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???
+Wrappers se refiere a esos casos en los que intercepta para controlar el acceso al target, mientras que virtual se refiere a cuando agregan un comportamiento y el virtual object no importa (ejemplo, property check y RMI respectivamente)&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Propiedades del proxy&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Transparencia virtual: no podemos saber si un objeto es un proxy&lt;/li&gt;
+&lt;li&gt;Encapsulamiento: no podemos acceder al handler desde el proxy&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???
+Wrappers se refiere a esos casos en los que intercepta para controlar el acceso al target, mientras que virtual se refiere a cuando agregan un comportamiento y el virtual object no importa (ejemplo, property check y RMI respectivamente)&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Mas casos de uso&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;DOM&lt;/li&gt;
+&lt;li&gt;Indices negativos de array&lt;/li&gt;
+&lt;li&gt;Data binding (polemico)&lt;/li&gt;
+&lt;li&gt;Profiling&lt;/li&gt;
+&lt;li&gt;RMI&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Note:
+DOM: usualmente está implementado entre C++ y JS, y el context switch es costoso, lo que nos lleva a querer hacer el dom en js puro, pero hay cosas que no son tan simples de implementar, y ello fue una importante razon para hacer los proxies en JS (dom mas eficiente) y ademas que nos permite emular el browser (jsdom).&lt;/p&gt;
+&lt;p&gt;Indices negativos como en algunos lenguajes.
+Mencionar Object.observe (ES7) creado para binding por la pobre performance de los proxy, aunque abandonado por react.
+Object.observe no es necesario con la inmutabilidad, tratar browser como remote rendering, no storage y query
+(undo, state). Se dice que es lo que queremos, no lo que necesitamos (Stateful dom).
+Profiling para medir tiempo.
+RMI permite por ejemplo db access directo.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Invariants&lt;/em&gt;&lt;br&gt;
+Si el target es no extensible y no configurable, lo invariante es forzado por el engine.&lt;/p&gt;
+&lt;p&gt;???
+no extensible protege objetos, non configurability protege properties.
+Con los proxy se podría violar la invariabilidad, pero el engine lo prohibe chequeando los parametros y los resultados de los handlers, preventExtension, true y luego false, e igual para isExtensible y getOwnPropertyDescriptor&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Practica 2&lt;/em&gt;&lt;br&gt;
+Mejorar api client&lt;br&gt;
+(30 minutos)&lt;/p&gt;
+&lt;p&gt;???
+elegir algunos de los TODO&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Avanzadas 1&lt;/em&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;getOwnPropertyDescriptor(target, propKey) // → PropDesc|Undefined  (fundamental)
+  // tby: Object.getOwnPropertyDescriptor(proxy, propKey)
+getPrototypeOf(target) // → Object|Null  (fundamental)
+  // tby: Object.getPrototypeOf(proxy)
+has(target, propKey) // → boolean
+  // tby: propKey in proxy
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Avanzadas 2&lt;/em&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;isExtensible(target) // → boolean  (fundamental)
+  // tby: Object.isExtensible(proxy)
+ownKeys(target) // → Array&amp;#x3C;PropertyKey&gt;  (fundamental)
+  // tby: Object.getOwnPropertyPropertyNames(proxy) (only uses string-valued keys)
+  // tby: Object.getOwnPropertyPropertySymbols(proxy) (only uses symbol-valued keys)
+  // tby: Object.keys(proxy) (only uses enumerable string-valued keys;
+  // enumerability is checked via Object.getOwnPropertyDescriptor)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Avanzadas 3&lt;/em&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;preventExtensions(target) // → boolean  (fundamental)
+  // tby: Object.preventExtensions(proxy)
+set(target, propKey, value, receiver) // → boolean
+  // tby: receiver[propKey] = value
+  // tby: receiver.foo = value // propKey = &apos;foo&apos;
+setPrototypeOf(target, proto) // → boolean  (fundamental)
+  // tby: Object.setPrototypeOf(proxy, proto)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Para funciones&lt;/em&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apply(target, thisArgument, argumentsList) // → any
+  // tby: proxy.apply(thisArgument, argumentsList) (fundamental)
+  // tby: proxy.call(thisArgument, ...argumentsList)
+  // tby: proxy(...argumentsList)
+construct(target, argumentsList) // → Object
+  // tby: new proxy(..argumentsList)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Conclusion&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Performance&lt;/li&gt;
+&lt;li&gt;Debug&lt;/li&gt;
+&lt;li&gt;Casos de uso&lt;/li&gt;
+&lt;li&gt;Complejidad&lt;/li&gt;
+&lt;li&gt;Compatibilidad&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Note:
+Performance: Conviene medir la performance en cada caso, evaluar que tan critica es la performance en nuestra app y tomar una decision.
+A mas código interceptado, menor performance, mayor dificultad de entender el codigo y de debug.
+Riesgo: podemos &quot;romper&quot; comportamientos, hacerlo inconsistente
+Casos de uso:&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;Preguntas / Discusion / Ideas&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;Gracias!&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Contenedores unicamente de volumenes en docker (volume only containers)]]></title><description><![CDATA[En estos dias estuve trabajando mucho con Docker para diversos proyectos, aprendiendo mucho en el camino, y note que hay un tema particular…]]></description><link>http://nicosommi.com/2016/09/06/contenedores-unicamente-de-volumenes-en-docker-volume-only-containers/</link><guid isPermaLink="false">http://nicosommi.com/2016/09/06/contenedores-unicamente-de-volumenes-en-docker-volume-only-containers/</guid><pubDate>Wed, 07 Sep 2016 00:10:13 GMT</pubDate><content:encoded>&lt;p&gt;En estos dias estuve trabajando mucho con Docker para diversos proyectos, aprendiendo mucho en el camino, y note que hay un tema particular que me costo digerir.&lt;/p&gt;
 &lt;p&gt;Los volumenes compartidos entre containers que necesitan permanecer en una ubicacion determinada del host son soportados de una manera extraña que se da casi por casualidad.&lt;/p&gt;
 &lt;p&gt;Es decir, si quiero que mi container bindee una carpeta a una carpeta del host, esto es muy sencillo si quiero hacerlo para un solo container, basta con un argumento a docker run, como el siguiente&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;docker run -it -v /etc:/etc coreos/apache /bin/bash
