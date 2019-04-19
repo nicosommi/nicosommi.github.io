@@ -9,95 +9,95 @@
 /sw.js
   Cache-Control: no-cache
 /offline-plugin-app-shell-fallback/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
   Link: </component---node-modules-gatsby-plugin-offline-app-shell-js-ef635cd868e44bcd3652.js>; rel=preload; as=script
 /2018/09/16/your-carrot-app-share
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /2018/03/25/ansible-plus-docker
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </component---src-templates-slide-tsx-5d55638fb7ce81bc9e48.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </component---src-templates-slide-tsx-ccddc45795151e9118b1.js>; rel=preload; as=script
 /2017/04/weekend-experiment-docker
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /2017/04/tuoS
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /2017/03/29/docker-secrets
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </component---src-templates-slide-tsx-5d55638fb7ce81bc9e48.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </component---src-templates-slide-tsx-ccddc45795151e9118b1.js>; rel=preload; as=script
 /2016/10/24/docker
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </component---src-templates-slide-tsx-5d55638fb7ce81bc9e48.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </component---src-templates-slide-tsx-ccddc45795151e9118b1.js>; rel=preload; as=script
 /2016/10/24/proxies
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </component---src-templates-slide-tsx-5d55638fb7ce81bc9e48.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </component---src-templates-slide-tsx-ccddc45795151e9118b1.js>; rel=preload; as=script
 /2016/09/06/contenedores-unicamente-de-volumenes-en-docker-volume-only-containers/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /2016/05/27/generation-driven-development-introduction-to-the-idea-and-to-gddify/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /2016/05/25/generation-driven-development-introduccion-a-la-idea-y-a-gddify/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /2016/03/30/a-good-way-to-use-global-not-really-clis-in-your-node-js-project-like-gulp/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /2015/10/21/how-adopting-cucumber-js-and-other-agile-practices-can-help-you-improve-your-development-process/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /2015/08/10/partial-class-approach-for-es6/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /2015/07/17/crear-un-componente-javascript-y-open-source-de-calidad-en-minutos/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /2015/07/17/create-a-javascript-quality-open-source-component-in-minutes/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /2014/06/21/mmmmm-mozilla/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /2014/05/02/asusta-pero-es-exitante-traduccion-al-espanol-de-la-carta-de-mark-surman-de-mozilla-scary-but-exciting/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /2014/05/02/debugging-node/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /2014/04/20/debugging-node-seriously/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /2013/12/05/explore-bw-test/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /2013/12/02/bw-rest-2/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /2013/12/02/explore-bw-test-2/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /2013/10/18/bw-rest/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /404/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /about/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /posts/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /slides/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
 /tetris/
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
   Link: </component---src-pages-tetris-tsx-258f641ab13a28a0f4d3.js>; rel=preload; as=script
 /404.html
-  Link: </webpack-runtime-08419f79d0866b664cd1.js>; rel=preload; as=script
-  Link: </0-ee03169c67fef18a0a5a.js>; rel=preload; as=script
+  Link: </webpack-runtime-6580fac552dece856788.js>; rel=preload; as=script
+  Link: </0-b9df51df840cfc610024.js>; rel=preload; as=script
