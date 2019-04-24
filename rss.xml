@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[nicosommi]]></title><description><![CDATA[developer blog]]></description><link>http://github.com/dylang/node-rss</link><generator>RSS for Node</generator><lastBuildDate>Fri, 19 Apr 2019 14:52:48 GMT</lastBuildDate><item><title><![CDATA[Your Carrot App, a life balancer tool]]></title><description><![CDATA[Why? For fun. A long way back, my life work balance was not so bad, but not so good neither... it could be better, and I started a path of…]]></description><link>http://nicosommi.com/2018/09/16/your-carrot-app-share</link><guid isPermaLink="false">http://nicosommi.com/2018/09/16/your-carrot-app-share</guid><pubDate>Sun, 16 Sep 2018 20:22:30 GMT</pubDate><content:encoded>&lt;div style=&quot;display: flex; justify-content: space-around; flex-wrap: wrap; width: 80%; margin: auto;&quot;&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[nicosommi]]></title><description><![CDATA[developer blog]]></description><link>http://github.com/dylang/node-rss</link><generator>RSS for Node</generator><lastBuildDate>Wed, 24 Apr 2019 13:13:19 GMT</lastBuildDate><item><title><![CDATA[Your Carrot App, a life balancer tool]]></title><description><![CDATA[Why? For fun. A long way back, my life work balance was not so bad, but not so good neither... it could be better, and I started a path of…]]></description><link>http://nicosommi.com/2018/09/16/your-carrot-app-share</link><guid isPermaLink="false">http://nicosommi.com/2018/09/16/your-carrot-app-share</guid><pubDate>Sun, 16 Sep 2018 20:22:30 GMT</pubDate><content:encoded>&lt;div style=&quot;display: flex; justify-content: space-around; flex-wrap: wrap; width: 80%; margin: auto;&quot;&gt;
   &lt;div style=&quot;flex: 1 0 33%; width: 33%; max-width: 33%;&quot;&gt;
     
   &lt;a class=&quot;gatsby-resp-image-link&quot; href=&quot;/static/2e4398afc084b37c485e503f37bf78f9/e2510/amber.512x512.png&quot; style=&quot;display: block&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;
@@ -176,9 +176,9 @@ If you do, remember to tell me how it goes!&lt;/p&gt;
 &lt;li&gt;Subir imágenes al registry&lt;/li&gt;
 &lt;li&gt;Subir compose al server por SSH&lt;/li&gt;
 &lt;li&gt;Crear servicio/s con imágen&lt;/li&gt;
-&lt;li&gt;Deployar stack en el swarm o hacer run/up
-???&lt;/li&gt;
+&lt;li&gt;Deployar stack en el swarm o hacer run/up&lt;/li&gt;
 &lt;/ol&gt;
+&lt;p&gt;???&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2&gt;Problemas&lt;/h2&gt;
 &lt;ul&gt;
@@ -215,7 +215,7 @@ If you do, remember to tell me how it goes!&lt;/p&gt;
 &lt;li&gt;galaxy con roles y playbook ejemplos&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;h2&gt;Ansible - Conceptos&lt;/h2&gt;
+&lt;h2&gt;Ansible - Conceptos 1&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;Inventarios&lt;/li&gt;
 &lt;/ul&gt;
@@ -231,16 +231,18 @@ api.host ansible_host=50.15.200.200 ansible_port=2223
 api
 web
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h2&gt;???&lt;/h2&gt;
-&lt;h2&gt;Ansible - Conceptos&lt;/h2&gt;
+&lt;hr&gt;
+&lt;h2&gt;Ansible - Conceptos 2&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;Modulos&lt;/li&gt;
 &lt;/ul&gt;
-&lt;pre&gt;&lt;code&gt;&gt; ansible -i hosts -m copy -a &apos;src=index.html dest=/app/index.html&apos; docker.host
-&gt; ansible -i hosts -m shell -a &apos;grep DISTRIB_RELEASE /etc/lsb-release&apos; all
+&lt;pre&gt;&lt;code&gt;&gt; ansible -i hosts -m copy \
+    -a &apos;src=index.html dest=/app/index.html&apos; docker.host
+&gt; ansible -i hosts -m shell \
+    -a &apos;grep DISTRIB_RELEASE /etc/lsb-release&apos; all
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h2&gt;???&lt;/h2&gt;
-&lt;h2&gt;Ansible - Conceptos&lt;/h2&gt;
+&lt;hr&gt;
+&lt;h2&gt;Ansible - Conceptos 3&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;Grupos y variables&lt;/li&gt;
 &lt;/ul&gt;
@@ -248,8 +250,8 @@ web
 group_vars/api
 host_vars/api.host
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h2&gt;???&lt;/h2&gt;
-&lt;h2&gt;Ansible - Conceptos&lt;/h2&gt;
+&lt;hr&gt;
+&lt;h2&gt;Ansible - Conceptos 4&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;Playbooks, tasks y handlers&lt;/li&gt;
 &lt;/ul&gt;
@@ -268,14 +270,16 @@ host_vars/api.host
       service: name=nginx state=restarted
       listen: &quot;restart nginx&quot;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h2&gt;???&lt;/h2&gt;
-&lt;h2&gt;Ansible - Conceptos&lt;/h2&gt;
+&lt;hr&gt;
+&lt;h2&gt;Ansible - Conceptos 5&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;Roles&lt;/li&gt;
 &lt;li&gt;Vault&lt;/li&gt;
 &lt;li&gt;Patterns, Conditions, Loops&lt;/li&gt;
-&lt;li&gt;Etc
-???&lt;/li&gt;
+&lt;li&gt;Etc&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;???&lt;/p&gt;
+&lt;ul&gt;
 &lt;li&gt;utiliza ssh&lt;/li&gt;
 &lt;li&gt;galaxy con roles y playbook ejemplos&lt;/li&gt;
 &lt;/ul&gt;
@@ -286,11 +290,11 @@ host_vars/api.host
 &lt;li&gt;Creando el playbook para deploy&lt;/li&gt;
 &lt;li&gt;Creando el playbook X&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2&gt;???&lt;/h2&gt;
+&lt;hr&gt;
 &lt;h2&gt;Ejemplo&lt;/h2&gt;
-&lt;h2&gt;???&lt;/h2&gt;
+&lt;hr&gt;
 &lt;h1&gt;Q &amp;#x26; A&lt;/h1&gt;
-&lt;h2&gt;???&lt;/h2&gt;
+&lt;hr&gt;
 &lt;h2&gt;Para llevar&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;Tutorial de ansible&lt;br&gt;
@@ -300,14 +304,12 @@ host_vars/api.host
 &lt;ul&gt;
 &lt;li&gt;Orchestration&lt;/li&gt;
 &lt;li&gt;Rotación de secretos&lt;/li&gt;
-&lt;li&gt;...cualquier serie de comandos automatizables...
-???&lt;/li&gt;
+&lt;li&gt;...cualquier serie de comandos automatizables...&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;h1&gt;Gracias!&lt;/h1&gt;
-&lt;p&gt;???&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Weekend experiment: a node.js SPA with multi stage builds from docker]]></title><description><![CDATA[Let's build a small node.js single page application (SPA) using the multi stage builds feature from docker to optimize the image size…]]></description><link>http://nicosommi.com/2017/04/weekend-experiment-docker</link><guid isPermaLink="false">http://nicosommi.com/2017/04/weekend-experiment-docker</guid><pubDate>Sat, 29 Apr 2017 09:34:58 GMT</pubDate><content:encoded>&lt;p&gt;&lt;em&gt;Let&apos;s build a small node.js single page application (SPA) using the multi stage builds feature from docker to optimize the image size&lt;/em&gt;&lt;/p&gt;
+&lt;h1&gt;Gracias!&lt;/h1&gt;</content:encoded></item><item><title><![CDATA[Weekend experiment: a node.js SPA with multi stage builds from docker]]></title><description><![CDATA[Let's build a small node.js single page application (SPA) using the multi stage builds feature from docker to optimize the image size…]]></description><link>http://nicosommi.com/2017/04/weekend-experiment-docker</link><guid isPermaLink="false">http://nicosommi.com/2017/04/weekend-experiment-docker</guid><pubDate>Sat, 29 Apr 2017 09:34:58 GMT</pubDate><content:encoded>&lt;p&gt;&lt;em&gt;Let&apos;s build a small node.js single page application (SPA) using the multi stage builds feature from docker to optimize the image size&lt;/em&gt;&lt;/p&gt;
 &lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;With multi stage builds (a feature announced in the docker con last week) we can create a tiny image that get&apos;s pulled and pushed faster to the docker repository.&lt;/p&gt;
 &lt;p&gt;A Single Page Applications (SPA&apos;s) is a convenient use case to test the power of multi stage build easily in the node.js world.&lt;/p&gt;
