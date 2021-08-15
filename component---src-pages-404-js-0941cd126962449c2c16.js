@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkpersonal_blog=self.webpackChunkpersonal_blog||[]).push([[883],{9616:function(n,l,a){a.r(l);a(9425);var e=a(8460),t=a(5049),u=a(3431);l.default=function(){return(0,u.tZ)(e.Z,null,(0,u.tZ)("center",null,(0,u.tZ)("h1",null,(0,u.tZ)(t.Z,{char:"🤷‍",label:"woman shrugging"})," What? Esta pagina no existe...",(0,u.tZ)(t.Z,{char:"🤷‍",label:"woman shrugging"}))))}}}]);
+//# sourceMappingURL=component---src-pages-404-js-0941cd126962449c2c16.js.map
