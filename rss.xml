@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[nicosommi]]></title><description><![CDATA[developer blog]]></description><link>http://github.com/dylang/node-rss</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 07 Nov 2021 16:33:52 GMT</lastBuildDate><item><title><![CDATA[Making proactive reactive]]></title><description><![CDATA[Simplifying existing solutions and creating new ones are the most important tasks an Engineer is supposed to do in a Company. A simpler…]]></description><link>https://nicosommi.com/making-proactive-reactive</link><guid isPermaLink="false">https://nicosommi.com/making-proactive-reactive</guid><pubDate>Sun, 07 Nov 2021 09:04:02 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=SxdOUGdseq4&quot;&gt;Simplifying&lt;/a&gt; existing solutions and creating new ones are the most important tasks an Engineer is supposed to do in a Company.&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[nicosommi]]></title><description><![CDATA[developer blog]]></description><link>http://github.com/dylang/node-rss</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 07 Nov 2021 17:07:14 GMT</lastBuildDate><item><title><![CDATA[Making proactive reactive]]></title><description><![CDATA[Simplifying existing solutions and creating new ones are the most important tasks an Engineer is supposed to do in a Company. A simpler…]]></description><link>https://nicosommi.com/making-proactive-reactive</link><guid isPermaLink="false">https://nicosommi.com/making-proactive-reactive</guid><pubDate>Sun, 07 Nov 2021 09:04:02 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=SxdOUGdseq4&quot;&gt;Simplifying&lt;/a&gt; existing solutions and creating new ones are the most important tasks an Engineer is supposed to do in a Company.&lt;/p&gt;
 &lt;p&gt;A simpler solution is more effective than a complex solution.&lt;/p&gt;
 &lt;p&gt;It often involves &lt;a href=&quot;https://en.wikipedia.org/wiki/Occam%27s_razor&quot;&gt;fewer assumptions&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;This fact sounds obvious when read.&lt;/p&gt;
@@ -30,6 +30,20 @@
 &lt;h2&gt;Initial cache pattern&lt;/h2&gt;
 &lt;p&gt;The initial version of the website was more oriented to provide the editorial platform&apos;s functionality while also providing a solution for caching.&lt;/p&gt;
 &lt;p&gt;Because of this, we had an initial implementation, which was ignorant of the micro downtimes problems with the high load.&lt;/p&gt;
+&lt;p&gt;This is how a sequence diagram may look like&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-mermaid&quot;&gt;sequenceDiagram
+  actor U as Browser
+  participant A as Server
+  participant R as Redis
+  participant C as CMS
+  U-&gt;&gt;+A: request &apos;/&apos; route
+  A-&gt;&gt;+R: request content
+  R-&gt;&gt;-A: I don&apos;t have the content
+  A-&gt;&gt;+C: request content
+  C-&gt;&gt;-A: here you go
+  A-&gt;&gt;-U: here you go
+  A-&gt;&gt;+R: put content
+&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Clients usually call the cache like this&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-javascript&quot;&gt;cache.set(key, async () =&gt; {
   const value = cms.get()
@@ -53,86 +67,54 @@
 &lt;p&gt;And we had thousands of requests pending.&lt;/p&gt;
 &lt;p&gt;So they all wait.&lt;/p&gt;
 &lt;p&gt;They wait at least &lt;code&gt;600 ms&lt;/code&gt;, because, in the most basic API request, we hit 3 CMS endpoints (with cache, of course). Each one of those takes around &lt;code&gt;200ms&lt;/code&gt; each.
-Some requests went up to &apos;30 seconds` or even more when something went out of control on the third party.&lt;/p&gt;
+Some requests went up to &lt;code&gt;30 seconds&lt;/code&gt; or even more when something went out of control on the third party.&lt;/p&gt;
 &lt;p&gt;In addition, at some point, our servers could not accept more requests and started to fail with the status codes &lt;code&gt;503 - Service unavailable&lt;/code&gt;, &lt;code&gt;Socket timeout&lt;/code&gt;, or &lt;code&gt;403 - Bad Gateway&lt;/code&gt;. As a result, the throughput went dramatically low, and you could even check the downtime from a browser.&lt;/p&gt;
 &lt;h3&gt;But... why?&lt;/h3&gt;
 &lt;p&gt;The CMS call is an API call, which means it goes through HTTP, with encryption on top and pointing to a different infrastructure (CMS provider).&lt;/p&gt;
 &lt;p&gt;We can then guess that calling an API endpoint located in a different infrastructure is slower than calling a Redis database on our own, in the most common scenario.&lt;/p&gt;
 &lt;p&gt;We checked that in a Newrelic dashboard.&lt;/p&gt;
 &lt;p&gt;This dashboard has shown us how much time a request took on each function call.
-Redis database read access is often lower than 25 milliseconds and, in some rare scenarios, up to 75 ms.&lt;/p&gt;
-&lt;p&gt;At the same time, third parties were around 200 ms and up to more than 10 seconds from time to time (it happened every two or three weeks in our particular case).&lt;/p&gt;
+Redis database read access is often lower than &lt;code&gt;25 ms&lt;/code&gt; and, in some rare scenarios, up to &lt;code&gt;75 ms&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;At the same time, third parties were around &lt;code&gt;200 ms&lt;/code&gt; and up to more than &lt;code&gt;10 seconds&lt;/code&gt; from time to time (it happened every two or three weeks in our particular case).&lt;/p&gt;
 &lt;p&gt;We had to do something to improve this.&lt;/p&gt;
 &lt;h2&gt;Solution 1: Proactive loading&lt;/h2&gt;
-&lt;p&gt;When creating a sequence diagram of this problem, you see something like this&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-mermaid&quot;&gt;sequenceDiagram
-  actor U as Browser
-  participant A as Server
-  participant R as Redis
-  participant C as CMS
-  U-&gt;&gt;+A: request &apos;/&apos; route
-  A-&gt;&gt;+R: request content
-  R-&gt;&gt;-A: I don&apos;t have the content
-  A-&gt;&gt;+C: request content
-  C-&gt;&gt;-A: here you go
-  A-&gt;&gt;-U: here you go
-  A-&gt;&gt;+R: put content
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Again, the problem is that the user needs to wait for the CMS response, plus there are many users.&lt;/p&gt;
 &lt;p&gt;So, what can we do about it?&lt;/p&gt;
 &lt;p&gt;Well, having the content in the cache in the first place sounded like an option to us.&lt;/p&gt;
 &lt;p&gt;So, what if we periodically simulate our users and put everything in cache?&lt;/p&gt;
 &lt;p&gt;This solution looks something like this&lt;/p&gt;
-&lt;p&gt;&quot;`mermaid
-sequenceDiagram
-actor J as Cronjob
-actor U as Browser
-participant A as Server
-participant R as Redis
-participant C as CMS
-J-&gt;&gt;+A: request all routes
-A-&gt;&gt;+C: request content
-C-&gt;&gt;-A: here you go
-A-&gt;&gt;-J: ok, loaded
-U-&gt;&gt;+A: request &apos;/&apos; route
-A-&gt;&gt;+R: request content
-R-&gt;&gt;-A: here you go
-A-&gt;&gt;-U: here you go&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;We saw some light there, and we started to move in this direction.
-
-We called it Proactive load.
-
-The idea was to trigger a command via a Cron Job each hour or so, in which we&apos;ll load the most popular content, if not all, in the cache.
-
-Because we pull the data from a CMS, it is very similar to how Static Site Generation (SSG) works. For example, I used Gatsby, a web framework on my blog, and a few other projects.
-
-It is just that instead of generating HTML on files, we&apos;ll load a bunch of objects in the cache.
-
-When I started programming this, I had to add many new interface methods here and there to manipulate the cache keys and generate all the combinations of the data, which implied lots of new methods and data sources.
-
-It didn&apos;t feel very well, to be honest. _The solution started to smell too complex_.
-
-In the meantime, a few other things happened.
-
-We use Next.js for the website, and because of that, I was following some releases there. I saw that they released a new feature on the framework, supported by their CDN, called Staled While Revalidate. A pattern that I knew from theory but not so much in practice. They advertised it to be even better than SSG. I didn&apos;t believe them (Or understand them?). For me, Gatsby was the new fancy tool in town, and SSG was the new thing better than traditional SSR and the old PHP approach suggested by Next.js.
-
-Also, I was reading parts of the book [&quot;Reactive design patterns&quot;][5].
-
-In this book, I learned a few things about how reactive systems are often superior because they tend to be more efficient.
-
-Now with this in mind, let&apos;s think back about the notion of &quot;_nasty smell to complexity_&quot;.
-It seems to be related to recent learnings.
-
-To summarize, with this approach, we&apos;ll be running a job each hour and loading some content in the cache that maybe never is going to be consumed. So it won&apos;t solve the initial issue in the worst scenario unless we always generate _everything_.
-
-Then I remembered the whole thing of &quot;Stale While Revalidate&quot; and decided to take a look at it.
-
-## Solution 2: Reactive loading
-
-Staled While Revalidate solution looks something like this
-
-```mermaid
-sequenceDiagram
+&lt;pre&gt;&lt;code class=&quot;language-mermaid&quot;&gt;sequenceDiagram
+  actor J as Cronjob
+  actor U as Browser
+  participant A as Server
+  participant R as Redis
+  participant C as CMS
+  J-&gt;&gt;+A: request all routes
+  A-&gt;&gt;+C: request content
+  C-&gt;&gt;-A: here you go
+  A-&gt;&gt;-J: ok, loaded
+  U-&gt;&gt;+A: request &apos;/&apos; route
+  A-&gt;&gt;+R: request content
+  R-&gt;&gt;-A: here you go
+  A-&gt;&gt;-U: here you go
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We saw some light there, and we started to move in this direction.&lt;/p&gt;
+&lt;p&gt;We called it Proactive load.&lt;/p&gt;
+&lt;p&gt;The idea was to trigger a command via a Cron Job each hour or so, in which we&apos;ll load the most popular content, if not all, in the cache.&lt;/p&gt;
+&lt;p&gt;Because we pull the data from a CMS, it is very similar to how Static Site Generation (SSG) works. For example, I used Gatsby, a web framework on my blog, and a few other projects.&lt;/p&gt;
+&lt;p&gt;It is just that instead of generating HTML on files, we&apos;ll load a bunch of objects in the cache.&lt;/p&gt;
+&lt;p&gt;When I started programming this, I had to add many new interface methods here and there to manipulate the cache keys and generate all the combinations of the data, which implied lots of new methods and data sources.&lt;/p&gt;
+&lt;p&gt;It didn&apos;t feel very well, to be honest. &lt;em&gt;The solution started to smell too complex&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;In the meantime, a few other things happened.&lt;/p&gt;
+&lt;p&gt;We use Next.js for the website, and because of that, I was following some releases there. I saw that they released a new feature on the framework, supported by their CDN, called Staled While Revalidate. A pattern that I knew from theory but not so much in practice. They advertised it to be even better than SSG. I didn&apos;t believe them (Or understand them?). For me, Gatsby was the new fancy tool in town, and SSG was the new thing better than traditional SSR and the old PHP approach suggested by Next.js.&lt;/p&gt;
+&lt;p&gt;Also, I was reading parts of the book &lt;a href=&quot;https://www.reactivedesignpatterns.com/&quot;&gt;&quot;Reactive design patterns&quot;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In this book, I learned a few things about how reactive systems are often superior because they tend to be more efficient.&lt;/p&gt;
+&lt;p&gt;Now with this in mind, let&apos;s think back about the notion of &quot;&lt;em&gt;nasty smell to complexity&lt;/em&gt;&quot;.
+It seems to be related to recent learnings.&lt;/p&gt;
+&lt;p&gt;To summarize, with this approach, we&apos;ll be running a job each hour and loading some content in the cache that maybe never is going to be consumed. So it won&apos;t solve the initial issue in the worst scenario unless we always generate &lt;em&gt;everything&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Then I remembered the whole thing of &quot;Stale While Revalidate&quot; and decided to take a look at it.&lt;/p&gt;
+&lt;h2&gt;Solution 2: Reactive loading&lt;/h2&gt;
+&lt;p&gt;Staled While Revalidate solution looks something like this&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-mermaid&quot;&gt;sequenceDiagram
   actor U as Browser
   participant A as Server
   participant R as Redis
