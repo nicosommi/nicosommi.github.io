@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[nicosommi]]></title><description><![CDATA[developer blog]]></description><link>http://github.com/dylang/node-rss</link><generator>GatsbyJS</generator><lastBuildDate>Thu, 09 Dec 2021 13:12:01 GMT</lastBuildDate><item><title><![CDATA[Making proactive reactive]]></title><description><![CDATA[Simplifying existing solutions and creating new ones are the most important tasks an Engineer is supposed to do in a Company. A simpler…]]></description><link>https://nicosommi.com/making-proactive-reactive</link><guid isPermaLink="false">https://nicosommi.com/making-proactive-reactive</guid><pubDate>Sun, 07 Nov 2021 09:04:02 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=SxdOUGdseq4&quot;&gt;Simplifying&lt;/a&gt; existing solutions and creating new ones are the most important tasks an Engineer is supposed to do in a Company.&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[nicosommi]]></title><description><![CDATA[developer blog]]></description><link>http://github.com/dylang/node-rss</link><generator>GatsbyJS</generator><lastBuildDate>Thu, 31 Mar 2022 20:44:06 GMT</lastBuildDate><item><title><![CDATA[Making proactive reactive]]></title><description><![CDATA[Simplifying existing solutions and creating new ones are the most important tasks an Engineer is supposed to do in a Company. A simpler…]]></description><link>https://nicosommi.com/making-proactive-reactive</link><guid isPermaLink="false">https://nicosommi.com/making-proactive-reactive</guid><pubDate>Sun, 07 Nov 2021 09:04:02 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=SxdOUGdseq4&quot;&gt;Simplifying&lt;/a&gt; existing solutions and creating new ones are the most important tasks an Engineer is supposed to do in a Company.&lt;/p&gt;
 &lt;p&gt;A simpler solution is more effective than a complex solution.&lt;/p&gt;
 &lt;p&gt;It often involves &lt;a href=&quot;https://en.wikipedia.org/wiki/Occam%27s_razor&quot;&gt;fewer assumptions&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;This fact sounds obvious when read.&lt;/p&gt;
-&lt;p&gt;But in practice is much harder to detect in real life.&lt;/p&gt;
+&lt;p&gt;But in practice is much harder to detect.&lt;/p&gt;
 &lt;p&gt;And the experience may go away silently if you don&apos;t often reflect on the things you do.&lt;/p&gt;
 &lt;p&gt;In this post, I&apos;ll explain a specific situation in which I was able to identify this.&lt;/p&gt;
 &lt;p&gt;When code is needed, I&apos;ll use JS-like pseudocode and sequence diagrams.&lt;/p&gt;
@@ -47,18 +47,18 @@
 &lt;p&gt;Clients usually call the cache like this&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-javascript&quot;&gt;cache.set(key, async () =&gt; {
   const value = cms.get()
-  return value;
-});
+  return value
+})
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;And the &lt;code&gt;cache.set&lt;/code&gt; implementation was roughly something like this&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-javascript&quot;&gt;function set(key, getFunction) {
   let value = cache.get(&apos;key&apos;);
-  
+
   if (!value) {
     value = await getFunction();
     cache.set(&apos;key&apos;, value); // fire and forget
   }
-  
+
   return value
 }
 &lt;/code&gt;&lt;/pre&gt;
@@ -113,7 +113,7 @@ It seems to be related to recent learnings.&lt;/p&gt;
 &lt;p&gt;To summarize, with this approach, we&apos;ll be running a job each hour and loading some content in the cache that maybe never is going to be consumed. So it won&apos;t solve the initial issue in the worst scenario unless we always generate &lt;em&gt;everything&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Then I remembered the whole thing of &quot;Stale While Revalidate&quot; and decided to take a look at it.&lt;/p&gt;
 &lt;h2&gt;Solution 2: Reactive loading&lt;/h2&gt;
-&lt;p&gt;Staled While Revalidate solution looks something like this&lt;/p&gt;
+&lt;p&gt;Our implementation for Staled While Revalidate solution looks something like this&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-mermaid&quot;&gt;sequenceDiagram
   actor U as Browser
   participant A as Server
@@ -139,22 +139,25 @@ It seems to be related to recent learnings.&lt;/p&gt;
 &lt;p&gt;Now, to implement this is super easy. First, we change the cache algorithm, and that&apos;s &lt;em&gt;almost it&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;There is no need for simulated requests because it uses the actual user event, making it reactive instead of proactive.&lt;/p&gt;
 &lt;p&gt;Now there is a downside: requests that take the content from layer 2 are technically getting old content. But at least they are getting content instead of erroring. And the content is not very old neither (only as old as the last request that triggered the Revalidation function).&lt;/p&gt;
-&lt;p&gt;I said &lt;em&gt;almost&lt;/em&gt; above because we had a CDN in front of our server. And because the CDN is in charge of caching, when returning a &lt;em&gt;staled&lt;/em&gt; response, you need to tell them to cache the response only for a few seconds (more or less the delay of the request to the CMS) instead of the regular expiration, which may be 6 hours for example. Otherwise, the CDN would continue replying with the staled content for those 6 hours.&lt;/p&gt;
+&lt;p&gt;I said &lt;em&gt;almost&lt;/em&gt; above because we had a CDN in front of our server. And because the CDN is in charge of caching, when returning a &lt;em&gt;staled&lt;/em&gt; response, you need to tell them and/or the browser to cache the response only for a few seconds (more or less the delay of the request to the CMS) instead of the regular expiration, which may be 6 hours for example. Otherwise, the CDN would continue replying with the staled content for those 6 hours. For this, the cache-control header is used.&lt;/p&gt;
 &lt;h2&gt;Current situation&lt;/h2&gt;
 &lt;p&gt;The current situation is that we don&apos;t have any more &lt;code&gt;micro-downtimes&lt;/code&gt; when clearing the cache.&lt;/p&gt;
-&lt;p&gt;No more &lt;code&gt;micro-downtimes&lt;/code&gt; is great because when the system is unstable, it causes performance and business implications and brings fear to developers who are afraid to deploy new changes, which is not good.&lt;/p&gt;
+&lt;p&gt;No more &lt;code&gt;micro-downtimes&lt;/code&gt; is great because when the system is unstable, it causes performance and business implications and brings fear to developers who are afraid to deploy new changes or clear the cache, which is not good.&lt;/p&gt;
 &lt;p&gt;Now we are dealing with other kinds of issues I&apos;ll share in the future.&lt;/p&gt;
 &lt;h2&gt;Conclusions&lt;/h2&gt;
-&lt;p&gt;So, how is SWR simpler than SSG?&lt;/p&gt;
+&lt;p&gt;So, how is the reactive approach simpler than the proactive?&lt;/p&gt;
 &lt;p&gt;First of all, the implementation is more straightforward. It involves fewer new pieces, while it reuses most of the current existing pieces.&lt;/p&gt;
 &lt;p&gt;Also, it uses the original user event to work, instead of &lt;em&gt;assuming&lt;/em&gt; that an &lt;em&gt;automated user&lt;/em&gt; with a clunky visit pattern (CRON + script) could generate something useful.&lt;/p&gt;
 &lt;p&gt;In this particular case, for me, the complex implementation was the first sign.&lt;/p&gt;
 &lt;p&gt;My favorite takeaways are:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Try to make complex more straightforward choosing solutions with fewer assumptions&lt;/li&gt;
-&lt;li&gt;In reactive systems, it is essential to distinguish between original events and synthetic ones&lt;/li&gt;
+&lt;li&gt;Sometimes, subtracting things from Solutions makes them better&lt;br&gt;
+In this case, one implicit assumption was to assume we will do a good job by simulating the user requests&lt;/li&gt;
+&lt;li&gt;In reactive systems, it is essential to distinguish between original events and synthetic ones&lt;br&gt;
+Synthetic events could require a lot of work to get right, while original events occur externally, which doesn&apos;t require ANY effort&lt;/li&gt;
 &lt;li&gt;Keep it up with reading and learning; it helps you solve problems&lt;/li&gt;
-&lt;li&gt;Have observability in place, get to know your app at runtime&lt;/li&gt;
+&lt;li&gt;Have observability in place, get to know your app at runtime
+Logs, metrics, dashboard&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Special thanks to Dan, Dimi, and Vlad for their collaboration during this process.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Tetris web - an experiment]]></title><description><![CDATA[Early this year (April) I created a small tetris web using react hooks. I've learned many things about react, theming, sound, and I still…]]></description><link>https://nicosommi.com/2019/07/27/tetris-web</link><guid isPermaLink="false">https://nicosommi.com/2019/07/27/tetris-web</guid><pubDate>Sat, 27 Jul 2019 08:30:54 GMT</pubDate><content:encoded>&lt;p&gt;Early this year (April) I created a small tetris web using react hooks.&lt;/p&gt;
 &lt;p&gt;I&apos;ve learned many things about react, theming, sound, and I still have a lot to experiment with it and many, many things to improve, but I closed a first playable version.&lt;/p&gt;
