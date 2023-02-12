@@ -1,4 +1,0 @@
-This is a Brave Rewards publisher verification file.
-
-Domain: nicosommi.com
-Token: 39cf2d87ba3ccec6865f2925d6552051afd87277351e31dce03dfc6669d6f291
